@@ -24,7 +24,7 @@
         "vid": "0xFEED" // "vid": "0x4653"
     },
     "layouts": {
-        "LAYOUT_ortho_spit_3x6_4": {
+        "LAYOUT_ortho_split_3x6_4": {
             "layout": [
                 {"matrix": [0, 0], "x": 0, "y": 0},
                 {"matrix": [0, 1], "x": 1, "y": 0},
