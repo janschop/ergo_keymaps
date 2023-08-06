@@ -16,6 +16,8 @@
 
 /* disable action features */
 #define TAPPING_TOGGLE 2
+#define ONESHOT_TAP_TOGGLE 2
+#define ONESHOT_TIMEOUT 5000
 #define BOTH_SHIFTS_TURNS_ON_CAPS_WORD
 //#define NO_ACTION_LAYER
 //#define NO_ACTION_TAPPING
@@ -32,5 +34,3 @@
 #define MOUSEKEY_MAX_SPEED      4
 #undef MOUSEKEY_TIME_TO_MAX
 #define MOUSEKEY_TIME_TO_MAX    64
-
-
