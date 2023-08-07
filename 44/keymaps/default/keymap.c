@@ -44,9 +44,9 @@ TD(TD_LSFT_CAPS),  KC_Z,    KC_X,    KC_C,    KC_V,    KC_B,                    
   //,-----------------------------------------------------.                    ,-----------------------------------------------------.
       KC_GRV,    KC_1,    KC_2,    KC_3,    KC_4,    KC_5,                          KC_6,    KC_7,    KC_8,    KC_9,    KC_0, KC_MINS,
   //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-     KC_LCTL,KC_ESCAPE, KC_MPRV, KC_MPLY, KC_MNXT, XXXXXXX,                       KC_EQL, XXXXXXX, XXXXXXX, XXXXXXX, KC_RBRC, KC_BSLS,
+     KC_LCTL,  KC_BTN4, KC_BTN1, KC_WH_U, KC_BTN2, KC_BTN5,                       KC_EQL, XXXXXXX, XXXXXXX, XXXXXXX, KC_RBRC, KC_BSLS,
   //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-TD(TD_LSFT_CAPS),KC_NUBS,KC_MUTE,KC_VOLD, KC_VOLU,   TO(0),                      XXXXXXX, XXXXXXX, _______, _______, _______, KC_RSFT,
+TD(TD_LSFT_CAPS),KC_ESCAPE,KC_WH_L,KC_WH_D,KC_WH_R,  TO(0),                      XXXXXXX, XXXXXXX, _______, _______, _______, KC_RSFT,
   //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
       XXXXXXX, XXXXXXX, KC_LGUI, KC_LALT,KC_DELETE,_______,                       OSL(3),  KC_SPC, KC_RALT,  KC_ENT, XXXXXXX, XXXXXXX
                       //`---------------------------------'                     `----------------------------------'
@@ -56,9 +56,9 @@ TD(TD_LSFT_CAPS),KC_NUBS,KC_MUTE,KC_VOLD, KC_VOLU,   TO(0),                     
   //,-----------------------------------------------------.                    ,-----------------------------------------------------.
       KC_GRV,  KC_EXLM,   KC_AT, KC_HASH,  KC_DLR, KC_PERC,                      KC_CIRC, KC_AMPR, KC_ASTR, KC_LPRN, KC_RPRN, KC_UNDS,
   //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-     KC_LCTL,KC_ESCAPE, XXXXXXX, XXXXXXX,   KC_F4, XXXXXXX,                      KC_PLUS, KC_HOME,   KC_UP,  KC_END, KC_RCBR, KC_PIPE,
+      KC_LCTL, XXXXXXX, KC_MPRV, KC_MPLY, KC_MNXT,   KC_F4,                      KC_PLUS, KC_HOME,   KC_UP,  KC_END, KC_RCBR, KC_PIPE,
   //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-TD(TD_LSFT_CAPS),XXXXXXX,XXXXXXX,XXXXXXX, XXXXXXX,   TO(0),                      XXXXXXX, KC_LEFT, KC_DOWN,KC_RIGHT, XXXXXXX,  KC_ENT,
+TD(TD_LSFT_CAPS),KC_NUBS,KC_MUTE,KC_VOLD, KC_VOLU,   TO(0),                      XXXXXXX, KC_LEFT, KC_DOWN,KC_RIGHT, XXXXXXX,  KC_ENT,
   //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------| 
       XXXXXXX, XXXXXXX, KC_LGUI, KC_LALT,KC_DELETE, OSL(4),                      _______,  KC_SPC, KC_RALT,  KC_ENT, XXXXXXX, XXXXXXX
                       //`---------------------------------'                     `----------------------------------'
