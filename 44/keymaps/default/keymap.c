@@ -19,11 +19,112 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include QMK_KEYBOARD_H
 
 enum {
-    TD_LSFT_CAPS,
+    LSFT_CAPS,
+    RSFT_ENTER,
+};
+
+enum custom_keycodes {
+    ralt2 = SAFE_RANGE,
+    ralt3,
+    ralt4,
+    ralt5,
+    ralt7,
+    ralt8,
+    ralt9,
+    ralt0,
+    // raltfslash,
+    // ralttilde,
+};
+
+bool process_record_user(uint16_t keycode, keyrecord_t *record) {
+    switch (keycode) {
+    case ralt2:
+        if (record->event.pressed) {
+            SEND_STRING(SS_RALT("2"));
+        } else {
+            // when keycode ralt2 is released
+        }
+        break;
+
+    case ralt3:
+        if (record->event.pressed) {
+            SEND_STRING(SS_RALT("3"));
+        } else {
+            // when keycode ralt3 is released
+        }
+        break;
+
+    case ralt4:
+        if (record->event.pressed) {
+            SEND_STRING(SS_RALT("4"));
+        } else {
+            // when keycode ralt4 is released
+        }
+        break;
+
+    case ralt5:
+        if (record->event.pressed) {
+            SEND_STRING(SS_RALT("5"));
+        } else {
+            // when keycode ralt5 is released
+        }
+        break;
+
+    case ralt7:
+        if (record->event.pressed) {
+            SEND_STRING(SS_RALT("7"));
+        } else {
+            // when keycode ralt7 is released
+        }
+        break;
+
+    case ralt8:
+        if (record->event.pressed) {
+            SEND_STRING(SS_RALT("8"));
+        } else {
+            // when keycode ralt8 is released
+        }
+        break;
+
+    case ralt9:
+        if (record->event.pressed) {
+            SEND_STRING(SS_RALT("9"));
+        } else {
+            // when keycode ralt9 is released
+        }
+        break;
+
+        case ralt0:
+        if (record->event.pressed) {
+            SEND_STRING(SS_RALT("0"));
+        } else {
+            // when keycode ralt0 is released
+        }
+        break;
+        // both do not work..
+        // case raltfslash:
+        // if (record->event.pressed) {
+        //     SEND_STRING(SS_RALT("\\"));
+        // } else {
+        //     // when keycode ralt0 is released
+        // }
+        // break;
+        // 
+        // case ralttilde:
+        // if (record->event.pressed) {
+        //     SEND_STRING(SS_RALT("¨"));
+        // } else {
+        //     // when keycode ralt0 is released
+        // }
+        // break;
+    }
+    return true;
+
 };
 
 tap_dance_action_t tap_dance_actions[] = {
-    [TD_LSFT_CAPS] = ACTION_TAP_DANCE_DOUBLE(KC_LSFT, KC_CAPS),
+    [LSFT_CAPS] = ACTION_TAP_DANCE_DOUBLE(KC_LSFT, KC_CAPS),
+    [RSFT_ENTER] = ACTION_TAP_DANCE_DOUBLE(KC_RSFT, KC_ENT),
 };
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
@@ -33,9 +134,9 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
       KC_LCTL,    KC_A,    KC_S,    KC_D,    KC_F,    KC_G,                         KC_H,    KC_J,    KC_K,    KC_L, KC_SCLN, KC_QUOT,
   //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-TD(TD_LSFT_CAPS),  KC_Z,    KC_X,    KC_C,    KC_V,    KC_B,                         KC_N,    KC_M, KC_COMM,  KC_DOT, KC_SLSH, KC_RSFT,
+TD(LSFT_CAPS),  KC_Z,    KC_X,    KC_C,    KC_V,    KC_B,                         KC_N,    KC_M, KC_COMM,  KC_DOT,KC_SLSH,TD(RSFT_ENTER),
   //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
-      XXXXXXX, XXXXXXX, KC_LGUI ,KC_LALT, KC_BSPC,   OSL(1),                        OSL(2),  KC_SPC, KC_RALT, KC_ENT,XXXXXXX,XXXXXXX
+      XXXXXXX, XXXXXXX, KC_LGUI ,KC_LALT, KC_BSPC,   OSL(1),                        OSL(2),  KC_SPC, MO(5), KC_ENT,XXXXXXX,XXXXXXX
                       //`---------------------------------'                     `----------------------------------'
 
   ),
@@ -46,7 +147,7 @@ TD(TD_LSFT_CAPS),  KC_Z,    KC_X,    KC_C,    KC_V,    KC_B,                    
   //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
      KC_LCTL,  KC_BTN4, KC_BTN1, KC_WH_U, KC_BTN2, KC_BTN5,                       KC_EQL, XXXXXXX, XXXXXXX, XXXXXXX, KC_RBRC, KC_BSLS,
   //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-TD(TD_LSFT_CAPS),KC_ESCAPE,KC_WH_L,KC_WH_D,KC_WH_R,  TO(0),                      XXXXXXX, XXXXXXX, _______, _______, _______, KC_RSFT,
+TD(LSFT_CAPS),KC_ESCAPE,KC_WH_L,KC_WH_D,KC_WH_R,  TO(0),                      XXXXXXX, XXXXXXX, _______, _______, _______,TD(RSFT_ENTER),
   //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
       XXXXXXX, XXXXXXX, KC_LGUI, KC_LALT,KC_DELETE,_______,                       OSL(3),  KC_SPC, KC_RALT,  KC_ENT, XXXXXXX, XXXXXXX
                       //`---------------------------------'                     `----------------------------------'
@@ -86,88 +187,17 @@ TD(TD_LSFT_CAPS),KC_NUBS,KC_MUTE,KC_VOLD, KC_VOLU,   TO(0),                     
   //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
       XXXXXXX, XXXXXXX, KC_LGUI, KC_LALT, KC_BSPC,_______,                       _______,   KC_P0, KC_PDOT,  KC_ENT ,XXXXXXX, XXXXXXX
                       //`---------------------------------'                     `----------------------------------'
+    ),
+
+      [5] = LAYOUT_ortho_split_3x6_4(
+  //,-----------------------------------------------------.                    ,-----------------------------------------------------.
+      XXXXXXX, XXXXXXX,   ralt2,   ralt3,   ralt4,   ralt5,                      XXXXXXX,   ralt7,   ralt8,   ralt9,   ralt0, XXXXXXX,
+  //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
+      XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,                      XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,
+  //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
+      XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,   TO(0),                      XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,
+  //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
+      XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,XXXXXXX,                       XXXXXXX, XXXXXXX, _______, XXXXXXX, XXXXXXX, XXXXXXX
+                      //`---------------------------------'                     `----------------------------------'
     )
 };
-
-
-uint16_t init_done = 0;
-
-// bool process_record_user(uint16_t keycode, keyrecord_t *record) {
-//     switch (keycode) {
-
-//     case KC_U:
-//         // Detect the activation of only Left Alt
-//         if (get_mods() == MOD_BIT(KC_RALT)) {
-//             if (record->event.pressed) {
-//                 // No need to register KC_LALT because it's already active.
-//                 // The Alt modifier will apply on this KC_TAB.
-//                 register_code(LSFT(KC_7));
-//             } else {
-//                 unregister_code(LSFT(KC_7));
-//             }
-//             // Do not let QMK process the keycode further
-//             return false;
-//         }
-//         // Else, let QMK process the KC_ESC keycode as usual
-//         return true;
-
-//     }
-//     return true;
-// }
-
-// bool process_record_user(uint16_t keycode, keyrecord_t *record) {
-//     switch (keycode) {
-
-//     case KC_U:
-//         // Detect the activation of only Left Alt
-//         if (get_mods() == MOD_BIT(KC_RALT)) {
-//             if (record->event.pressed) {
-//                 // No need to register KC_LALT because it's already active.
-//                 // The Alt modifier will apply on this KC_TAB.
-//                 unregister_code(LSFT(KC_7));
-//             } else {
-//                 unregister_code(LSFT(KC_7));
-//             }
-//             // Do not let QMK process the keycode further
-//             return false;
-//         }
-//         // Else, let QMK process the KC_ESC keycode as usual
-//         return true;
-
-//     }
-//     return true;
-// };
-
-// layer_state_t layer_state_set_user(layer_state_t state) {
-//   if (init_done == 0) {
-//     setPinOutput(B0);
-//     setPinOutput(D5);
-//     writePinHigh(B0);
-//     writePinHigh(D5);
-//     init_done = 1;
-//   }
-//   else {
-//     switch(get_highest_layer(state)) {
-//     case 0:
-//       writePinHigh(B0);
-//       writePinHigh(D5); 
-//     case 1:
-//     writePinLow(B0);
-//     //writePinHigh(D5);
-
-//       break;
-//     case 2:
-//       //writePinHigh(B0);
-//       writePinLow(D5);
-//       break;
-//     case 3:
-//       writePinLow(B0);
-//       writePinLow(D5);
-//     default:
-//       writePinHigh(B0);
-//       writePinHigh(D5);
-//       break;
-//     }
-//   }
-//   return state;
-// }                          
