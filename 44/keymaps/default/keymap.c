@@ -32,6 +32,14 @@ enum custom_keycodes {
     ralt8,
     ralt9,
     ralt0,
+    print,
+    kiwi, 
+    rema,
+    bunnpris,
+    mail,
+    first_name,
+    last_name,
+    number,
     // raltfslash,
     // ralttilde,
 };
@@ -101,6 +109,52 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             // when keycode ralt0 is released
         }
         break;
+
+        case bunnpris:
+        if (record->event.pressed) {
+            SEND_STRING("bunnpris");
+        } else {
+            // when keycode is released
+        }
+        break;
+
+        case kiwi:
+        if (record->event.pressed) {
+            SEND_STRING("kiwi");
+        }
+        break;
+
+        case rema:
+        if (record->event.pressed) {
+            SEND_STRING("rema");
+        } 
+        break;
+        
+        case mail:
+        if (record->event.pressed) {
+            SEND_STRING("jan.erik@schopmeier.com");
+        }
+        break;
+        
+        case first_name:
+        if (record->event.pressed) {
+            SEND_STRING("Jan Erik");
+        }
+        break;
+        
+        case last_name:
+        if (record->event.pressed) {
+            SEND_STRING("Schopmeier");
+        }
+        break;
+        
+        case number:
+        if (record->event.pressed) {
+            SEND_STRING("46360691");
+        }
+        break;
+        
+        
         // both do not work..
         // case raltfslash:
         // if (record->event.pressed) {
@@ -159,7 +213,7 @@ TD(LSFT_CAPS),KC_ESCAPE,KC_WH_L,KC_WH_D,KC_WH_R,  TO(0),                      XX
   //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
       KC_LCTL, XXXXXXX, KC_MPRV, KC_MPLY, KC_MNXT,   KC_F4,                      KC_PLUS, KC_HOME,   KC_UP,  KC_END, KC_RCBR, KC_PIPE,
   //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-TD(TD_LSFT_CAPS),KC_NUBS,KC_MUTE,KC_VOLD, KC_VOLU,   TO(0),                      XXXXXXX, KC_LEFT, KC_DOWN,KC_RIGHT, XXXXXXX,  KC_ENT,
+TD(LSFT_CAPS),KC_NUBS,KC_MUTE,KC_VOLD, KC_VOLU,   TO(0),                      XXXXXXX, KC_LEFT, KC_DOWN,KC_RIGHT, XXXXXXX,  KC_ENT,
   //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------| 
       XXXXXXX, XXXXXXX, KC_LGUI, KC_LALT,KC_DELETE, OSL(4),                      _______,  KC_SPC, KC_RALT,  KC_ENT, XXXXXXX, XXXXXXX
                       //`---------------------------------'                     `----------------------------------'
@@ -179,11 +233,11 @@ TD(TD_LSFT_CAPS),KC_NUBS,KC_MUTE,KC_VOLD, KC_VOLU,   TO(0),                     
     
       [4] = LAYOUT_ortho_split_3x6_4(
   //,-----------------------------------------------------.                    ,-----------------------------------------------------.
-      QK_BOOT, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,                       KC_NUM,   KC_P7,   KC_P8,   KC_P9, KC_PSLS, KC_PAST,
+      QK_BOOT, XXXXXXX,    kiwi,bunnpris,    rema, XXXXXXX,                       KC_NUM,   KC_P7,   KC_P8,   KC_P9, KC_PSLS, KC_PAST,
   //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-      XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,                       KC_TAB,   KC_P4,   KC_P5,   KC_P6, KC_PPLS, KC_PMNS,
+      XXXXXXX, XXXXXXX, XXXXXXX,   KC_UP, XXXXXXX, XXXXXXX,                       KC_TAB,   KC_P4,   KC_P5,   KC_P6, KC_PPLS, KC_PMNS,
   //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-      XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,   TO(0),                      XXXXXXX,   KC_P1,   KC_P2,   KC_P3, XXXXXXX, KC_PENT,
+      XXXXXXX, XXXXXXX, KC_LEFT, KC_DOWN,KC_RIGHT,   TO(0),                      XXXXXXX,   KC_P1,   KC_P2,   KC_P3, XXXXXXX, KC_PENT,
   //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
       XXXXXXX, XXXXXXX, KC_LGUI, KC_LALT, KC_BSPC,_______,                       _______,   KC_P0, KC_PDOT,  KC_ENT ,XXXXXXX, XXXXXXX
                       //`---------------------------------'                     `----------------------------------'
@@ -193,9 +247,9 @@ TD(TD_LSFT_CAPS),KC_NUBS,KC_MUTE,KC_VOLD, KC_VOLU,   TO(0),                     
   //,-----------------------------------------------------.                    ,-----------------------------------------------------.
       XXXXXXX, XXXXXXX,   ralt2,   ralt3,   ralt4,   ralt5,                      XXXXXXX,   ralt7,   ralt8,   ralt9,   ralt0, XXXXXXX,
   //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-      XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,                      XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,
+      XXXXXXX, XXXXXXX, XXXXXXX,XXXXXXX,first_name,XXXXXXX,                      XXXXXXX, XXXXXXX, XXXXXXX,last_name,XXXXXXX, XXXXXXX,
   //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-      XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,   TO(0),                      XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,
+      XXXXXXX, XXXXXXX, XXXXXXX,   print, XXXXXXX,   TO(0),                       number,    mail, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,
   //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
       XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,XXXXXXX,                       XXXXXXX, XXXXXXX, _______, XXXXXXX, XXXXXXX, XXXXXXX
                       //`---------------------------------'                     `----------------------------------'
