@@ -158,10 +158,10 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 
         case print:
         if (record->event.pressed) {
-            SEND_STRING("printf(\"test\");");
+            SEND_STRING("print" SS_LSFT("82") "test" SS_LSFT("29"));
         }
         break;
-
+printf)ÆtestÆ=ø
         case dplct:
         if (record->event.pressed) {
             SEND_STRING(SS_LCTL("l"));
