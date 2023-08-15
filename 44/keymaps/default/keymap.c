@@ -16,7 +16,6 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-// test 2
 
 #include QMK_KEYBOARD_H
 
@@ -42,6 +41,7 @@ enum custom_keycodes {
     first_name,
     last_name,
     number,
+    dplct,
     // raltfslash,
     // ralttilde,
 };
@@ -155,7 +155,17 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             SEND_STRING("46360691");
         }
         break;
-        
+
+        case print:
+        if (record->event.pressed) {
+            SEND_STRING("printf(\"test\");");
+        }
+        break;
+
+        case dplct:
+        if (record->event.pressed) {
+            SEND_STRING(SS_LCTL("l"), SS_LALT(ENT));
+        }              
         
         // both do not work..
         // case raltfslash:
@@ -177,7 +187,6 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     return true;
 
 };
-
 tap_dance_action_t tap_dance_actions[] = {
     [LSFT_CAPS] = ACTION_TAP_DANCE_DOUBLE(KC_LSFT, KC_CAPS),
     [RSFT_ENTER] = ACTION_TAP_DANCE_DOUBLE(KC_RSFT, KC_ENT),
@@ -199,11 +208,11 @@ TD(LSFT_CAPS),  KC_Z,    KC_X,    KC_C,    KC_V,    KC_B,                       
 
     [1] = LAYOUT_ortho_split_3x6_4(
   //,-----------------------------------------------------.                    ,-----------------------------------------------------.
-      KC_GRV,    KC_1,    KC_2,    KC_3,    KC_4,    KC_5,                          KC_6,    KC_7,    KC_8,    KC_9,    KC_0, KC_MINS,
+    KC_ESCAPE,    KC_1,    KC_2,    KC_3,    KC_4,    KC_5,                         KC_6,    KC_7,    KC_8,    KC_9,    KC_0, KC_MINS,
   //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-     KC_LCTL,  KC_BTN4, KC_BTN1, KC_WH_U, KC_BTN2, KC_BTN5,                       KC_EQL, XXXXXXX, XXXXXXX, XXXXXXX, KC_RBRC, KC_BSLS,
+      KC_LCTL, KC_BTN4, KC_BTN1, KC_WH_U, KC_BTN2, KC_BTN5,                       KC_EQL, XXXXXXX, XXXXXXX, XXXXXXX, KC_RBRC, KC_BSLS,
   //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-TD(LSFT_CAPS),KC_ESCAPE,KC_WH_L,KC_WH_D,KC_WH_R,  TO(0),                      XXXXXXX, XXXXXXX, _______, _______, _______,TD(RSFT_ENTER),
+TD(LSFT_CAPS), KC_BTN3, KC_WH_L, KC_WH_D, KC_WH_R,   TO(0),                      XXXXXXX, XXXXXXX, _______, _______, _______,TD(RSFT_ENTER),
   //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
       XXXXXXX, XXXXXXX, KC_LGUI, KC_LALT,KC_DELETE,_______,                       OSL(3),  KC_SPC, KC_RALT,  KC_ENT, XXXXXXX, XXXXXXX
                       //`---------------------------------'                     `----------------------------------'
@@ -249,7 +258,7 @@ TD(LSFT_CAPS),KC_NUBS,KC_MUTE,KC_VOLD, KC_VOLU,   TO(0),                      XX
   //,-----------------------------------------------------.                    ,-----------------------------------------------------.
       XXXXXXX, XXXXXXX,   ralt2,   ralt3,   ralt4,   ralt5,                      XXXXXXX,   ralt7,   ralt8,   ralt9,   ralt0, XXXXXXX,
   //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-      XXXXXXX, XXXXXXX, XXXXXXX,XXXXXXX,first_name,XXXXXXX,                      XXXXXXX, XXXXXXX, XXXXXXX,last_name,XXXXXXX, XXXXXXX,
+      XXXXXXX, XXXXXXX, XXXXXXX,   dplct,first_name,XXXXXXX,                      XXXXXXX, XXXXXXX, XXXXXXX,last_name,XXXXXXX, XXXXXXX,
   //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
       XXXXXXX, XXXXXXX, XXXXXXX,   print, XXXXXXX,   TO(0),                       number,    mail, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,
   //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
