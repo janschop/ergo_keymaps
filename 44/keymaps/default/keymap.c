@@ -164,7 +164,10 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 
         case dplct:
         if (record->event.pressed) {
-            SEND_STRING(SS_LCTL("l"), SS_LALT(ENT));
+            SEND_STRING(SS_LCTL("l"));
+            SEND_STRING(SS_DOWN(X_LALT));
+            SEND_STRING((SS_TAP(X_ENT)));
+            SEND_STRING(SS_UP(X_LALT));
         }              
         
         // both do not work..
