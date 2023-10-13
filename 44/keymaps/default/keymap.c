@@ -42,8 +42,8 @@ enum custom_keycodes {
     last_name,
     number,
     dplct,
+    ralttilde,
     // raltfslash,
-    // ralttilde,
 };
 
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
@@ -134,7 +134,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
         
         case mail:
         if (record->event.pressed) {
-            SEND_STRING("jan.erik@schopmeier.com");
+            SEND_STRING("jan.erik"SS_RALT("2")"schopmeier.com");
         }
         break;
         
@@ -158,10 +158,12 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 
         case print:
         if (record->event.pressed) {
-            SEND_STRING("print" SS_LSFT("82") "test" SS_LSFT("29"));
+            SEND_STRING("printf"SS_DOWN(X_LSFT)"82"SS_UP(X_LSFT));
+            SEND_STRING("fisken"SS_DOWN(X_LSFT)"29,"SS_UP(X_LSFT));
+            SEND_STRING(SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT));
         }
         break;
-printf)ÆtestÆ=ø
+
         case dplct:
         if (record->event.pressed) {
             SEND_STRING(SS_LCTL("l"));
@@ -179,13 +181,16 @@ printf)ÆtestÆ=ø
         // }
         // break;
         // 
-        // case ralttilde:
-        // if (record->event.pressed) {
-        //     SEND_STRING(SS_RALT("¨"));
-        // } else {
-        //     // when keycode ralt0 is released
-        // }
-        // break;
+        case ralttilde:
+        if (record->event.pressed) {
+            SEND_STRING(SS_RALT("`"));
+            // SEND_STRING(SS_DOWN(X_RALT));
+            // SEND_STRING(SS_TAP(X_SCLN));
+            // SEND_STRING(SS_UP(X_RALT));
+        } else {
+            // when keycode ralt0 is released
+        }
+        break;
     }
     return true;
 
@@ -261,7 +266,7 @@ TD(LSFT_CAPS),KC_NUBS,KC_MUTE,KC_VOLD, KC_VOLU,   TO(0),                      XX
   //,-----------------------------------------------------.                    ,-----------------------------------------------------.
       XXXXXXX, XXXXXXX,   ralt2,   ralt3,   ralt4,   ralt5,                      XXXXXXX,   ralt7,   ralt8,   ralt9,   ralt0, XXXXXXX,
   //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-      XXXXXXX, XXXXXXX, XXXXXXX,   dplct,first_name,XXXXXXX,                      XXXXXXX, XXXXXXX, XXXXXXX,last_name,XXXXXXX, XXXXXXX,
+      XXXXXXX, XXXXXXX, XXXXXXX,   dplct,first_name,XXXXXXX,                     XXXXXXX, XXXXXXX,XXXXXXX,last_name,ralttilde,XXXXXXX,
   //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
       XXXXXXX, XXXXXXX, XXXXXXX,   print, XXXXXXX,   TO(0),                       number,    mail, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,
   //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
