@@ -11,11 +11,6 @@
 /* disable debug print */
 //#define NO_DEBUG
 
-#define SPLIT_USB_DETECT
-
-#define MATRIX_COL_PINS_RIGHT {B4, B5, B6, C6, C7, F7}
-#define MATRIX_ROW_PINS_RIGHT {F0, F1, F4, F5}
-#define EE_HANDS
 /* disable print */
 //#define NO_PRINT
 

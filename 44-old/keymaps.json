@@ -1,0 +1,7 @@
+"keyboard": "ergo/44",
+"keymap": "default",
+"macros": [
+    [
+        {"action":"tap", "keycodes": ["RALT", "7"]}
+    ]
+]
