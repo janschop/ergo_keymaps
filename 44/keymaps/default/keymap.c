@@ -37,6 +37,8 @@ enum custom_keycodes {
     rght_dsktp,
     tsk_view,
     print,
+    heart,
+    frac,
 };
 
 void keyboard_pre_init_user(void) {
@@ -94,7 +96,11 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             SEND_STRING(SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT));
         }
         break;
-
+        case frac: //\frac{}{}
+        if (record->event.pressed) {
+            // SEND_STRING("\\frac"(X_RALT)"70"SS_UP(X_RALT));
+            // SEND_STRING(SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT));
+        }
         case dplct:
         if (record->event.pressed) {
             SEND_STRING(SS_LCTL("l"));
@@ -113,6 +119,10 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             SEND_STRING(SS_DOWN(X_LGUI)SS_DOWN(X_LCTL)SS_TAP(X_RIGHT)SS_UP(X_LCTL)SS_UP(X_LGUI));
         }
         break;
+        case heart:
+        if (record->event.pressed) {
+            SEND_STRING("<3");
+        }
   
     }
     return true;    
@@ -128,20 +138,20 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   //,-----------------------------------------------------.          
        KC_TAB,    KC_Q,    KC_W,    KC_E,    KC_R,    KC_T,          
   //|--------+--------+--------+--------+--------+--------|          
-      KC_LCTL,    KC_A,    KC_S,    KC_D,    KC_F,    KC_G,          
+      KC_LCTL,    SFT_T(KC_A),    KC_S,    KC_D,    KC_F,    KC_G,          
   //|--------+--------+--------+--------+--------+--------|          
 TD(LSFT_CAPS),    KC_Z,    KC_X,    KC_C,    KC_V,    KC_B,          
   //|--------+--------+--------+--------+--------+--------|
       XXXXXXX, XXXXXXX, KC_LGUI ,KC_LALT, KC_BSPC,  OSL(1),          
 // -----------------------------------------------------
 // -----------------------------------------------------
-         KC_Y,    KC_U,    KC_I,    KC_O,    KC_P,KC_LEFT_BRACKET
+         KC_Y,    KC_U,    KC_I,    KC_O,    KC_P,KC_LEFT_BRACKET,
 //  |--------+--------+--------+--------+--------+--------|
-         KC_H,    KC_J,    KC_K,    KC_L, KC_SCLN, KC_QUOT,
+         KC_H,    KC_J,    KC_K,    KC_L, SFT_T(KC_SCLN), KC_QUOT,
 //  |--------+--------+--------+--------+--------+--------|
-         KC_N,    KC_M, KC_COMM,  KC_DOT, KC_SLSH,TD(RSFT_ENTER),
+         KC_N,    KC_M, KC_COMM,  KC_DOT, KC_SLSH,SC_SENT,
  // |--------+--------+--------+--------+--------+--------|
-        OSL(2),  KC_SPC,  OSL(5),  KC_ENT, XXXXXXX, XXXXXXX
+        OSL(2),  KC_SPC,  OSL(5),  KC_LGUI, XXXXXXX, XXXXXXX
   ),
 
     [1] = LAYOUT_ortho_split_3x6_4(
@@ -159,9 +169,9 @@ TD(LSFT_CAPS), KC_BTN3, KC_WH_L, KC_WH_D, KC_WH_R,   TO(0),
          // |--------+--------+--------+--------+--------+--------|
              KC_EQL,lft_dsktp,G(KC_TAB),rght_dsktp,KC_RBRC,KC_BSLS,
         //  |--------+--------+--------+--------+--------+--------|
-            XXXXXXX, XXXXXXX, _______, _______, _______,TD(RSFT_ENTER),
+                dplct, XXXXXXX, _______, _______, _______,SC_SENT,
  //|--------+--------+--------+--------+--------+--------+--------|
-             OSL(3),  KC_SPC, KC_RALT,  KC_ENT, XXXXXXX, XXXXXXX
+             OSL(3),  KC_SPC, KC_RALT,  _______, XXXXXXX, XXXXXXX
    //        `----------------------------------'      
   ),
 
@@ -169,11 +179,11 @@ TD(LSFT_CAPS), KC_BTN3, KC_WH_L, KC_WH_D, KC_WH_R,   TO(0),
   //,-----------------------------------------------------.          
     KC_GRV,LSFT(KC_1),LSFT(KC_2),LSFT(KC_3),LSFT(KC_4),LSFT(KC_5),   
   //|--------+--------+--------+--------+--------+--------|          
-      KC_LCTL, XXXXXXX, KC_MPRV, KC_MPLY, KC_MNXT,   KC_F4,          
+      KC_LCTL, KC_MUTE, KC_MPRV, KC_MPLY, KC_MNXT,   KC_F4,          
   //|--------+--------+--------+--------+--------+--------|          
-TD(LSFT_CAPS),KC_NUBS,KC_MUTE,KC_VOLD, KC_VOLU,   TO(0),             
+TD(LSFT_CAPS),KC_NUBS,LSFT(KC_NUBS),KC_VOLD,KC_VOLU, TO(0),             
   //|--------+--------+--------+--------+--------+--------+--------| 
-      XXXXXXX, XXXXXXX, KC_LGUI, KC_LALT,KC_DELETE, OSL(4),          
+      XXXXXXX, XXXXXXX, KC_LGUI, KC_LALT,KC_DELETE, TO(4),          
         //`---------------------------------'   
         //    ,-----------------------------------------------------.
   LSFT(KC_6),LSFT(KC_7),LSFT(KC_8),LSFT(KC_9),LSFT(KC_0),LSFT(KC_MINS),
@@ -182,7 +192,7 @@ TD(LSFT_CAPS),KC_NUBS,KC_MUTE,KC_VOLD, KC_VOLU,   TO(0),
         //    |--------+--------+--------+--------+--------+--------|
           XXXXXXX, KC_LEFT, KC_DOWN,KC_RIGHT, XXXXXXX,  KC_ENT,
 //   |--------+--------+--------+--------+--------+--------+--------| 
-             _______,  KC_SPC, KC_RALT,  KC_ENT, XXXXXXX, XXXXXXX
+             _______,  KC_SPC, KC_RALT,_______, XXXXXXX, XXXXXXX
             // `----------------------------------'                
   ),
 
@@ -202,7 +212,7 @@ TD(LSFT_CAPS),KC_NUBS,KC_MUTE,KC_VOLD, KC_VOLU,   TO(0),
         //   |--------+--------+--------+--------+--------+--------|
             XXXXXXX, KC_MS_L, KC_MS_D, KC_MS_R, XXXXXXX, XXXXXXX,
 //  |--------+--------+--------+--------+--------+--------+--------|
-            _______,  KC_SPC, KC_RALT,  KC_ENT ,XXXXXXX, XXXXXXX
+            _______,  KC_SPC, KC_RALT,  _______ ,XXXXXXX, XXXXXXX
         //    `----------------------------------'
            
     ),
@@ -223,7 +233,7 @@ TD(LSFT_CAPS),KC_NUBS,KC_MUTE,KC_VOLD, KC_VOLU,   TO(0),
         //   |--------+--------+--------+--------+--------+--------|
             XXXXXXX,   KC_P1,   KC_P2,   KC_P3, XXXXXXX, KC_PENT,
 //  |--------+--------+--------+--------+--------+--------+--------|
-            _______,   KC_P0, KC_PDOT,  KC_ENT ,XXXXXXX, XXXXXXX
+            _______,   KC_P0, KC_PDOT,  _______ ,XXXXXXX, XXXXXXX
         //    `----------------------------------'
     ),
 
@@ -233,7 +243,7 @@ TD(LSFT_CAPS),KC_NUBS,KC_MUTE,KC_VOLD, KC_VOLU,   TO(0),
   //|--------+--------+--------+--------+--------+--------|          
       XXXXXXX, XXXXXXX, XXXXXXX,   dplct,first_name,XXXXXXX,         
   //|--------+--------+--------+--------+--------+--------|          
-      XXXXXXX, XXXXXXX, XXXXXXX,   print, XXXXXXX,   TO(0),          
+      XXXXXXX,   heart, XXXXXXX,   print, XXXXXXX,   TO(0),          
   //|--------+--------+--------+--------+--------+--------+--------| 
       XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,           
                     //`---------------------------------'            
