@@ -22,6 +22,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 enum {
     LSFT_CAPS,
     RSFT_ENTER,
+    Q_TAB,
+    ONE_TAB,
+    CTRL_TAB,
 };
 
 enum custom_keycodes {
@@ -121,7 +124,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
         break;
         case heart:
         if (record->event.pressed) {
-            SEND_STRING("<3");
+            SEND_STRING(";3");
         }
   
     }
@@ -130,24 +133,26 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 };
 tap_dance_action_t tap_dance_actions[] = {
     [LSFT_CAPS] = ACTION_TAP_DANCE_DOUBLE(KC_LSFT, KC_CAPS),
-    [RSFT_ENTER] = ACTION_TAP_DANCE_DOUBLE(KC_RSFT, KC_ENT),
+    [Q_TAB] = ACTION_TAP_DANCE_DOUBLE(KC_Q, KC_TAB),
+    [ONE_TAB] = ACTION_TAP_DANCE_DOUBLE(KC_1, KC_TAB),
+    [CTRL_TAB] = ACTION_TAP_DANCE_DOUBLE(KC_LCTL, KC_TAB),
 };
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     [0] = LAYOUT_ortho_split_3x6_4(
-  //,-----------------------------------------------------.          
-       KC_TAB,    KC_Q,    KC_W,    KC_E,    KC_R,    KC_T,          
+  //|-----------------------------------------------------.          
+       KC_TAB,TD(Q_TAB),   KC_W,    KC_E,    KC_R,    KC_T,          
   //|--------+--------+--------+--------+--------+--------|          
-      KC_LCTL,    SFT_T(KC_A),    KC_S,    KC_D,    KC_F,    KC_G,          
-  //|--------+--------+--------+--------+--------+--------|          
-TD(LSFT_CAPS),    KC_Z,    KC_X,    KC_C,    KC_V,    KC_B,          
+ TD(CTRL_TAB),CTL_T(KC_A),SFT_T(KC_S),KC_D,  KC_F,    KC_G,
   //|--------+--------+--------+--------+--------+--------|
-      XXXXXXX, XXXXXXX, KC_LGUI ,KC_LALT, KC_BSPC,  OSL(1),          
+TD(LSFT_CAPS),    KC_Z,    KC_X,    KC_C,    KC_V,    KC_B,
+  //|--------+--------+--------+--------+--------+--------|
+      XXXXXXX, XXXXXXX,KC_LGUI,LM(6,MOD_LALT),KC_BSPC,OSL(1),
 // -----------------------------------------------------
 // -----------------------------------------------------
-         KC_Y,    KC_U,    KC_I,    KC_O,    KC_P,KC_LEFT_BRACKET,
+         KC_Y,    KC_U,    KC_I,    KC_O,    KC_P, KC_LBRC,
 //  |--------+--------+--------+--------+--------+--------|
-         KC_H,    KC_J,    KC_K,    KC_L, SFT_T(KC_SCLN), KC_QUOT,
+         KC_H,    KC_J,  KC_K,SFT_T(KC_L),CTL_T(KC_SCLN),KC_QUOT,
 //  |--------+--------+--------+--------+--------+--------|
          KC_N,    KC_M, KC_COMM,  KC_DOT, KC_SLSH,SC_SENT,
  // |--------+--------+--------+--------+--------+--------|
@@ -158,12 +163,12 @@ TD(LSFT_CAPS),    KC_Z,    KC_X,    KC_C,    KC_V,    KC_B,
   //,-----------------------------------------------------.          
     KC_ESCAPE,    KC_1,    KC_2,    KC_3,    KC_4,    KC_5,          
   //|--------+--------+--------+--------+--------+--------|          
-      KC_LCTL, KC_BTN4, KC_BTN1, KC_WH_U, KC_BTN2, KC_BTN5,          
+       KC_ESC, KC_BTN4, KC_BTN1, KC_WH_U, KC_BTN2, KC_BTN5,          
   //|--------+--------+--------+--------+--------+--------|          
-TD(LSFT_CAPS), KC_BTN3, KC_WH_L, KC_WH_D, KC_WH_R,   TO(0),          
+TD(LSFT_CAPS), KC_BTN3, KC_WH_L, KC_WH_D, KC_WH_R,   TO(0),
   //|--------+--------+--------+--------+--------+--------+--------| 
       XXXXXXX, XXXXXXX, KC_LGUI, KC_LALT,KC_DELETE,_______,          
-                      //`---------------------------------'    
+                      //`---------------------------------'         
         //      ,-----------------------------------------------------.
                KC_6,    KC_7,    KC_8,    KC_9,    KC_0, KC_MINS,
          // |--------+--------+--------+--------+--------+--------|
@@ -219,7 +224,7 @@ TD(LSFT_CAPS),KC_NUBS,LSFT(KC_NUBS),KC_VOLD,KC_VOLU, TO(0),
     
       [4] = LAYOUT_ortho_split_3x6_4(
   //,-----------------------------------------------------.          
-      QK_BOOT, XXXXXXX,    kiwi,bunnpris,    rema, XXXXXXX,          
+      QK_BOOT, QK_BOOT,    kiwi,bunnpris,    rema, XXXXXXX,          
   //|--------+--------+--------+--------+--------+--------|          
       XXXXXXX, XXXXXXX, XXXXXXX,   KC_UP, XXXXXXX, XXXXXXX,          
   //|--------+--------+--------+--------+--------+--------|          
@@ -255,5 +260,24 @@ TD(LSFT_CAPS),KC_NUBS,LSFT(KC_NUBS),KC_VOLD,KC_VOLU, TO(0),
 //  |--------+--------+--------+--------+--------+--------+--------|
       XXXXXXX, XXXXXXX, _______, XXXXXXX, XXXXXXX, XXXXXXX
         //  `----------------------------------'   
-    )
+    ), 
+    [6] = LAYOUT_ortho_split_3x6_4(
+    //,-----------------------------------------------------.          
+        _______,  KC_TAB, _______, _______,   KC_F4, _______,
+    //|--------+--------+--------+--------+--------+--------|
+        _______, _______, _______, _______, _______, _______,
+    //|--------+--------+--------+--------+--------+--------|
+        _______, _______, _______, _______, _______, _______,
+    //|--------+--------+--------+--------+--------+--------|
+        _______, _______, _______, _______, _______, _______,
+    //`----------------------------------'
+    //,-----------------------------------------------------.          
+        _______, _______, _______, _______, _______, _______,
+    //|--------+--------+--------+--------+--------+--------|te
+        _______, _______, _______, _______, _______, _______,
+    //|--------+--------+--------+--------+--------+--------|
+        _______, _______, _______, _______, _______, _______,
+    //|--------+--------+--------+--------+--------+--------|
+        _______, _______, _______, _______, _______, _______)
+    //`----------------------------------'
 };
