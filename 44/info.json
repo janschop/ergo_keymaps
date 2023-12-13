@@ -25,8 +25,8 @@
     "url": "",
     "usb": {
         "device_version": "1.0.0",
-        "pid": "0x0000", // "pid": "0x0001",  //crkbd
-        "vid": "0xFEED" // "vid": "0x4653"
+        "pid": "0x0001", // "pid": "0x0001",  //crkbd
+        "vid": "0x6A73" // "vid": "0x4653"
     },
     "layouts": {
         "LAYOUT_ortho_split_3x6_4": {
