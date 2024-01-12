@@ -44,10 +44,10 @@ enum custom_keycodes {
     frac,
 };
 
-void keyboard_pre_init_user(void) {
-    setPinOutput(D3);  // initialize D3 for LED
-    writePinHigh(D3);  // turn on LED for testing
-}
+// void keyboard_pre_init_user(void) {
+//     setPinOutput(D3);  // initialize D3 for LED
+//     writePinHigh(D3);  // turn on LED for testing
+// }
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     switch (keycode) {
         case bunnpris:
@@ -138,21 +138,29 @@ tap_dance_action_t tap_dance_actions[] = {
     [CTRL_TAB] = ACTION_TAP_DANCE_DOUBLE(KC_LCTL, KC_TAB),
 };
 
+const uint16_t PROGMEM qw_esc[] = {KC_S, KC_D, COMBO_END};
+const uint16_t PROGMEM df_tab[] = {KC_D, KC_F, COMBO_END};
+combo_t key_combos[] = {
+    COMBO(qw_esc, KC_ESC),
+    COMBO(df_tab, KC_TAB), // keycodes with modifiers are possible too!
+};
+
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     [0] = LAYOUT_ortho_split_3x6_4(
   //|-----------------------------------------------------.          
-       KC_TAB,TD(Q_TAB),   KC_W,    KC_E,    KC_R,    KC_T,          
+       KC_TAB,    KC_Q,    KC_W,    KC_E,    KC_R,    KC_T,          
   //|--------+--------+--------+--------+--------+--------|          
- TD(CTRL_TAB),CTL_T(KC_A),SFT_T(KC_S),KC_D,  KC_F,    KC_G,
+ TD(CTRL_TAB),CTL_T(KC_A), KC_S,    KC_D,    KC_F,    KC_G,
   //|--------+--------+--------+--------+--------+--------|
-TD(LSFT_CAPS),    KC_Z,    KC_X,    KC_C,    KC_V,    KC_B,
+TD(LSFT_CAPS),ALT_T(KC_Z), KC_X,    KC_C,    KC_V,    KC_B,
   //|--------+--------+--------+--------+--------+--------|
-      XXXXXXX, XXXXXXX,KC_LGUI,LM(6,MOD_LALT),KC_BSPC,OSL(1),
+      XXXXXXX, XXXXXXX, KC_LGUI, KC_LSFT, KC_BSPC,  OSL(1),
 // -----------------------------------------------------
+
 // -----------------------------------------------------
          KC_Y,    KC_U,    KC_I,    KC_O,    KC_P, KC_LBRC,
 //  |--------+--------+--------+--------+--------+--------|
-         KC_H,    KC_J,  KC_K,SFT_T(KC_L),CTL_T(KC_SCLN),KC_QUOT,
+         KC_H,    KC_J,    KC_K,    KC_L,CTL_T(KC_SCLN),KC_QUOT,
 //  |--------+--------+--------+--------+--------+--------|
          KC_N,    KC_M, KC_COMM,  KC_DOT, KC_SLSH,SC_SENT,
  // |--------+--------+--------+--------+--------+--------|
@@ -167,7 +175,7 @@ TD(LSFT_CAPS),    KC_Z,    KC_X,    KC_C,    KC_V,    KC_B,
   //|--------+--------+--------+--------+--------+--------|          
 TD(LSFT_CAPS), KC_BTN3, KC_WH_L, KC_WH_D, KC_WH_R,   TO(0),
   //|--------+--------+--------+--------+--------+--------+--------| 
-      XXXXXXX, XXXXXXX, KC_LGUI, KC_LALT,KC_DELETE,_______,          
+      XXXXXXX, XXXXXXX, KC_LGUI, KC_LSFT,KC_DELETE,_______,          
                       //`---------------------------------'         
         //      ,-----------------------------------------------------.
                KC_6,    KC_7,    KC_8,    KC_9,    KC_0, KC_MINS,
@@ -188,7 +196,7 @@ TD(LSFT_CAPS), KC_BTN3, KC_WH_L, KC_WH_D, KC_WH_R,   TO(0),
   //|--------+--------+--------+--------+--------+--------|          
 TD(LSFT_CAPS),KC_NUBS,LSFT(KC_NUBS),KC_VOLD,KC_VOLU, TO(0),             
   //|--------+--------+--------+--------+--------+--------+--------| 
-      XXXXXXX, XXXXXXX, KC_LGUI, KC_LALT,KC_DELETE, TO(4),          
+      XXXXXXX, XXXXXXX, KC_LGUI, KC_LSFT,KC_DELETE, TO(4),          
         //`---------------------------------'   
         //    ,-----------------------------------------------------.
   LSFT(KC_6),LSFT(KC_7),LSFT(KC_8),LSFT(KC_9),LSFT(KC_0),LSFT(KC_MINS),
@@ -209,7 +217,7 @@ TD(LSFT_CAPS),KC_NUBS,LSFT(KC_NUBS),KC_VOLD,KC_VOLU, TO(0),
   //|--------+--------+--------+--------+--------+--------|          
       XXXXXXX, KC_BTN3, KC_WH_L, KC_WH_D, KC_WH_R,   TO(0),          
   //|--------+--------+--------+--------+--------+--------+--------| 
-      XXXXXXX, XXXXXXX, KC_LGUI, KC_LALT, KC_BSPC,_______,           
+      XXXXXXX, XXXXXXX, KC_LGUI, KC_LSFT, KC_BSPC,_______,           
                       //`---------------------------------'   
               KC_F6,   KC_F7,   KC_F8,   KC_F9,  KC_F10,  KC_F11,
         //   |--------+--------+--------+--------+--------+--------|
@@ -230,7 +238,7 @@ TD(LSFT_CAPS),KC_NUBS,LSFT(KC_NUBS),KC_VOLD,KC_VOLU, TO(0),
   //|--------+--------+--------+--------+--------+--------|          
       XXXXXXX, XXXXXXX, KC_LEFT, KC_DOWN,KC_RIGHT,   TO(0),          
   //|--------+--------+--------+--------+--------+--------+--------| 
-      XXXXXXX, XXXXXXX, KC_LGUI, KC_LALT, KC_BSPC,_______,           
+      XXXXXXX, XXXXXXX, KC_LGUI, KC_LSFT, KC_BSPC,_______,           
                       //`---------------------------------'          
              KC_NUM,   KC_P7,   KC_P8,   KC_P9, KC_PSLS, KC_PAST,
         //   |--------+--------+--------+--------+--------+--------|
@@ -246,15 +254,16 @@ TD(LSFT_CAPS),KC_NUBS,LSFT(KC_NUBS),KC_VOLD,KC_VOLU, TO(0),
   //,-----------------------------------------------------.          
       XXXXXXX, XXXXXXX,ALGR(KC_2),ALGR(KC_3),ALGR(KC_4),ALGR(KC_5), 
   //|--------+--------+--------+--------+--------+--------|          
-      XXXXXXX, XXXXXXX, XXXXXXX,   dplct,first_name,XXXXXXX,         
+      XXXXXXX, XXXXXXX,last_name,  dplct,first_name,XXXXXXX,         
   //|--------+--------+--------+--------+--------+--------|          
       XXXXXXX,   heart, XXXXXXX,   print, XXXXXXX,   TO(0),          
   //|--------+--------+--------+--------+--------+--------+--------| 
       XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,           
                     //`---------------------------------'            
-      XXXXXXX,ALGR(KC_7),ALGR(KC_8),ALGR(KC_9),ALGR(KC_0),XXXXXXX,
+
+      XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,
 //  |--------+--------+--------+--------+--------+--------|
-      XXXXXXX, XXXXXXX,XXXXXXX,last_name,ALGR(KC_RBRC),XXXXXXX,
+      XXXXXXX,ALGR(KC_7),ALGR(KC_8),ALGR(KC_9),ALGR(KC_0),ALGR(KC_RBRC),
 //  |--------+--------+--------+--------+--------+--------|
        number,    mail, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,
 //  |--------+--------+--------+--------+--------+--------+--------|
@@ -273,7 +282,7 @@ TD(LSFT_CAPS),KC_NUBS,LSFT(KC_NUBS),KC_VOLD,KC_VOLU, TO(0),
     //`----------------------------------'
     //,-----------------------------------------------------.          
         _______, _______, _______, _______, _______, _______,
-    //|--------+--------+--------+--------+--------+--------|te
+    //|--------+--------+--------+--------+--------+--------|
         _______, _______, _______, _______, _______, _______,
     //|--------+--------+--------+--------+--------+--------|
         _______, _______, _______, _______, _______, _______,
