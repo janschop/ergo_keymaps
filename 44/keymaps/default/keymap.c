@@ -101,9 +101,10 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
         break;
         case frac: //\frac{}{}
         if (record->event.pressed) {
-            // SEND_STRING("\\frac"(X_RALT)"70"SS_UP(X_RALT));
-            // SEND_STRING(SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT));
+            SEND_STRING("=frac"SS_ALGR("7")SS_ALGR("0")SS_ALGR("7")SS_ALGR("0"));
+            SEND_STRING(SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT));
         }
+        break;
         case dplct:
         if (record->event.pressed) {
             SEND_STRING(SS_LCTL("l"));
@@ -124,8 +125,9 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
         break;
         case heart:
         if (record->event.pressed) {
-            SEND_STRING(";3");
+            SEND_STRING(SS_LSFT(",")"3");
         }
+        break;
   
     }
     return true;    
@@ -142,12 +144,18 @@ tap_dance_action_t tap_dance_actions[] = {
 const uint16_t PROGMEM sd_esc[] = {KC_S, KC_D, COMBO_END};
 const uint16_t PROGMEM df_tab[] = {KC_D, KC_F, COMBO_END};
 const uint16_t PROGMEM jk_ent[] = {KC_J, KC_K, COMBO_END};
+const uint16_t PROGMEM io_aa[] = {KC_I, KC_O, COMBO_END};
+const uint16_t PROGMEM kl_ae[] = {KC_K, KC_L, COMBO_END};
 
 combo_t key_combos[] = {
     COMBO(sd_esc, KC_ESC),
     COMBO(df_tab, KC_TAB), // keycodes with modifiers are possible too!
     COMBO(jk_ent, KC_ENT),
+    COMBO(io_aa, KC_LBRC),
+    COMBO(kl_ae, KC_QUOT),
+
 };
+
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     [0] = LAYOUT_ortho_split_3x6_4(
@@ -156,9 +164,9 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   //|--------+--------+--------+--------+--------+--------|          
  TD(CTRL_TAB),CTL_T(KC_A), KC_S,    KC_D,    KC_F,    KC_G,
   //|--------+--------+--------+--------+--------+--------|
-TD(LSFT_CAPS),ALT_T(KC_Z), KC_X,    KC_C,    KC_V,    KC_B,
+TD(LSFT_CAPS),SFT_T(KC_Z),ALT_T(KC_X),KC_C, KC_V,    KC_B,
   //|--------+--------+--------+--------+--------+--------|
-      XXXXXXX, XXXXXXX, KC_LGUI,TD(LSFT_CAPS), KC_BSPC,  OSL(1),
+      XXXXXXX, XXXXXXX, KC_LGUI, KC_LGUI, KC_BSPC,  OSL(1),
 // -----------------------------------------------------
 
 // -----------------------------------------------------
@@ -166,7 +174,7 @@ TD(LSFT_CAPS),ALT_T(KC_Z), KC_X,    KC_C,    KC_V,    KC_B,
 //  |--------+--------+--------+--------+--------+--------|
          KC_H,    KC_J,    KC_K,    KC_L,CTL_T(KC_SCLN),KC_QUOT,
 //  |--------+--------+--------+--------+--------+--------|
-         KC_N,    KC_M, KC_COMM,  KC_DOT, KC_SLSH,SC_SENT,
+         KC_N,    KC_M, KC_COMM,  KC_DOT, SFT_T(KC_SLSH),SC_SENT,
  // |--------+--------+--------+--------+--------+--------|
         OSL(2),  KC_SPC,  OSL(5),  KC_LGUI, XXXXXXX, XXXXXXX
   ),
@@ -179,7 +187,7 @@ TD(LSFT_CAPS),ALT_T(KC_Z), KC_X,    KC_C,    KC_V,    KC_B,
   //|--------+--------+--------+--------+--------+--------|          
 TD(LSFT_CAPS), KC_BTN3, KC_WH_L, KC_WH_D, KC_WH_R,   TO(0),
   //|--------+--------+--------+--------+--------+--------+--------| 
-      XXXXXXX, XXXXXXX, KC_LGUI,TD(LSFT_CAPS),KC_DELETE,_______,          
+      XXXXXXX, XXXXXXX, KC_LGUI, KC_LGUI,KC_DELETE,_______,          
 // -----------------------------------------------------
 
 // -----------------------------------------------------
@@ -187,28 +195,28 @@ TD(LSFT_CAPS), KC_BTN3, KC_WH_L, KC_WH_D, KC_WH_R,   TO(0),
          // |--------+--------+--------+--------+--------+--------|
              KC_EQL,lft_dsktp,G(KC_TAB),rght_dsktp,KC_RBRC,KC_BSLS,
         //  |--------+--------+--------+--------+--------+--------|
-                dplct, XXXXXXX, _______, _______, _______,SC_SENT,
+              KC_MINS, XXXXXXX, _______, _______, KC_BSLS,SC_SENT,
  //|--------+--------+--------+--------+--------+--------+--------|
-             OSL(3),  KC_SPC, KC_RALT,  _______, XXXXXXX, XXXXXXX    
+             TO(3),  KC_SPC, KC_RALT,  _______, XXXXXXX, XXXXXXX    
   ),
 
     [2] = LAYOUT_ortho_split_3x6_4(
   //,-----------------------------------------------------.          
-    KC_GRV,LSFT(KC_1),LSFT(KC_2),LSFT(KC_3),LSFT(KC_4),LSFT(KC_5),   
+       KC_GRV, S(KC_1), S(KC_2), S(KC_3), S(KC_4), S(KC_5),   
   //|--------+--------+--------+--------+--------+--------|          
       KC_LCTL, KC_MUTE, KC_MPRV, KC_MPLY, KC_MNXT,   KC_F4,          
   //|--------+--------+--------+--------+--------+--------|          
-TD(LSFT_CAPS),KC_NUBS,LSFT(KC_NUBS),KC_VOLD,KC_VOLU, TO(0),             
+TD(LSFT_CAPS),TD(LSFT_CAPS),KC_NUBS,KC_VOLD,KC_VOLU, TO(0),             
   //|--------+--------+--------+--------+--------+--------+--------| 
-      XXXXXXX, XXXXXXX, KC_LGUI,TD(LSFT_CAPS),KC_DELETE, TO(4),          
+      XXXXXXX, XXXXXXX, KC_LGUI, KC_LGUI,KC_DELETE, TO(4),          
 // -----------------------------------------------------
 
 // -----------------------------------------------------
-LSFT(KC_6),LSFT(KC_7),LSFT(KC_8),LSFT(KC_9),LSFT(KC_0),LSFT(KC_MINS),
+        S(KC_6), S(KC_7), S(KC_8), S(KC_9), S(KC_0),S(KC_MINS),
     //|--------+--------+--------+--------+--------+--------|
-   LSFT(KC_EQL), KC_HOME,   KC_UP,  KC_END,LSFT(KC_RBRC),LSFT(KC_BSLS),
+      S(KC_EQL), KC_HOME,   KC_UP,  KC_END,S(KC_RBRC),S(KC_BSLS),
     //|--------+--------+--------+--------+--------+--------|
-        XXXXXXX, KC_LEFT, KC_DOWN,KC_RIGHT, XXXXXXX,  KC_ENT,
+     S(KC_MINS), KC_LEFT, KC_DOWN,KC_RIGHT,S(KC_BSLS),KC_ENT,
     //|--------+--------+--------+--------+--------+--------+--------| 
         _______,  KC_SPC, KC_RALT, _______, XXXXXXX,  XXXXXXX
   ),
@@ -221,13 +229,13 @@ LSFT(KC_6),LSFT(KC_7),LSFT(KC_8),LSFT(KC_9),LSFT(KC_0),LSFT(KC_MINS),
   //|--------+--------+--------+--------+--------+--------|          
       XXXXXXX, KC_BTN3, KC_WH_L, KC_WH_D, KC_WH_R,   TO(0),          
   //|--------+--------+--------+--------+--------+--------+--------| 
-      XXXXXXX, XXXXXXX, KC_LGUI,TD(LSFT_CAPS), KC_BSPC,_______,           
+      XXXXXXX, XXXXXXX, KC_LGUI, KC_LGUI, KC_BSPC,_______,           
 // -----------------------------------------------------
 
 // -----------------------------------------------------
               KC_F6,   KC_F7,   KC_F8,   KC_F9,  KC_F10,  KC_F11,
         //|--------+--------+--------+--------+--------+--------|
-             KC_F12, XXXXXXX, KC_MS_U, XXXXXXX, XXXXXXX, KC_PSCR,
+             KC_F11, KC_F12, KC_MS_U, XXXXXXX, KC_PSCR, KC_PSCR,
         //|--------+--------+--------+--------+--------+--------|
             XXXXXXX, KC_MS_L, KC_MS_D, KC_MS_R, XXXXXXX, XXXXXXX,
         //|--------+--------+--------+--------+--------+--------+--------|
@@ -242,7 +250,7 @@ LSFT(KC_6),LSFT(KC_7),LSFT(KC_8),LSFT(KC_9),LSFT(KC_0),LSFT(KC_MINS),
   //|--------+--------+--------+--------+--------+--------|          
       XXXXXXX, XXXXXXX, KC_LEFT, KC_DOWN,KC_RIGHT,   TO(0),          
   //|--------+--------+--------+--------+--------+--------+--------| 
-      XXXXXXX, XXXXXXX, KC_LGUI,TD(LSFT_CAPS), KC_BSPC,_______,           
+      XXXXXXX, XXXXXXX, KC_LGUI, KC_LGUI, KC_BSPC,_______,
 // -----------------------------------------------------
 
 // -----------------------------------------------------
@@ -261,17 +269,17 @@ LSFT(KC_6),LSFT(KC_7),LSFT(KC_8),LSFT(KC_9),LSFT(KC_0),LSFT(KC_MINS),
   //|--------+--------+--------+--------+--------+--------|          
       XXXXXXX, XXXXXXX,last_name,  dplct,first_name,XXXXXXX,         
   //|--------+--------+--------+--------+--------+--------|          
-      XXXXXXX,   heart, XXXXXXX,   print, XXXXXXX,   TO(0),          
+      XXXXXXX,   heart, frac,   print, XXXXXXX,   TO(0),          
   //|--------+--------+--------+--------+--------+--------+--------| 
       XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,           
 // -----------------------------------------------------    
 
 // -----------------------------------------------------
-      XXXXXXX, XXXXXXX,LSFT(KC_8),LSFT(KC_9),XXXXXXX,XXXXXXX,
+      XXXXXXX, XXXXXXX,S(KC_8),S(KC_9),XXXXXXX,XXXXXXX,
 //  |--------+--------+--------+--------+--------+--------|
       XXXXXXX,ALGR(KC_7),ALGR(KC_8),ALGR(KC_9),ALGR(KC_0),ALGR(KC_RBRC),
 //  |--------+--------+--------+--------+--------+--------|
-       number,    mail, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,
+       number,    mail,C(S(KC_TAB)), C(KC_TAB), XXXXXXX, XXXXXXX,
 //  |--------+--------+--------+--------+--------+--------+--------|
       XXXXXXX, XXXXXXX, _______, XXXXXXX, XXXXXXX, XXXXXXX
     ), 
@@ -293,5 +301,5 @@ LSFT(KC_6),LSFT(KC_7),LSFT(KC_8),LSFT(KC_9),LSFT(KC_0),LSFT(KC_MINS),
 //     //|--------+--------+--------+--------+--------+--------|
 //         _______, _______, _______, _______, _______, _______,
 //     //|--------+--------+--------+--------+--------+--------|
-//         _______, _______, _______, _______, _______, _______)
+//         _______, _______, _______, _______, _______, _______
 };
