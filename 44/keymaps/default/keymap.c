@@ -76,7 +76,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
         
         case first_name:
         if (record->event.pressed) {
-            SEND_STRING("Jan Erik");
+            SEND_STRING("Jan Erik ");
         }
         break;
         
@@ -166,7 +166,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   //|--------+--------+--------+--------+--------+--------|
 TD(LSFT_CAPS),SFT_T(KC_Z),ALT_T(KC_X),KC_C, KC_V,    KC_B,
   //|--------+--------+--------+--------+--------+--------|
-      XXXXXXX, XXXXXXX, KC_LGUI, KC_LGUI, KC_BSPC,  OSL(1),
+      XXXXXXX, XXXXXXX,  KC_ENT, KC_LGUI, KC_BSPC,  OSL(1),
 // -----------------------------------------------------
 
 // -----------------------------------------------------
@@ -176,7 +176,7 @@ TD(LSFT_CAPS),SFT_T(KC_Z),ALT_T(KC_X),KC_C, KC_V,    KC_B,
 //  |--------+--------+--------+--------+--------+--------|
          KC_N,    KC_M, KC_COMM,  KC_DOT, SFT_T(KC_SLSH),SC_SENT,
  // |--------+--------+--------+--------+--------+--------|
-        OSL(2),  KC_SPC,  OSL(5),  KC_LGUI, XXXXXXX, XXXXXXX
+        OSL(2), KC_SPC,  OSL(5), KC_LGUI, XXXXXXX, XXXXXXX
   ),
 
     [1] = LAYOUT_ortho_split_3x6_4(
@@ -187,7 +187,7 @@ TD(LSFT_CAPS),SFT_T(KC_Z),ALT_T(KC_X),KC_C, KC_V,    KC_B,
   //|--------+--------+--------+--------+--------+--------|          
 TD(LSFT_CAPS), KC_BTN3, KC_WH_L, KC_WH_D, KC_WH_R,   TO(0),
   //|--------+--------+--------+--------+--------+--------+--------| 
-      XXXXXXX, XXXXXXX, KC_LGUI, KC_LGUI,KC_DELETE,_______,          
+      XXXXXXX, XXXXXXX,  KC_ENT, KC_LGUI,KC_DELETE,_______,          
 // -----------------------------------------------------
 
 // -----------------------------------------------------
@@ -197,7 +197,7 @@ TD(LSFT_CAPS), KC_BTN3, KC_WH_L, KC_WH_D, KC_WH_R,   TO(0),
         //  |--------+--------+--------+--------+--------+--------|
               KC_MINS, XXXXXXX, _______, _______, KC_BSLS,SC_SENT,
  //|--------+--------+--------+--------+--------+--------+--------|
-             TO(3),  KC_SPC, KC_RALT,  _______, XXXXXXX, XXXXXXX    
+                TO(3),  KC_SPC, KC_RALT,  _______, XXXXXXX, XXXXXXX    
   ),
 
     [2] = LAYOUT_ortho_split_3x6_4(
@@ -208,7 +208,7 @@ TD(LSFT_CAPS), KC_BTN3, KC_WH_L, KC_WH_D, KC_WH_R,   TO(0),
   //|--------+--------+--------+--------+--------+--------|          
 TD(LSFT_CAPS),TD(LSFT_CAPS),KC_NUBS,KC_VOLD,KC_VOLU, TO(0),             
   //|--------+--------+--------+--------+--------+--------+--------| 
-      XXXXXXX, XXXXXXX, KC_LGUI, KC_LGUI,KC_DELETE, TO(4),          
+      XXXXXXX, XXXXXXX,  KC_ENT, KC_LGUI,KC_DELETE,  TO(4),          
 // -----------------------------------------------------
 
 // -----------------------------------------------------
@@ -218,7 +218,7 @@ TD(LSFT_CAPS),TD(LSFT_CAPS),KC_NUBS,KC_VOLD,KC_VOLU, TO(0),
     //|--------+--------+--------+--------+--------+--------|
      S(KC_MINS), KC_LEFT, KC_DOWN,KC_RIGHT,S(KC_BSLS),KC_ENT,
     //|--------+--------+--------+--------+--------+--------+--------| 
-        _______,  KC_SPC, KC_RALT, _______, XXXXXXX,  XXXXXXX
+        _______,  KC_SPC, KC_RALT, _______, XXXXXXX, XXXXXXX
   ),
 
     [3] = LAYOUT_ortho_split_3x6_4(
@@ -229,7 +229,7 @@ TD(LSFT_CAPS),TD(LSFT_CAPS),KC_NUBS,KC_VOLD,KC_VOLU, TO(0),
   //|--------+--------+--------+--------+--------+--------|          
       XXXXXXX, KC_BTN3, KC_WH_L, KC_WH_D, KC_WH_R,   TO(0),          
   //|--------+--------+--------+--------+--------+--------+--------| 
-      XXXXXXX, XXXXXXX, KC_LGUI, KC_LGUI, KC_BSPC,_______,           
+      XXXXXXX, XXXXXXX,  KC_ENT, KC_LGUI, KC_BSPC, _______,           
 // -----------------------------------------------------
 
 // -----------------------------------------------------
@@ -239,7 +239,7 @@ TD(LSFT_CAPS),TD(LSFT_CAPS),KC_NUBS,KC_VOLD,KC_VOLU, TO(0),
         //|--------+--------+--------+--------+--------+--------|
             XXXXXXX, KC_MS_L, KC_MS_D, KC_MS_R, XXXXXXX, XXXXXXX,
         //|--------+--------+--------+--------+--------+--------+--------|
-            _______,  KC_SPC, KC_RALT,  _______ ,XXXXXXX, XXXXXXX           
+            _______,  KC_SPC, KC_RALT, _______, XXXXXXX, XXXXXXX           
     ),
     
       [4] = LAYOUT_ortho_split_3x6_4(
@@ -250,7 +250,7 @@ TD(LSFT_CAPS),TD(LSFT_CAPS),KC_NUBS,KC_VOLD,KC_VOLU, TO(0),
   //|--------+--------+--------+--------+--------+--------|          
       XXXXXXX, XXXXXXX, KC_LEFT, KC_DOWN,KC_RIGHT,   TO(0),          
   //|--------+--------+--------+--------+--------+--------+--------| 
-      XXXXXXX, XXXXXXX, KC_LGUI, KC_LGUI, KC_BSPC,_______,
+      XXXXXXX, XXXXXXX,  KC_ENT, KC_LGUI, KC_BSPC, _______,
 // -----------------------------------------------------
 
 // -----------------------------------------------------
@@ -260,12 +260,12 @@ TD(LSFT_CAPS),TD(LSFT_CAPS),KC_NUBS,KC_VOLD,KC_VOLU, TO(0),
         //|--------+--------+--------+--------+--------+--------|
             XXXXXXX,   KC_P1,   KC_P2,   KC_P3, XXXXXXX, KC_PENT,
         //|--------+--------+--------+--------+--------+--------+--------|
-            _______,   KC_P0, KC_PDOT,  _______ ,XXXXXXX, XXXXXXX
+            _______,   KC_P0, KC_PDOT, _______, XXXXXXX, XXXXXXX
     ),
 
       [5] = LAYOUT_ortho_split_3x6_4(
   //,-----------------------------------------------------.          
-      XXXXXXX, XXXXXXX,ALGR(KC_2),ALGR(KC_3),ALGR(KC_4),ALGR(KC_5), 
+      XXXXXXX,  KC_GRV,ALGR(KC_2),ALGR(KC_3),ALGR(KC_4),ALGR(KC_5), 
   //|--------+--------+--------+--------+--------+--------|          
       XXXXXXX, XXXXXXX,last_name,  dplct,first_name,XXXXXXX,         
   //|--------+--------+--------+--------+--------+--------|          
