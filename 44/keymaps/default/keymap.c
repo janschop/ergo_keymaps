@@ -42,6 +42,8 @@ enum custom_keycodes {
     print,
     heart,
     frac,
+    double_click,
+    MOUSE_MACRO,
 };
 
 // void keyboard_pre_init_user(void) {
@@ -128,7 +130,20 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             SEND_STRING(SS_LSFT(",")"3");
         }
         break;
-  
+        case double_click:
+        if (record->event.pressed) {
+            SEND_STRING(SS_TAP(X_BTN1) SS_DELAY(15) SS_TAP(X_BTN1));
+        }
+        break;
+         case MOUSE_MACRO :
+        if (record->event.pressed) {
+            // when keycode  is pressed
+            SEND_STRING(SS_DOWN(X_LSFT) SS_DELAY(15) SS_DOWN(X_BTN3));
+        } else {
+            // when keycode is released
+            SEND_STRING(SS_UP(X_LSFT) SS_UP(X_BTN3));
+      }
+      break;
     }
     return true;    
 
@@ -143,16 +158,36 @@ tap_dance_action_t tap_dance_actions[] = {
 
 const uint16_t PROGMEM sd_esc[] = {KC_S, KC_D, COMBO_END};
 const uint16_t PROGMEM df_tab[] = {KC_D, KC_F, COMBO_END};
-const uint16_t PROGMEM jk_ent[] = {KC_J, KC_K, COMBO_END};
+const uint16_t PROGMEM hj_ent[] = {KC_H, KC_J, COMBO_END};
 const uint16_t PROGMEM io_aa[] = {KC_I, KC_O, COMBO_END};
 const uint16_t PROGMEM kl_ae[] = {KC_K, KC_L, COMBO_END};
+const uint16_t PROGMEM combo_enter_l[] = {KC_W, KC_E, COMBO_END};
+const uint16_t PROGMEM combo_alt_f4[] = {KC_X, KC_C, COMBO_END};
+const uint16_t PROGMEM combo_lclick[] = {KC_F, KC_G, COMBO_END};
+const uint16_t PROGMEM combo_right_click[] = {KC_S, KC_F, COMBO_END};
+const uint16_t PROGMEM combo_middle_click[] = {KC_C, KC_V, COMBO_END};
+const uint16_t PROGMEM combo_double_click[] = {KC_V, KC_B, COMBO_END};
+const uint16_t PROGMEM combo_gui[] = {KC_BSPC, OSL(2), COMBO_END};
+const uint16_t PROGMEM combo_caps[] = {KC_LALT, KC_BSPC, COMBO_END};
+
+
+
 
 combo_t key_combos[] = {
     COMBO(sd_esc, KC_ESC),
     COMBO(df_tab, KC_TAB), // keycodes with modifiers are possible too!
-    COMBO(jk_ent, KC_ENT),
+    COMBO(hj_ent, KC_ENT),
     COMBO(io_aa, KC_LBRC),
     COMBO(kl_ae, KC_QUOT),
+    COMBO(combo_enter_l, KC_ENT),
+    COMBO(combo_alt_f4, LALT(KC_F4)),
+    COMBO(combo_lclick, KC_BTN1),
+    COMBO(combo_right_click, KC_BTN2),
+    COMBO(combo_double_click, double_click),
+    COMBO(combo_gui, KC_LGUI),
+    COMBO(combo_middle_click, KC_BTN3),
+    COMBO(combo_caps, KC_PAGE_UP),
+
 
 };
 
@@ -160,47 +195,28 @@ combo_t key_combos[] = {
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     [0] = LAYOUT_ortho_split_3x6_4(
   //|-----------------------------------------------------.          
-       KC_TAB,    KC_Q,    KC_W,    KC_E,    KC_R,    KC_T,          
-  //|--------+--------+--------+--------+--------+--------|          
- TD(CTRL_TAB),CTL_T(KC_A), KC_S,    KC_D,    KC_F,    KC_G,
+      XXXXXXX,    KC_Q,    KC_W,    KC_E,    KC_R,    KC_T,          
+  //|--------+--------+--------+--------||||+--------+--------|          
+      KC_BTN1,CTL_T(KC_A), KC_S,    KC_D,    KC_F,    KC_G,
   //|--------+--------+--------+--------+--------+--------|
-TD(LSFT_CAPS),SFT_T(KC_Z),ALT_T(KC_X),KC_C, KC_V,    KC_B,
+      KC_WH_D,SFT_T(KC_Z),    KC_X,    KC_C,    KC_V,    KC_B,
   //|--------+--------+--------+--------+--------+--------|
-      XXXXXXX, XXXXXXX,  KC_ENT, KC_LGUI, KC_BSPC,  OSL(1),
-// -----------------------------------------------------
+      XXXXXXX, XXXXXXX,  KC_ENT, KC_LALT,KC_BSPC,OSL(2),
+// |
 
 // -----------------------------------------------------
-         KC_Y,    KC_U,    KC_I,    KC_O,    KC_P, KC_LBRC,
+         KC_Y,    KC_U,    KC_I,    KC_O,    KC_P, KC_BTN2,
 //  |--------+--------+--------+--------+--------+--------|
-         KC_H,    KC_J,    KC_K,    KC_L,CTL_T(KC_SCLN),KC_QUOT,
+         KC_H,    KC_J,    KC_K,    KC_L,CTL_T(KC_SCLN),KC_BTN3,
 //  |--------+--------+--------+--------+--------+--------|
-         KC_N,    KC_M, KC_COMM,  KC_DOT, SFT_T(KC_SLSH),SC_SENT,
+         KC_N,    KC_M, KC_COMM,  KC_DOT,SFT_T(KC_SLSH), KC_WH_U,
  // |--------+--------+--------+--------+--------+--------|
-        OSL(2), KC_SPC,  OSL(5), KC_LGUI, XXXXXXX, XXXXXXX
+        OSL(3), LT(1, KC_SPC),  KC_LGUI, XXXXXXX, XXXXXXX, XXXXXXX
   ),
+
+
 
     [1] = LAYOUT_ortho_split_3x6_4(
-  //,-----------------------------------------------------.          
-    KC_ESCAPE,    KC_1,    KC_2,    KC_3,    KC_4,    KC_5,          
-  //|--------+--------+--------+--------+--------+--------|          
-       KC_ESC, KC_BTN4, KC_BTN1, KC_WH_U, KC_BTN2, KC_BTN5,          
-  //|--------+--------+--------+--------+--------+--------|          
-TD(LSFT_CAPS), KC_BTN3, KC_WH_L, KC_WH_D, KC_WH_R,   TO(0),
-  //|--------+--------+--------+--------+--------+--------+--------| 
-      XXXXXXX, XXXXXXX,  KC_ENT, KC_LGUI,KC_DELETE,_______,          
-// -----------------------------------------------------
-
-// -----------------------------------------------------
-               KC_6,    KC_7,    KC_8,    KC_9,    KC_0, KC_MINS,
-         // |--------+--------+--------+--------+--------+--------|
-             KC_EQL,lft_dsktp,G(KC_TAB),rght_dsktp,KC_RBRC,KC_BSLS,
-        //  |--------+--------+--------+--------+--------+--------|
-              KC_MINS, XXXXXXX, _______, _______, KC_BSLS,SC_SENT,
- //|--------+--------+--------+--------+--------+--------+--------|
-                TO(3),  KC_SPC, KC_RALT,  _______, XXXXXXX, XXXXXXX    
-  ),
-
-    [2] = LAYOUT_ortho_split_3x6_4(
   //,-----------------------------------------------------.          
        KC_GRV, S(KC_1), S(KC_2), S(KC_3), S(KC_4), S(KC_5),   
   //|--------+--------+--------+--------+--------+--------|          
@@ -208,7 +224,7 @@ TD(LSFT_CAPS), KC_BTN3, KC_WH_L, KC_WH_D, KC_WH_R,   TO(0),
   //|--------+--------+--------+--------+--------+--------|          
 TD(LSFT_CAPS),TD(LSFT_CAPS),KC_NUBS,KC_VOLD,KC_VOLU, TO(0),             
   //|--------+--------+--------+--------+--------+--------+--------| 
-      XXXXXXX, XXXXXXX,  KC_ENT, KC_LGUI,KC_DELETE,  TO(4),          
+      XXXXXXX, XXXXXXX, _______, _______,KC_DELETE,_______,
 // -----------------------------------------------------
 
 // -----------------------------------------------------
@@ -218,29 +234,69 @@ TD(LSFT_CAPS),TD(LSFT_CAPS),KC_NUBS,KC_VOLD,KC_VOLU, TO(0),
     //|--------+--------+--------+--------+--------+--------|
      S(KC_MINS), KC_LEFT, KC_DOWN,KC_RIGHT,S(KC_BSLS),KC_ENT,
     //|--------+--------+--------+--------+--------+--------+--------| 
-        _______,  KC_SPC, KC_RALT, _______, XXXXXXX, XXXXXXX
+        _______, _______, _______, _______, XXXXXXX, XXXXXXX
   ),
-
-    [3] = LAYOUT_ortho_split_3x6_4(
+      [2] = LAYOUT_ortho_split_3x6_4(
   //,-----------------------------------------------------.          
-    KC_ESCAPE,   KC_F1,   KC_F2,   KC_F3,   KC_F4,   KC_F5,          
+    KC_ESCAPE,    KC_1,    KC_2,    KC_3,    KC_4,    KC_5,          
   //|--------+--------+--------+--------+--------+--------|          
-      XXXXXXX, KC_BTN4, KC_BTN1, KC_WH_U, KC_BTN2, KC_BTN5,          
+ double_click, KC_BTN4, KC_BTN1, KC_BTN3, KC_BTN2, KC_BTN5,          
   //|--------+--------+--------+--------+--------+--------|          
-      XXXXXXX, KC_BTN3, KC_WH_L, KC_WH_D, KC_WH_R,   TO(0),          
+      _______, KC_LSFT,C(S(KC_TAB)),MOUSE_MACRO,C(KC_TAB),TO(0),
   //|--------+--------+--------+--------+--------+--------+--------| 
-      XXXXXXX, XXXXXXX,  KC_ENT, KC_LGUI, KC_BSPC, _______,           
+      XXXXXXX, XXXXXXX, _______, _______,KC_DELETE,_______,          
 // -----------------------------------------------------
 
 // -----------------------------------------------------
-              KC_F6,   KC_F7,   KC_F8,   KC_F9,  KC_F10,  KC_F11,
-        //|--------+--------+--------+--------+--------+--------|
-             KC_F11, KC_F12, KC_MS_U, XXXXXXX, KC_PSCR, KC_PSCR,
-        //|--------+--------+--------+--------+--------+--------|
-            XXXXXXX, KC_MS_L, KC_MS_D, KC_MS_R, XXXXXXX, XXXXXXX,
-        //|--------+--------+--------+--------+--------+--------+--------|
-            _______,  KC_SPC, KC_RALT, _______, XXXXXXX, XXXXXXX           
-    ),
+               KC_6,    KC_7,    KC_8,    KC_9,    KC_0, _______,
+         // |--------+--------+--------+--------+--------+--------|
+             KC_EQL,lft_dsktp,G(KC_TAB),rght_dsktp,KC_RBRC,_______,
+        //  |--------+--------+--------+--------+--------+--------|
+              KC_MINS, _______, _______, _______, KC_BSLS,_______,
+ //|--------+--------+--------+--------+--------+--------+--------|
+                TO(4),  KC_SPC, KC_RALT,  _______, XXXXXXX, XXXXXXX    
+  ),
+        [3] = LAYOUT_ortho_split_3x6_4(
+  //,-----------------------------------------------------.          
+      _______,  KC_GRV,ALGR(KC_2),ALGR(KC_3),ALGR(KC_4),ALGR(KC_5), 
+  //|--------+--------+--------+--------+--------+--------|          
+      _______,   KC_F1,   KC_F2,   KC_F3,   KC_F4,   KC_F5,
+  //|--------+--------+--------+--------+--------+--------|          
+        TO(0),   KC_F7,   KC_F8,   KC_F9,  KC_F10, KC_F11,
+  //|--------+--------+--------+--------+--------+--------+--------| 
+      XXXXXXX, XXXXXXX, _______, _______, _______, _______,           
+// -----------------------------------------------------    
+
+// -----------------------------------------------------
+      _______, _______,S(KC_8),S(KC_9),_______,_______,
+//  |--------+--------+--------+--------+--------+--------|
+        KC_F6,ALGR(KC_7),ALGR(KC_8),ALGR(KC_9),ALGR(KC_0),ALGR(KC_RBRC),
+//  |--------+--------+--------+--------+--------+--------|
+       KC_F12,C(S(KC_TAB)),mail,C(KC_TAB),ALGR(KC_RBRC),TO(0),
+//  |--------+--------+--------+--------+--------+--------+--------|
+      XXXXXXX, XXXXXXX, _______, _______, _______, _______
+    ), 
+
+//     [3] = LAYOUT_ortho_split_3x6_4(
+//   //,-----------------------------------------------------.          
+//     KC_ESCAPE,   KC_F1,   KC_F2,   KC_F3,   KC_F4,   KC_F5,          
+//   //|--------+--------+--------+--------+--------+--------|          
+//       XXXXXXX, KC_BTN4, KC_BTN1, KC_WH_U, KC_BTN2, KC_BTN5,          
+//   //|--------+--------+--------+--------+--------+--------|          
+//       XXXXXXX, KC_BTN3, KC_WH_L, KC_WH_D, KC_WH_R,   TO(0),          
+//   //|--------+--------+--------+--------+--------+--------+--------| 
+//       XXXXXXX, XXXXXXX,  KC_ENT, KC_LGUI, KC_BSPC, _______,           
+// // -----------------------------------------------------
+
+// // -----------------------------------------------------
+//               KC_F6,   KC_F7,   KC_F8,   KC_F9,  KC_F10,  KC_F11,
+//         //|--------+--------+--------+--------+--------+--------|
+//              KC_F11, KC_F12, KC_MS_U, XXXXXXX, KC_PSCR, KC_PSCR,
+//         //|--------+--------+--------+--------+--------+--------|
+//             XXXXXXX, KC_MS_L, KC_MS_D, KC_MS_R, XXXXXXX, XXXXXXX,
+//         //|--------+--------+--------+--------+--------+--------+--------|
+//             _______,  KC_SPC, KC_RALT, _______, XXXXXXX, XXXXXXX           
+//     ),
     
       [4] = LAYOUT_ortho_split_3x6_4(
   //,-----------------------------------------------------.          
@@ -263,43 +319,5 @@ TD(LSFT_CAPS),TD(LSFT_CAPS),KC_NUBS,KC_VOLD,KC_VOLU, TO(0),
             _______,   KC_P0, KC_PDOT, _______, XXXXXXX, XXXXXXX
     ),
 
-      [5] = LAYOUT_ortho_split_3x6_4(
-  //,-----------------------------------------------------.          
-      XXXXXXX,  KC_GRV,ALGR(KC_2),ALGR(KC_3),ALGR(KC_4),ALGR(KC_5), 
-  //|--------+--------+--------+--------+--------+--------|          
-      XXXXXXX, XXXXXXX,last_name,  dplct,first_name,XXXXXXX,         
-  //|--------+--------+--------+--------+--------+--------|          
-      XXXXXXX,   heart, frac,   print, XXXXXXX,   TO(0),          
-  //|--------+--------+--------+--------+--------+--------+--------| 
-      XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,           
-// -----------------------------------------------------    
 
-// -----------------------------------------------------
-      XXXXXXX, XXXXXXX,S(KC_8),S(KC_9),XXXXXXX,XXXXXXX,
-//  |--------+--------+--------+--------+--------+--------|
-      XXXXXXX,ALGR(KC_7),ALGR(KC_8),ALGR(KC_9),ALGR(KC_0),ALGR(KC_RBRC),
-//  |--------+--------+--------+--------+--------+--------|
-       number,    mail,C(S(KC_TAB)), C(KC_TAB), XXXXXXX, XXXXXXX,
-//  |--------+--------+--------+--------+--------+--------+--------|
-      XXXXXXX, XXXXXXX, _______, XXXXXXX, XXXXXXX, XXXXXXX
-    ), 
-
-//     [6] = LAYOUT_ortho_split_3x6_4
-//     //,-----------------------------------------------------.          
-//         _______, _______, _______, _______, _______, _______,
-//     //|--------+--------+--------+--------+--------+--------|
-//         _______, _______, _______, _______, _______, _______,
-//     //|--------+--------+--------+--------+--------+--------|
-//         _______, _______, _______, _______, _______, _______,
-//     //|--------+--------+--------+--------+--------+--------|
-//         _______, _______, _______, _______, _______, _______,
-// // -----------------------------------------------------
-// // -----------------------------------------------------
-//         _______, _______, _______, _______, _______, _______,
-//     //|--------+--------+--------+--------+--------+--------|
-//         _______, _______, _______, _______, _______, _______,
-//     //|--------+--------+--------+--------+--------+--------|
-//         _______, _______, _______, _______, _______, _______,
-//     //|--------+--------+--------+--------+--------+--------|
-//         _______, _______, _______, _______, _______, _______
 };
