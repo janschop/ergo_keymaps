@@ -44,6 +44,9 @@ enum custom_keycodes {
     frac,
     double_click,
     MOUSE_MACRO,
+    copy,
+    paste,
+    cut,
 };
 
 // void keyboard_pre_init_user(void) {
@@ -142,8 +145,23 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
         } else {
             // when keycode is released
             SEND_STRING(SS_UP(X_LSFT) SS_UP(X_BTN3));
-      }
-      break;
+        }
+        break;
+        case copy:
+        if (record->event.pressed) {
+            SEND_STRING(SS_DOWN(X_LCTL)SS_TAP(X_C)SS_UP(X_LCTL));
+        }
+        break;
+        case paste:
+        if (record->event.pressed) {
+            SEND_STRING(SS_DOWN(X_LCTL)SS_TAP(X_V)SS_UP(X_LCTL));
+        }
+        break;
+        case cut:
+        if (record->event.pressed) {
+            SEND_STRING(SS_DOWN(X_LCTL)SS_TAP(X_X)SS_UP(X_LCTL));
+        }
+        break;
     }
     return true;    
 
@@ -161,14 +179,19 @@ const uint16_t PROGMEM df_tab[] = {KC_D, KC_F, COMBO_END};
 const uint16_t PROGMEM hj_ent[] = {KC_H, KC_J, COMBO_END};
 const uint16_t PROGMEM io_aa[] = {KC_I, KC_O, COMBO_END};
 const uint16_t PROGMEM kl_ae[] = {KC_K, KC_L, COMBO_END};
-const uint16_t PROGMEM combo_enter_l[] = {KC_W, KC_E, COMBO_END};
-const uint16_t PROGMEM combo_alt_f4[] = {KC_X, KC_C, COMBO_END};
+const uint16_t PROGMEM combo_enter_l[] = {KC_S, KC_F, COMBO_END};
+const uint16_t PROGMEM combo_alt_f4[] = {SFT_T(KC_Z), KC_X, COMBO_END};
 const uint16_t PROGMEM combo_lclick[] = {KC_F, KC_G, COMBO_END};
-const uint16_t PROGMEM combo_right_click[] = {KC_S, KC_F, COMBO_END};
-const uint16_t PROGMEM combo_middle_click[] = {KC_C, KC_V, COMBO_END};
+const uint16_t PROGMEM combo_right_click[] = {KC_F, KC_R, COMBO_END};
+const uint16_t PROGMEM combo_middle_click[] = {KC_G, KC_B, COMBO_END};
+const uint16_t PROGMEM combo_mouse_macro[] = {KC_F, KC_V, COMBO_END}; // maybe problem here
 const uint16_t PROGMEM combo_double_click[] = {KC_V, KC_B, COMBO_END};
 const uint16_t PROGMEM combo_gui[] = {KC_BSPC, OSL(2), COMBO_END};
 const uint16_t PROGMEM combo_caps[] = {KC_LALT, KC_BSPC, COMBO_END};
+const uint16_t PROGMEM combo_copy[] = {KC_X, KC_C, COMBO_END};
+const uint16_t PROGMEM combo_paste[] = {KC_C, KC_V, COMBO_END};
+const uint16_t PROGMEM combo_cut[] = {KC_X, KC_V, COMBO_END};
+
 
 
 
@@ -187,19 +210,53 @@ combo_t key_combos[] = {
     COMBO(combo_gui, KC_LGUI),
     COMBO(combo_middle_click, KC_BTN3),
     COMBO(combo_caps, KC_PAGE_UP),
+    COMBO(combo_mouse_macro, MOUSE_MACRO), //maybe problem here
+    COMBO(combo_copy, copy),
+    COMBO(combo_paste, paste),
+    COMBO(combo_cut, cut),
 
 
 };
 
+bool get_permissive_hold(uint16_t keycode, keyrecord_t *record) {
+    switch (keycode) {
+        case CTL_T(KC_A):
+            // Immediately select the hold action when another key is tapped.
+            return true;
+        case CTL_T(KC_SCLN):
+            // Immediately select the hold action when another key is tapped.
+            return true;
+        default:
+            // Do not select the hold action when another key is tapped.
+            return false;
+    }
+}
+bool get_hold_on_other_key_press(uint16_t keycode, keyrecord_t *record) {
+    switch (keycode) {
+        case SFT_T(KC_Z):
+            // Immediately select the hold action when another key is pressed.
+            return true;
+        case SFT_T(KC_SLSH):
+            // Immediately select the hold action when another key is pressed.
+            return true;
+        default:
+            // Do not select the hold action when another key is pressed.
+            return false;
+    }
+}
 
+
+
+// hold on other keypress for shift
+// permissive hold for ctrl
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     [0] = LAYOUT_ortho_split_3x6_4(
   //|-----------------------------------------------------.          
       XXXXXXX,    KC_Q,    KC_W,    KC_E,    KC_R,    KC_T,          
-  //|--------+--------+--------+--------||||+--------+--------|          
+  //|--------+--------+--------+-------+--------+--------|          
       KC_BTN1,CTL_T(KC_A), KC_S,    KC_D,    KC_F,    KC_G,
   //|--------+--------+--------+--------+--------+--------|
-      KC_WH_D,SFT_T(KC_Z),    KC_X,    KC_C,    KC_V,    KC_B,
+      KC_PSCR,SFT_T(KC_Z),    KC_X,    KC_C,    KC_V,    KC_B,
   //|--------+--------+--------+--------+--------+--------|
       XXXXXXX, XXXXXXX,  KC_ENT, KC_LALT,KC_BSPC,OSL(2),
 // |
@@ -207,9 +264,9 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 // -----------------------------------------------------
          KC_Y,    KC_U,    KC_I,    KC_O,    KC_P, KC_BTN2,
 //  |--------+--------+--------+--------+--------+--------|
-         KC_H,    KC_J,    KC_K,    KC_L,CTL_T(KC_SCLN),KC_BTN3,
+         KC_H,    KC_J,    KC_K,    KC_L,CTL_T(KC_SCLN),TO(5),
 //  |--------+--------+--------+--------+--------+--------|
-         KC_N,    KC_M, KC_COMM,  KC_DOT,SFT_T(KC_SLSH), KC_WH_U,
+         KC_N,    KC_M, KC_COMM,  KC_DOT,SFT_T(KC_SLSH), KC_BTN3,
  // |--------+--------+--------+--------+--------+--------|
         OSL(3), LT(1, KC_SPC),  KC_LGUI, XXXXXXX, XXXXXXX, XXXXXXX
   ),
@@ -218,11 +275,11 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
     [1] = LAYOUT_ortho_split_3x6_4(
   //,-----------------------------------------------------.          
-       KC_GRV, S(KC_1), S(KC_2), S(KC_3), S(KC_4), S(KC_5),   
+       KC_GRV, S(KC_1), S(KC_2), S(KC_3), ALGR(KC_4), S(KC_5),   
   //|--------+--------+--------+--------+--------+--------|          
-      KC_LCTL, KC_MUTE, KC_MPRV, KC_MPLY, KC_MNXT,   KC_F4,          
+      KC_LCTL, KC_LCTL, KC_MPRV, KC_MPLY, KC_MNXT,   KC_F4,          
   //|--------+--------+--------+--------+--------+--------|          
-TD(LSFT_CAPS),TD(LSFT_CAPS),KC_NUBS,KC_VOLD,KC_VOLU, TO(0),             
+TD(LSFT_CAPS),TD(LSFT_CAPS),KC_NUBS,KC_VOLD,KC_VOLU,KC_MUTE,             
   //|--------+--------+--------+--------+--------+--------+--------| 
       XXXXXXX, XXXXXXX, _______, _______,KC_DELETE,_______,
 // -----------------------------------------------------
@@ -232,7 +289,7 @@ TD(LSFT_CAPS),TD(LSFT_CAPS),KC_NUBS,KC_VOLD,KC_VOLU, TO(0),
     //|--------+--------+--------+--------+--------+--------|
       S(KC_EQL), KC_HOME,   KC_UP,  KC_END,S(KC_RBRC),S(KC_BSLS),
     //|--------+--------+--------+--------+--------+--------|
-     S(KC_MINS), KC_LEFT, KC_DOWN,KC_RIGHT,S(KC_BSLS),KC_ENT,
+     S(KC_MINS), KC_LEFT, KC_DOWN,KC_RIGHT,S(KC_BSLS),TO(0),
     //|--------+--------+--------+--------+--------+--------+--------| 
         _______, _______, _______, _______, XXXXXXX, XXXXXXX
   ),
@@ -252,13 +309,13 @@ TD(LSFT_CAPS),TD(LSFT_CAPS),KC_NUBS,KC_VOLD,KC_VOLU, TO(0),
          // |--------+--------+--------+--------+--------+--------|
              KC_EQL,lft_dsktp,G(KC_TAB),rght_dsktp,KC_RBRC,_______,
         //  |--------+--------+--------+--------+--------+--------|
-              KC_MINS, _______, _______, _______, KC_BSLS,_______,
+              KC_MINS, _______, _______, _______, KC_BSLS,TO(0),
  //|--------+--------+--------+--------+--------+--------+--------|
                 TO(4),  KC_SPC, KC_RALT,  _______, XXXXXXX, XXXXXXX    
   ),
         [3] = LAYOUT_ortho_split_3x6_4(
   //,-----------------------------------------------------.          
-      _______,  KC_GRV,ALGR(KC_2),ALGR(KC_3),ALGR(KC_4),ALGR(KC_5), 
+      _______,  KC_GRV,ALGR(KC_2),ALGR(KC_3),S(KC_4),ALGR(KC_5), 
   //|--------+--------+--------+--------+--------+--------|          
       _______,   KC_F1,   KC_F2,   KC_F3,   KC_F4,   KC_F5,
   //|--------+--------+--------+--------+--------+--------|          
@@ -277,26 +334,26 @@ TD(LSFT_CAPS),TD(LSFT_CAPS),KC_NUBS,KC_VOLD,KC_VOLU, TO(0),
       XXXXXXX, XXXXXXX, _______, _______, _______, _______
     ), 
 
-//     [3] = LAYOUT_ortho_split_3x6_4(
-//   //,-----------------------------------------------------.          
-//     KC_ESCAPE,   KC_F1,   KC_F2,   KC_F3,   KC_F4,   KC_F5,          
-//   //|--------+--------+--------+--------+--------+--------|          
-//       XXXXXXX, KC_BTN4, KC_BTN1, KC_WH_U, KC_BTN2, KC_BTN5,          
-//   //|--------+--------+--------+--------+--------+--------|          
-//       XXXXXXX, KC_BTN3, KC_WH_L, KC_WH_D, KC_WH_R,   TO(0),          
-//   //|--------+--------+--------+--------+--------+--------+--------| 
-//       XXXXXXX, XXXXXXX,  KC_ENT, KC_LGUI, KC_BSPC, _______,           
-// // -----------------------------------------------------
+    [5] = LAYOUT_ortho_split_3x6_4(
+  //,-----------------------------------------------------.          
+    XXXXXXX,   XXXXXXX,   XXXXXXX,   XXXXXXX,   XXXXXXX,   XXXXXXX,          
+  //|--------+--------+--------+--------+--------+--------|          
+   TO(0), KC_BTN4, KC_BTN1, KC_WH_U, KC_BTN2, KC_BTN5,          
+  //|--------+--------+--------+--------+--------+--------|          
+      TO(0), KC_BTN3, KC_WH_L, KC_WH_D, KC_WH_R, TO(0),          
+  //|--------+--------+--------+--------+--------+--------+--------| 
+      XXXXXXX, XXXXXXX,  TO(0),  TO(0),  TO(0),  TO(0),           
+// -----------------------------------------------------
 
-// // -----------------------------------------------------
-//               KC_F6,   KC_F7,   KC_F8,   KC_F9,  KC_F10,  KC_F11,
-//         //|--------+--------+--------+--------+--------+--------|
-//              KC_F11, KC_F12, KC_MS_U, XXXXXXX, KC_PSCR, KC_PSCR,
-//         //|--------+--------+--------+--------+--------+--------|
-//             XXXXXXX, KC_MS_L, KC_MS_D, KC_MS_R, XXXXXXX, XXXXXXX,
-//         //|--------+--------+--------+--------+--------+--------+--------|
-//             _______,  KC_SPC, KC_RALT, _______, XXXXXXX, XXXXXXX           
-//     ),
+// -----------------------------------------------------
+              XXXXXXX,   XXXXXXX,   XXXXXXX,   XXXXXXX,  XXXXXXX,  XXXXXXX,
+        //|--------+--------+--------+--------+--------+--------|
+             LGUI(KC_D), lft_dsktp, KC_MS_U, rght_dsktp, XXXXXXX, TO(0),
+        //|--------+--------+--------+--------+--------+--------|
+            XXXXXXX, KC_MS_L, KC_MS_D, KC_MS_R, XXXXXXX, TO(0),
+        //|--------+--------+--------+--------+--------+--------+--------|
+             TO(0),   TO(0),  TO(0),  TO(0), XXXXXXX, XXXXXXX           
+    ),
     
       [4] = LAYOUT_ortho_split_3x6_4(
   //,-----------------------------------------------------.          
@@ -314,7 +371,7 @@ TD(LSFT_CAPS),TD(LSFT_CAPS),KC_NUBS,KC_VOLD,KC_VOLU, TO(0),
         //|--------+--------+--------+--------+--------+--------|
              KC_TAB,   KC_P4,   KC_P5,   KC_P6, KC_PPLS, KC_PMNS,
         //|--------+--------+--------+--------+--------+--------|
-            XXXXXXX,   KC_P1,   KC_P2,   KC_P3, XXXXXXX, KC_PENT,
+            XXXXXXX,   KC_P1,   KC_P2,   KC_P3, KC_PENT, TO(0),
         //|--------+--------+--------+--------+--------+--------+--------|
             _______,   KC_P0, KC_PDOT, _______, XXXXXXX, XXXXXXX
     ),
