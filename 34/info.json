@@ -5,8 +5,8 @@
     "bootloader": "rp2040",
     "features": {
         "bootmagic": true,
-        "command": false,
-        "console": false,
+        "command": true,//false
+        "console": true,//false
         "extrakey": true,
         "mousekey": true,
         "nkro": true
@@ -30,7 +30,7 @@
         ]
     },
     "split": {
-        "enabled": true,
+        "enabled": true
         "matrix_pins": {
             "right": {
                 "direct": [

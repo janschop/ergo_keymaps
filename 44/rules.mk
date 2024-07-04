@@ -1,5 +1,5 @@
 # This file intentionally left blank
-
+CONSOLE_ENABLE = yes
 RGBLIGHT_SUPPORTED = no
 RGB_MATRIX_SUPPORTED = no
 CAPS_WORD_ENABLE = yes
@@ -8,3 +8,4 @@ TAP_DANCE_ENABLE = yes
 SPLIT_KEYBOARD = yes
 SERIAL_DRIVER = bitbang
 COMBO_ENABLE = yes
+DYNAMIC_MACRO_ENABLE = yes
