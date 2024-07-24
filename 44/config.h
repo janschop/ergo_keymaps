@@ -22,15 +22,12 @@
 /* disable action features */
 #define TAPPING_TOGGLE 3
 #define ONESHOT_TAP_TOGGLE 3
-#define ONESHOT_TIMEOUT 500
+#define ONESHOT_TIMEOUT 600
 #define BOTH_SHIFTS_TURNS_ON_CAPS_WORD
 #define PERMISSIVE_HOLD_PER_KEY
 #define HOLD_ON_OTHER_KEY_PRESS_PER_KEY
 #define TAPPING_TERM 220
 
-//#define NO_ACTION_LAYER
-//#define NO_ACTION_TAPPING
-//#define NO_ACTION_ONESHOT
 
 // Mouse key speed and acceleration.
 #define MOUSEKEY_INERTIA
@@ -57,3 +54,4 @@
 #define MOUSEKEY_WHEEL_TIME_TO_MAX 255
 
 #define DYNAMIC_MACRO_DELAY 50
+#define COMBO_ONLY_FROM_LAYER

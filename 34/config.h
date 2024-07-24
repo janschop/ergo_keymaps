@@ -11,13 +11,19 @@
 #define RP2040_BOOTLOADER_DOUBLE_TAP_RESET
 #define RP2040_BOOTLOADER_DOUBLE_TAP_RESET_TIMEOUT 1000U
 
-#define SERIAL_USART_FULL_DUPLEX
-#define SERIAL_USART_TX_PIN GP0
-#define SERIAL_USART_RX_PIN GP1
+#define SERIAL_USART_HALF_DUPLEX
+#define SERIAL_USART_TX_PIN GP13
+// only for right side
+// #define I2C_DRIVER I2CD1
+// #define I2C_SDA_PIN GP2
+// #define I2C_SCL_PIN GP3
 
-#define I2C_DRIVER I2CD1
-#define I2C_SDA_PIN GP2
-#define I2C_SCL_PIN GP3
+// #define SPLIT_USB_DETECT
+
+// #define MATRIX_COL_PINS_RIGHT {GP5, GP6, GP7, GP3}
+// #define MATRIX_ROW_PINS_RIGHT {GP8, GP14, GP15, GP26, GP4}
+// #define MATRIX_ROW_PINS_RIGHT {GP27, GP26, GP15, GP29}
+// #define MATRIcdcdX_COL_PINS_RIGHT {GP14, GP8, GP7, GP6, GP28}
 
 #define AZOTEQ_IQS5XX_TPS65
 #define AZOTEQ_IQS5XX_TWO_FINGER_TAP_ENABLE true
@@ -32,27 +38,6 @@
 //#define POINTING_DEVICE_GESTURES_SCROLL_ENABLE 
 #define POINTING_DEVICE_ROTATION_90
 #define POINTING_DEVICE_GESTURES_CURSOR_GLIDE_ENABLE true
-
-
-/* disable debug print */
-//#define NO_DEBUG
-
-/*#define SPLIT_USB_DETECT
-
-#define MATRIX_COL_PINS_RIGHT {B4, B5, B6, C6, C7, F7}
-#define MATRIX_ROW_PINS_RIGHT {F0, F1, F4, F5}
-#define EE_HANDS*/
-/* disable print */
-//#define NO_PRINT
-
-/* disable action features */
-// #define TAPPING_TOGGLE 2
-// #define ONESHOT_TAP_TOGGLE 2
-// #define ONESHOT_TIMEOUT 300
-//#define BOTH_SHIFTS_TURNS_ON_CAPS_WORD
-//#define NO_ACTION_LAYER
-//#define NO_ACTION_TAPPING
-//#define NO_ACTION_ONESHOT
 
 // Mouse key speed and acceleration.
 // #define MOUSEKEY_INERTIA

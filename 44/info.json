@@ -3,7 +3,7 @@
     "keyboard_name": "ergo44",
     "maintainer": "janschop",
     "bootloader": "atmel-dfu",
-    "diode_direction": "COL2ROW",
+    "diode_direction": "ROW2COL",
     "features": {
         "bootmagic": true,
         "extrakey": true,
@@ -73,8 +73,6 @@
                 {"matrix": [6, 4], "x": 10, "y": 2},
                 {"matrix": [6, 5], "x": 11, "y": 2},
 
-                {"matrix": [3, 0], "x": 0, "y": 3},
-                {"matrix": [3, 1], "x": 1, "y": 3},
                 {"matrix": [3, 2], "x": 2, "y": 3},
                 {"matrix": [3, 3], "x": 3, "y": 3},
                 {"matrix": [3, 4], "x": 4, "y": 3},
@@ -84,9 +82,7 @@
                 {"matrix": [7, 0], "x": 6, "y": 3},
                 {"matrix": [7, 1], "x": 7, "y": 3},
                 {"matrix": [7, 2], "x": 8, "y": 3},
-                {"matrix": [7, 3], "x": 9, "y": 3},
-                {"matrix": [7, 4], "x": 10, "y": 3},
-                {"matrix": [7, 5], "x": 11, "y": 3}]
+                {"matrix": [7, 3], "x": 9, "y": 3}]
         }
     }
 }
