@@ -3,3 +3,4 @@ RGB_MATRIX_SUPPORTED = no
 SERIAL_DRIVER = vendor
 COMBO_ENABLE = yes
 DYNAMIC_MACRO_ENABLE = yes
+SRC += features/layer_lock.c

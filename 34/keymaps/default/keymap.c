@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
 
 #include QMK_KEYBOARD_H
+#include "features/layer_lock.h"
 
 bool set_scrolling = false;
 
@@ -71,10 +72,6 @@ report_mouse_t pointing_device_task_user(report_mouse_t mouse_report) {
     return mouse_report;
 }
 
-void keyboard_pre_init_user(void) {
-    setPinOutput(GP16);
-    writePinHigh(GP16);  // turn on LED for testing
-}
 
 // permissive hold for ctrl
 bool get_permissive_hold(uint16_t keycode, keyrecord_t *record) {
@@ -107,7 +104,8 @@ bool get_hold_on_other_key_press(uint16_t keycode, keyrecord_t *record) {
 }
 
 enum custom_keycodes {
-    kiwi = SAFE_RANGE,
+    LLOCK = SAFE_RANGE,
+    kiwi,
     rema,
     bunnpris,
     mail,
@@ -139,9 +137,11 @@ enum custom_keycodes {
     win_5,
     win_6,
     win_7,
+    // goto_mouse,
 };
 
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
+    if (!process_layer_lock(keycode, record, LLOCK)) { return false; }
     switch (keycode) {
         case bunnpris:
         if (record->event.pressed) {
@@ -363,6 +363,9 @@ const uint16_t PROGMEM combo_r_curl[] = {S(KC_9), S(KC_8), COMBO_END};
 const uint16_t PROGMEM combo_shift[] =  {KC_BSPC, OSL(1), COMBO_END};
 const uint16_t PROGMEM combo_back[] = {KC_W, KC_S, COMBO_END};
 const uint16_t PROGMEM combo_forward[] = {KC_R, KC_F, COMBO_END};
+const uint16_t PROGMEM combo_scroll_up[] = {KC_I, KC_K, COMBO_END};
+const uint16_t PROGMEM combo_scroll_down[] = {KC_COMMA, KC_K, COMBO_END};
+const uint16_t PROGMEM combo_go_to_mouse[]  = {KC_M, KC_K, KC_DOT, COMBO_END};
 
 combo_t key_combos[] = {
     COMBO(sd_esc, KC_ESC),
@@ -377,7 +380,6 @@ combo_t key_combos[] = {
     COMBO(combo_double_click, double_click),
     COMBO(combo_gui, KC_LGUI),
     COMBO(combo_middle_click, KC_BTN3),
-    //COMBO(combo_caps, KC_LSFT),//KC_PAGE_UP),
     COMBO(combo_mouse_macro, MOUSE_MACRO),
     COMBO(combo_copy, copy),
     COMBO(combo_paste, paste),
@@ -394,10 +396,12 @@ combo_t key_combos[] = {
     COMBO(combo_shift, KC_LSFT),
     COMBO(combo_back, KC_BTN4),
     COMBO(combo_forward, KC_BTN5),
-    // COMBO(combo_semicolon, S(KC_COMM)),
-    // COMBO(combo_colon, S(KC_DOT)),
-    // COMBO(combo_underscore, S(KC_MINS)),
+    COMBO(combo_scroll_up, KC_WH_U),
+    COMBO(combo_scroll_down, KC_WH_D),
+    COMBO(combo_go_to_mouse, TG(5)),
 };
+
+//layout: {ortho_layout: {split: true, rows: 3, columns: 5, thumbs: 2}}
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
@@ -416,15 +420,15 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     ),
    
     [2] = LAYOUT_split_3x5_2(//navigation
-    KC_VOLD, KC_MPRV, KC_MPLY,   KC_MNXT,   KC_VOLU,    _______, ALGR(KC_7), S(KC_8),     S(KC_9), ALGR(KC_0), 
+    KC_VOLD, KC_MPRV, KC_MPLY,   KC_MNXT,   KC_VOLU,    KC_MUTE, ALGR(KC_7), S(KC_8),     S(KC_9), ALGR(KC_0), 
       win_1,   win_2,   win_3,     win_4,     win_5,    KC_HOME, C(KC_LEFT),   KC_UP, C(KC_RIGHT),     KC_END, 
-    KC_LSFT, KC_LALT,   win_6,     win_7,   KC_MUTE,    alt_tab,    KC_LEFT, KC_DOWN,    KC_RIGHT,    KC_LGUI,
+    KC_LSFT, KC_LALT,   win_6,     win_7,     LLOCK,    alt_tab,    KC_LEFT, KC_DOWN,    KC_RIGHT,    KC_LGUI,
                                  KC_BSPC, KC_DELETE,    _______,      TO(4)
     ),
 
     [3] = LAYOUT_split_3x5_2(// function and algr
-  KC_GRV, ALGR(KC_2), ALGR(KC_3), S(KC_4), ALGR(KC_5),    DM_REC1, DM_REC2, ALGR(KC_8), ALGR(KC_9),    S(KC_RBRC),
-   KC_F1,      KC_F2,      KC_F3,   KC_F4,      KC_F5,    KC_F6  , _______,    KC_NUBS, S(KC_NUBS),    S(KC_BSLS),
+  KC_GRV, ALGR(KC_2), ALGR(KC_3), S(KC_4), ALGR(KC_5),    XXXXXXX, DM_REC1, ALGR(KC_8), ALGR(KC_9),    S(KC_RBRC),
+   KC_F1,      KC_F2,      KC_F3,   KC_F4,      KC_F5,    KC_F6  , DM_PLY1,    KC_NUBS, S(KC_NUBS),    S(KC_BSLS),
    KC_F7,      KC_F8,      KC_F9,  KC_F10,     KC_F11,    KC_F12,    print,        usr,        pwd, ALGR(KC_RBRC),      
                                   KC_BSPC,  KC_DELETE,    XXXXXXX, _______
     ),
@@ -443,3 +447,4 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
                                  KC_BSPC, _______,    _______, KC_P0
     ),
 };
+

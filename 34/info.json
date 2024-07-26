@@ -35,15 +35,15 @@
                 "cols": ["GP14", "GP8", "GP7", "GP6", "GP28"]
             }
         },
-        "soft_serial_pin": "GP13",
+        "soft_serial_pin": "GP12",
         "transport": {
-            "protocol": "serial",
-            "sync": {
-                "indicators": true,
-                "layer_state": true,
-                "matrix_state": true,
-                "modifiers": true
-            }
+            // "protocol": "serial",
+            // "sync": {
+            //     "indicators": true,
+            //     "layer_state": true,
+            //     "matrix_state": true,
+            //     "modifiers": true
+            // }
         }
     },
     "layouts": {
