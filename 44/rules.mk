@@ -1,4 +1,3 @@
-# This file intentionally left blank
 CONSOLE_ENABLE = yes
 RGBLIGHT_SUPPORTED = no
 RGB_MATRIX_SUPPORTED = no

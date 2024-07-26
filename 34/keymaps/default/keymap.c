@@ -24,23 +24,6 @@ void keyboard_post_init_user(void) {
   //debug_keyboard=true;
   //debug_mouse=true;
 }
-//Function to handle mouse reports and perform drag scrolling
-// report_mouse_t pointing_device_task_user(report_mouse_t mouse_report) {
-//     // Check if drag scrolling is active
-//     // Calculate and accumulate scroll values based on mouse movement and divisors
-//     scroll_accumulated_h += (float)mouse_report.x / SCROLL_DIVISOR_H;
-//     scroll_accumulated_v += (float)mouse_report.y / SCROLL_DIVISOR_V;
-//     // Assign integer parts of accumulated scroll values to the mouse report
-//     mouse_report.h = (int8_t)scroll_accumulated_h;
-//     mouse_report.v = (int8_t)scroll_accumulated_v;
-//     // Update accumulated scroll values by subtracting the integer parts
-//     scroll_accumulated_h -= (int8_t)scroll_accumulated_h;
-//     scroll_accumulated_v -= (int8_t)scroll_accumulated_v;
-//     // Clear the X and Y values of the mouse report
-//     mouse_report.x = 0;
-//     mouse_report.y = 0;
-//     return mouse_report;
-// }
 report_mouse_t pointing_device_task_user(report_mouse_t mouse_report) {
     // Check if drag scrolling is active
     // Calculate and accumulate scroll values based on mouse movement and divisors
@@ -139,6 +122,8 @@ enum custom_keycodes {
     win_7,
     // goto_mouse,
 };
+
+#include "g/keymap_combo.h"
 
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     if (!process_layer_lock(keycode, record, LLOCK)) { return false; }
@@ -334,72 +319,6 @@ layer_state_t layer_state_set_user(layer_state_t state) {
     }
     return state;
 }
-
-const uint16_t PROGMEM sd_esc[] = {KC_S, KC_D, COMBO_END};
-const uint16_t PROGMEM df_tab[] = {KC_D, KC_F, COMBO_END};
-const uint16_t PROGMEM hj_ent[] = {KC_H, KC_J, COMBO_END};
-const uint16_t PROGMEM io_aa[] = {KC_I, KC_O, COMBO_END};
-const uint16_t PROGMEM kl_ae[] = {KC_K, KC_L, COMBO_END};
-const uint16_t PROGMEM combo_enter_l[] = {KC_S, KC_F, COMBO_END};
-const uint16_t PROGMEM combo_alt_f4[] = {KC_Z, KC_X, COMBO_END};
-const uint16_t PROGMEM combo_lclick[] = {KC_F, KC_G, COMBO_END};
-const uint16_t PROGMEM combo_right_click[] = {KC_R, KC_T, COMBO_END};
-const uint16_t PROGMEM combo_middle_click[] = {KC_G, KC_B, COMBO_END};
-const uint16_t PROGMEM combo_mouse_macro[] = {KC_F, KC_V, COMBO_END}; 
-const uint16_t PROGMEM combo_double_click[] = {KC_V, KC_B, COMBO_END};
-const uint16_t PROGMEM combo_gui[] = {LT(2, KC_SPC), OSL(3), COMBO_END};
-const uint16_t PROGMEM combo_copy[] = {ALT_T(KC_X), KC_C, COMBO_END};
-const uint16_t PROGMEM combo_paste[] = {KC_C, KC_V, COMBO_END};
-const uint16_t PROGMEM combo_cut[] = {ALT_T(KC_X), KC_V, COMBO_END};
-const uint16_t PROGMEM combo_dsktp_l[] = {ALT_T(KC_X), KC_D, COMBO_END};
-const uint16_t PROGMEM combo_dsktp_r[] = {KC_D, KC_V, COMBO_END};
-const uint16_t PROGMEM combo_close_tab[] = {KC_E, KC_D, COMBO_END};
-const uint16_t PROGMEM combo_close_tab2[] = {KC_MPLY, KC_WH_U, COMBO_END};
-const uint16_t PROGMEM combo_new_tab[] = {KC_G, KC_T, COMBO_END};
-const uint16_t PROGMEM combo_pwr_toys[] = {KC_J, KC_M, COMBO_END};
-const uint16_t PROGMEM combo_win_tab[] = {KC_D, KC_C, COMBO_END};
-const uint16_t PROGMEM combo_l_curl[] = {ALGR(KC_7), S(KC_8), COMBO_END};
-const uint16_t PROGMEM combo_r_curl[] = {S(KC_9), S(KC_8), COMBO_END};
-const uint16_t PROGMEM combo_shift[] =  {KC_BSPC, OSL(1), COMBO_END};
-const uint16_t PROGMEM combo_back[] = {KC_W, KC_S, COMBO_END};
-const uint16_t PROGMEM combo_forward[] = {KC_R, KC_F, COMBO_END};
-const uint16_t PROGMEM combo_scroll_up[] = {KC_I, KC_K, COMBO_END};
-const uint16_t PROGMEM combo_scroll_down[] = {KC_COMMA, KC_K, COMBO_END};
-const uint16_t PROGMEM combo_go_to_mouse[]  = {KC_M, KC_K, KC_DOT, COMBO_END};
-
-combo_t key_combos[] = {
-    COMBO(sd_esc, KC_ESC),
-    COMBO(df_tab, KC_TAB), // keycodes with modifiers are possible too!
-    COMBO(hj_ent, KC_ENT),
-    COMBO(io_aa, KC_LBRC),
-    COMBO(kl_ae, KC_QUOT),
-    COMBO(combo_enter_l, KC_ENT),
-    COMBO(combo_alt_f4, LALT(KC_F4)),
-    COMBO(combo_lclick, KC_BTN1),
-    COMBO(combo_right_click, KC_BTN2),
-    COMBO(combo_double_click, double_click),
-    COMBO(combo_gui, KC_LGUI),
-    COMBO(combo_middle_click, KC_BTN3),
-    COMBO(combo_mouse_macro, MOUSE_MACRO),
-    COMBO(combo_copy, copy),
-    COMBO(combo_paste, paste),
-    COMBO(combo_cut, cut),
-    COMBO(combo_dsktp_l, lft_dsktp),
-    COMBO(combo_dsktp_r, rght_dsktp),
-    COMBO(combo_pwr_toys, LALT(KC_SPACE)),
-    COMBO(combo_close_tab, LCTL(KC_W)),
-    COMBO(combo_close_tab2, LCTL(KC_W)),
-    COMBO(combo_new_tab, LCTL(KC_T)),
-    COMBO(combo_win_tab, G(KC_TAB)),
-    COMBO(combo_l_curl, ALGR(KC_8)),
-    COMBO(combo_r_curl, ALGR(KC_9)),
-    COMBO(combo_shift, KC_LSFT),
-    COMBO(combo_back, KC_BTN4),
-    COMBO(combo_forward, KC_BTN5),
-    COMBO(combo_scroll_up, KC_WH_U),
-    COMBO(combo_scroll_down, KC_WH_D),
-    COMBO(combo_go_to_mouse, TG(5)),
-};
 
 //layout: {ortho_layout: {split: true, rows: 3, columns: 5, thumbs: 2}}
 
