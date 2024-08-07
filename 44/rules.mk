@@ -1,5 +1,5 @@
-SRC += features/layer_lock.c
-VPATH += keyboards/gboards
+# SRC += features/layer_lock.c
+# VPATH += keyboards/gboards
 
 CONSOLE_ENABLE = yes
 RGBLIGHT_SUPPORTED = no
