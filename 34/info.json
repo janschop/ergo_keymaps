@@ -1,6 +1,6 @@
 {
     "manufacturer": "PNS-electronics",
-    "keyboard_name": "ergorth34",
+    "keyboard_name": "Ergo 34",
     "maintainer": "janschop",
     "bootloader": "rp2040",
     "diode_direction": "COL2ROW",
