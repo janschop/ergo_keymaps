@@ -3,7 +3,7 @@
     "keyboard_name": "ergo44",
     "maintainer": "janschop",
     "bootloader": "atmel-dfu",
-    "diode_direction": "ROW2COL",
+    "diode_direction": "COL2ROW",
     "features": {
         "bootmagic": true,
         "extrakey": true,
