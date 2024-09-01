@@ -1,0 +1,245 @@
+layout: {ortho_layout: {split: true, rows: 3, columns: 5, thumbs: 2}}
+layers:
+  L0:
+  - Q
+  - W
+  - E
+  - R
+  - T
+  - Y
+  - U
+  - I
+  - O
+  - P
+  - {t: A, h: CTL}
+  - S
+  - D
+  - F
+  - G
+  - H
+  - J
+  - K
+  - L
+  - {t: ;, h: CTL}
+  - {t: Z, h: SFT}
+  - {t: X, h: ALT}
+  - C
+  - V
+  - B
+  - N
+  - M
+  - ','
+  - .
+  - {t: /, h: SFT}
+  - {t: LSFT, h: sticky}
+  - {t: L1, h: sticky}
+  - {t: SPC, h: L2}
+  - {t: L3, h: sticky}
+  L1:
+  - Sft+ 1
+  - Sft+ 2
+  - Sft+ 3
+  - AGr+ 4
+  - Sft+ 5
+  - Sft+ 6
+  - Sft+ 7
+  - Sft+ 8
+  - Sft+ 9
+  - Sft+ 0
+  - '1'
+  - '2'
+  - '3'
+  - '4'
+  - '5'
+  - '6'
+  - '7'
+  - '8'
+  - '9'
+  - '0'
+  - LSFT
+  - ctl s tab
+  - ']'
+  - ctl tab
+  - \
+  - '='
+  - '-'
+  - {t: ▽, type: trans}
+  - {t: ▽, type: trans}
+  - {t: ▽, type: trans}
+  - DEL
+  - {type: held}
+  - {t: ▽, type: trans}
+  - {t: ▽, type: trans}
+  L2:
+  - VOLD
+  - MPRV
+  - MPLY
+  - MNXT
+  - VOLU
+  - MUTE
+  - AGr+ 7
+  - Sft+ 8
+  - Sft+ 9
+  - AGr+ 0
+  - win 1
+  - win 2
+  - win 3
+  - win 4
+  - win 5
+  - HOME
+  - Ctl+ LEFT
+  - UP
+  - Ctl+ RIGHT
+  - END
+  - LSFT
+  - LALT
+  - win 6
+  - win 7
+  - LLOCK
+  - alt tab
+  - LEFT
+  - DOWN
+  - RIGHT
+  - LGUI
+  - BSPC
+  - DELETE
+  - {type: held}
+  - {t: L4, h: toggle}
+  L3:
+  - '`'
+  - AGr+ 2
+  - AGr+ 3
+  - Sft+ 4
+  - AGr+ 5
+  - PSCR
+  - DM REC1
+  - AGr+ 8
+  - AGr+ 9
+  - Sft+ ]
+  - F1
+  - F2
+  - F3
+  - F4
+  - F5
+  - F6
+  - DM PLY1
+  - NUBS
+  - Sft+ NUBS
+  - Sft+ \
+  - F7
+  - F8
+  - F9
+  - F10
+  - F11
+  - F12
+  - print
+  - usr
+  - pwd
+  - AGr+ ]
+  - Ctl+ BSPC
+  - Ctl+ DELETE
+  - ''
+  - {type: held}
+  L4:
+  - ''
+  - ''
+  - Gui+ D
+  - ''
+  - ''
+  - ''
+  - ''
+  - Gui+ TAB
+  - ''
+  - ''
+  - ''
+  - ''
+  - WH U
+  - ''
+  - ''
+  - ''
+  - ''
+  - MS U
+  - ''
+  - ''
+  - ''
+  - WH L
+  - WH D
+  - WH R
+  - {t: L0, h: toggle}
+  - ''
+  - MS L
+  - MS D
+  - MS R
+  - ''
+  - {t: L0, h: toggle}
+  - {t: L0, h: toggle}
+  - {t: L0, h: toggle}
+  - {t: L0, h: toggle}
+  L5:
+  - QK BOOT
+  - kiwi
+  - bunnpris
+  - rema
+  - meny
+  - NUM
+  - P7
+  - P8
+  - P9
+  - PSLS
+  - ''
+  - ''
+  - UP
+  - ''
+  - ''
+  - TAB
+  - P4
+  - P5
+  - P6
+  - PPLS
+  - ''
+  - LEFT
+  - DOWN
+  - RIGHT
+  - {t: L0, h: toggle}
+  - ''
+  - P1
+  - P2
+  - P3
+  - PENT
+  - BSPC
+  - {t: ▽, type: trans}
+  - P0
+  - .
+combos:
+  - {p: [11, 12], k: esc, l: ["L0"]}
+  - {p: [12, 13], k: tab, l: ["L0"]}
+  - {p: [15, 16], k: ent, l: ["L0"]}
+  - {p: [11, 13], k: ent_l, l: ["L0"]}
+  - {p: [32, 33], k: gui, l: ["L0"]}
+  - {p: [20, 21], k: alt_f4, l: ["L0"]}
+  - {p: [12, 22], k: win_tab, l: ["L0"]}
+  - {p: [16, 26], k: pwrtoys, l: ["L0"]}
+  - {p: [21, 12], k: dsktp_l, l: ["L0"]}
+  - {p: [12, 23], k: dsktp_r, l: ["L0"]}
+  - {p: [21, 22], k: copy, l: ["L0"]}
+  - {p: [22, 23], k: paste, l: ["L0"]}
+  - {p: [21, 23], k: cut, l: ["L0"]}
+  - {p: [13, 14], k: l_click, l: ["L0"]}
+  - {p: [3, 4], k: r_click, l: ["L0"]}
+  - {p: [14, 24], k: m_click, l: ["L0"]}
+  - {p: [1, 11], k: back, l: ["L0"]}
+  - {p: [3, 13], k: forward, l: ["L0"]}
+  - {p: [7, 17], k: scrl_up, l: ["L0"]}
+  - {p: [27, 17], k: scrl_down, l: ["L0"]}
+  - {p: [23, 24], k: dbl_click, l: ["L0"]}
+  - {p: [13, 23], k: mouse_macro, l: ["L0"]}
+  - {p: [26, 17, 28], k: go_to_mouse, l: ["L0"]}
+  - {p: [2, 12], k: close_tab, l: ["L0"]}
+  - {p: [14, 4], k: new_tab, l: ["L0"]}
+  - {p: [7, 8], k: aa, l: ["L0"]}
+  - {p: [17, 18], k: ae, l: ["L0"]}
+  - {p: [6, 16], k: bckspc, l: ["L0"]}
+  - {p: [8, 18], k: del, l: ["L0"]}
+  - {p: [5, 15], k: bck_word, l: ["L0"]}
+  - {p: [9, 19], k: del_word, l: ["L0"]}
+  - {p: [11, 21], k: bspc_left, l: ["L0"]}

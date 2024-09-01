@@ -21,9 +21,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 void keyboard_post_init_user(void) {
   // Customise these values to desired behaviour
-  debug_enable=true;
+  //debug_enable=true;
   //debug_matrix=true;
-  debug_keyboard=true;
+  //debug_keyboard=true;
   //debug_mouse=true;
 }
 #define star
@@ -103,12 +103,15 @@ enum custom_keycodes {
     win_3,
     win_4,
     win_5,
+    win_6,
+    win_7,
 };
 
 // void keyboard_pre_init_user(void) {
 //     setPinOutput(D3);  // initialize D3 for LED
 //     writePinHigh(D3);  // turn on LED for testing
 // }
+
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     switch (keycode) {
         case bunnpris:
@@ -127,8 +130,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
         if (record->event.pressed) {
             SEND_STRING("rema");
         } 
-        break;
-        
+        break;     
         case mail:
         if (record->event.pressed) {
             SEND_STRING("jan.erik"SS_RALT("2")"schopmeier.com");
@@ -276,6 +278,16 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             SEND_STRING(SS_DOWN(X_LGUI)SS_TAP(X_5));
         }
         break;
+        case win_6:
+        if (record->event.pressed) {
+            SEND_STRING(SS_DOWN(X_LGUI)SS_TAP(X_6));
+        }
+        break;
+        case win_7:
+        if (record->event.pressed) {
+            SEND_STRING(SS_DOWN(X_LGUI)SS_TAP(X_7));
+        }
+        break;
     }
     return true;    
 };
@@ -323,9 +335,9 @@ const uint16_t PROGMEM combo_r_curl[] = {S(KC_9), S(KC_8), COMBO_END};
 const uint16_t PROGMEM combo_shift[] =  {KC_BSPC, OSL(1), COMBO_END};
 const uint16_t PROGMEM combo_back[] = {KC_W, KC_S, COMBO_END};
 const uint16_t PROGMEM combo_forward[] = {KC_R, KC_F, COMBO_END};
-const uint16_t PROGMEM combo_semicolon[] = {KC_COMM, KC_K, COMBO_END};   
-const uint16_t PROGMEM combo_colon[] = {KC_DOT, KC_L, COMBO_END};   
-const uint16_t PROGMEM combo_underscore[] = {KC_MINS, KC_SCLN, COMBO_END};
+// const uint16_t PROGMEM combo_semicolon[] = {KC_COMM, KC_K, COMBO_END};   
+// const uint16_t PROGMEM combo_colon[] = {KC_DOT, KC_L, COMBO_END};   
+// const uint16_t PROGMEM combo_underscore[] = {KC_MINS, KC_SCLN, COMBO_END};
 
 
 combo_t key_combos[] = {
@@ -358,8 +370,9 @@ combo_t key_combos[] = {
     COMBO(combo_shift, KC_LSFT),
     COMBO(combo_back, KC_BTN4),
     COMBO(combo_forward, KC_BTN5),
-    COMBO(combo_semicolon, S(KC_COMM)),
-    COMBO(combo_colon, S(KC_DOT)),
+    // COMBO(combo_semicolon, S(KC_COMM)),
+    // COMBO(combo_colon, S(KC_DOT)),
+    // COMBO(combo_underscore, S(KC_MINS)),
 };
 
 //layaout: {ortho_layout: {split: true, rows: 3, columns: 6, thumbs: 6}}
@@ -368,41 +381,41 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     XXXXXXX,        KC_Q,        KC_W,    KC_E,    KC_R,   KC_T,    KC_Y  ,          KC_U,    KC_I,    KC_O,           KC_P, KC_BTN2,         
     KC_BTN1, CTL_T(KC_A),        KC_S,    KC_D,    KC_F,   KC_G,    KC_H  ,          KC_J,    KC_K,    KC_L, CTL_T(KC_SCLN), TO(5),
     KC_PSCR, SFT_T(KC_Z), ALT_T(KC_X),    KC_C,    KC_V,   KC_B,    KC_N  ,          KC_M, KC_COMM,  KC_DOT, SFT_T(KC_SLSH), KC_BTN3,
-    XXXXXXX,     XXXXXXX,      QK_RBT, QK_BOOT, KC_BSPC, OSL(1),    LT(2, KC_SPC), OSL(3), DM_PLY1, DM_PLY2,        XXXXXXX, XXXXXXX
+                         QK_RBT, QK_BOOT, OSM(MOD_LSFT), OSL(1),    LT(2, KC_SPC), OSL(3), DM_PLY1, DM_PLY2
     ),
 
     [1] = LAYOUT_ortho_split_3x6_4(//numbers and symbols
     _______, S(KC_1),   S(KC_2), S(KC_3), ALGR(KC_4), S(KC_5),    S(KC_6), S(KC_7), S(KC_8), S(KC_9), S(KC_0), _______,
     _______,    KC_1,      KC_2,    KC_3,       KC_4,    KC_5,    KC_6   ,    KC_7,    KC_8,    KC_9,    KC_0, _______,
     _______, KC_LSFT, ctl_s_tab, KC_RBRC,    ctl_tab, KC_BSLS,    KC_EQL , KC_MINS, _______, _______, _______, TO(0),      
-    XXXXXXX, XXXXXXX,   _______, _______,  KC_DELETE, _______,    _______, _______, _______, _______, XXXXXXX, XXXXXXX     
+       _______, _______,  KC_DEL,   _______,    _______, _______, _______, _______
     ),
    
     [2] = LAYOUT_ortho_split_3x6_4(//navigation
-    _______     , KC_VOLD, KC_MPRV, KC_MPLY,   KC_MNXT, KC_VOLU,    _______, ALGR(KC_7), S(KC_8),     S(KC_9), ALGR(KC_0), _______, 
-    double_click,   win_1,   win_2,   win_3,     win_4,   win_5,    KC_HOME, C(KC_LEFT),   KC_UP, C(KC_RIGHT),     KC_END, _______,   
-    _______     , KC_LSFT, KC_LALT, win_6,   win_7, KC_MUTE,    alt_tab,    KC_LEFT, KC_DOWN,    KC_RIGHT,    KC_LGUI,   TO(0),
-    XXXXXXX     , XXXXXXX, _______, _______, KC_DELETE, _______,    _______,TO(4) , _______,     _______,   XXXXXXX, XXXXXXX              
+    _______     , KC_VOLD, KC_MPRV, KC_MPLY,   KC_MNXT,   KC_VOLU,    _______, ALGR(KC_7), S(KC_8),     S(KC_9), ALGR(KC_0), _______, 
+    double_click,   win_1,   win_2,   win_3,     win_4,     win_5,    KC_HOME, C(KC_LEFT),   KC_UP, C(KC_RIGHT),     KC_END, _______,   
+    _______     , KC_LSFT, KC_LALT,   win_6,     win_7,   KC_MUTE,    alt_tab,    KC_LEFT, KC_DOWN,    KC_RIGHT,    KC_LGUI,   TO(0),
+     _______, _______,   KC_BSPC, KC_DELETE,    _______,TO(4) , _______,     _______
     ),
 
     [3] = LAYOUT_ortho_split_3x6_4(// function and algr
     _______,  KC_GRV, ALGR(KC_2), ALGR(KC_3), S(KC_4), ALGR(KC_5),    DM_REC1, DM_REC2, ALGR(KC_8), ALGR(KC_9),    S(KC_RBRC), _______, 
     _______,   KC_F1,      KC_F2,      KC_F3,   KC_F4,      KC_F5,    KC_F6  , _______,    KC_NUBS, S(KC_NUBS),    S(KC_BSLS), _______,        
     TO(0)  ,   KC_F7,      KC_F8,      KC_F9,  KC_F10,     KC_F11,    KC_F12,    print,        usr,        pwd, ALGR(KC_RBRC),   TO(0),                    
-    XXXXXXX, XXXXXXX,    _______,    _______, _______,    _______,    XXXXXXX, _______,    _______,    _______,       _______, _______                     
+        _______,    _______, KC_BSPC,    KC_DELETE,    XXXXXXX, _______,    _______,    _______
     ),
 
     [5] = LAYOUT_ortho_split_3x6_4(// mouse
     XXXXXXX, XXXXXXX, XXXXXXX, G(KC_D), XXXXXXX, XXXXXXX,    XXXXXXX, lft_dsktp, G(KC_TAB), rght_dsktp, XXXXXXX, XXXXXXX,
     TO(0)  , KC_BTN4, KC_BTN1, KC_WH_U, KC_BTN2, KC_BTN5,    XXXXXXX,   XXXXXXX,   KC_MS_U,    XXXXXXX, XXXXXXX,   TO(0),    
     TO(0)  , KC_BTN3, KC_WH_L, KC_WH_D, KC_WH_R,   TO(0),    XXXXXXX,   KC_MS_L,   KC_MS_D,    KC_MS_R, XXXXXXX,   TO(0),             
-    XXXXXXX, XXXXXXX,   TO(0),   TO(0),   TO(0),   TO(0),    TO(0)  ,     TO(0),     TO(0),      TO(0), XXXXXXX, XXXXXXX                 
+       TO(0),   TO(0),   TO(0),   TO(0),    TO(0)  ,     TO(0),     TO(0),      TO(0)
     ),
 
     [4] = LAYOUT_ortho_split_3x6_4(//numpad
     QK_BOOT, QK_BOOT,    kiwi, bunnpris,     rema, XXXXXXX,    KC_NUM,  KC_P7,   KC_P8,   KC_P9, KC_PSLS, KC_PAST,
     XXXXXXX, XXXXXXX, XXXXXXX,    KC_UP,  XXXXXXX, XXXXXXX,    KC_TAB,  KC_P4,   KC_P5,   KC_P6, KC_PPLS, KC_PMNS,
     XXXXXXX, XXXXXXX, KC_LEFT,  KC_DOWN, KC_RIGHT,   TO(0),    XXXXXXX, KC_P1,   KC_P2,   KC_P3, KC_PENT,   TO(0),
-    XXXXXXX, XXXXXXX,  KC_ENT,  KC_LGUI,  KC_BSPC, _______,    _______, KC_P0, KC_PDOT, _______, XXXXXXX, XXXXXXX
+      KC_ENT,  KC_LGUI,  KC_BSPC, _______,    _______, KC_P0, KC_PDOT, _______
     ),
 };
