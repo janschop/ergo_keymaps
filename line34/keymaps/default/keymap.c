@@ -1,92 +1,27 @@
-// Copyright 2022 beekeeb
+// Copyright 2023 Jan Erik Schopmeier (@janschop)
 // SPDX-License-Identifier: GPL-2.0-or-later
 
 #include QMK_KEYBOARD_H
 #include "features/layer_lock.h"
 
-// bool set_scrolling = false;
-// // Modify these values to adjust the scrolling speed
-// #define SCROLL_DIVISOR_H 15.0
-// #define SCROLL_DIVISOR_V 15.0
-// #define ZOOM_DIVISOR 5
-//
-// // Variables to store accumulated scroll values
-// float scroll_accumulated_h = 0;
-// float scroll_accumulated_v = 0;
-// uint8_t zoom_in = 0;
-// uint8_t zoom_out = 0;
-//
-// report_mouse_t pointing_device_task_user(report_mouse_t mouse_report) {
-//     // Check if drag scrolling is active
-//     // Calculate and accumulate scroll values based on mouse movement and divisors
-//     scroll_accumulated_h += (float)mouse_report.h / SCROLL_DIVISOR_H;
-//     scroll_accumulated_v += (float)mouse_report.v / SCROLL_DIVISOR_V;
-//
-//     // Assign integer parts of accumulated scroll values to the mouse report
-//     mouse_report.v = -(int8_t)scroll_accumulated_h;
-//     mouse_report.h = -(int8_t)scroll_accumulated_v;
-//
-//     // Update accumulated scroll values by subtracting the integer parts
-//     scroll_accumulated_h -= (int8_t)scroll_accumulated_h;
-//     scroll_accumulated_v -= (int8_t)scroll_accumulated_v;
-//     if (mouse_report.buttons & (1 << 7)) {
-//         zoom_in ++;
-//     } 
-//     if (mouse_report.buttons & (1 << 6)) {
-//         zoom_out ++;
-//     }
-//
-//     if (zoom_in == ZOOM_DIVISOR) {
-//         SEND_STRING(SS_DOWN(X_LCTL)SS_TAP(X_MINS)SS_UP(X_LCTL));
-//         zoom_in = 0;
-//     }
-//     if (zoom_out == ZOOM_DIVISOR) {
-//         SEND_STRING(SS_DOWN(X_LCTL)SS_TAP(X_SLSH)SS_UP(X_LCTL));
-//         zoom_out = 0;
-//     }
-//     return mouse_report;
-// }
-
 void keyboard_post_init_user(void) {
-  // Customise these values to desired behaviour
   debug_enable=true;
 //   debug_matrix=true;
   debug_keyboard=true;
   //debug_mouse=true;
 }
 
-// permissive hold for ctrl
-// bool get_permissive_hold(uint16_t keycode, keyrecord_t *record) {
-//     switch (keycode) {
-//         case CTL_T(KC_A):
-//             // Immediately select the hold action when another key is tapped.
-//             return true;
-//         case CTL_T(KC_SCLN):
-//             // Immediately select the hold action when another key is tapped.
-//             return true;
-//         case SFT_T(KC_Z):
-//             // Immediately select the hold action when another key is tapped.
-//             return true;
-//         case SFT_T(KC_SLSH):
-//             // Immediately select the hold action when another key is tapped.
-//             return true;
-//         default:
-//             // Do not select the hold action when another key is tapped.
-//             return false;
-//     }
-// }
-//
-// hold on other keypress for shift
-// bool get_hold_on_other_key_press(uint16_t keycode, keyrecord_t *record) {
-//     switch (keycode) {
-//         default:
-//             // Do not select the hold action when another key is pressed.
-//             return false;
-//     }
-// }
-
 enum custom_keycodes {
-    LLOCK = SAFE_RANGE,
+     SMTD_KEYCODES_BEGIN = SAFE_RANGE,
+    CKC_A, // reads as C(ustom) + KC_A, but you may give any name here
+    CKC_R,
+    CKC_I,
+    CKC_O,
+    CKC_Z,
+    CKC_SL,
+    rsmk,
+    SMTD_KEYCODES_END,
+    LLOCK,
     kiwi,
     rema,
     bunnpris,
@@ -123,8 +58,10 @@ enum custom_keycodes {
 };
 
 #include "g/keymap_combo.h"
+#include "sm_td.h"
 
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
+    if (!process_smtd(keycode, record)) { return false; }
     if (!process_layer_lock(keycode, record, LLOCK)) { return false; }
     switch (keycode) {
         case bunnpris:
@@ -297,14 +234,42 @@ layer_state_t layer_state_set_user(layer_state_t state) {
     return state;
 }
 
+// https://github.com/stasmarkin/sm_td
+void on_smtd_action(uint16_t keycode, smtd_action action, uint8_t tap_count) {
+    switch (keycode) {
+        SMTD_MT(CKC_A, KC_A, KC_LEFT_CTRL)
+        SMTD_MT(CKC_R, KC_R, KC_LEFT_ALT)
+        SMTD_MT(CKC_I, KC_I, KC_LEFT_ALT)
+        SMTD_MT(CKC_O, KC_O, KC_LEFT_CTRL)
+        SMTD_MT(CKC_Z, KC_Z, KC_LSFT)
+        SMTD_MT(CKC_SL, KC_SLSH, KC_LSFT)
+        case rsmk: {                                           
+            switch (action) {                                     
+                case SMTD_ACTION_TOUCH: 
+                    if (tap_count > 0) {
+                        tap_code16(KC_BSPC);
+                    }                         
+
+                    switch (tap_count % 2) { 
+                        case 0: tap_code16(KC_COMM); break;
+                        case 1: tap_code16(S(KC_COMM)); break;
+                        default: break;
+                    }
+                default: break;
+                break;
+            } // end of switch (keycode)
+        }
+    }
+}
+
 //layout: {ortho_layout: {split: true, rows: 3, columns: 5, thumbs: 2}}
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
     [0] = LAYOUT_split_3x5_2(//colemak dh
-            KC_Q,        KC_W,    KC_F,    KC_P,   KC_B,    KC_J  ,        KC_L,    KC_U,    KC_Y,        KC_SCLN,          
-     CTL_T(KC_A),        MT(XXXXXXX,KC_R),    KC_S,    KC_T,   KC_G,    KC_K  ,        KC_N,    KC_E,    MT(XXXXXXX,KC_I), CTL_T(KC_O), 
-     SFT_T(KC_Z), ALT_T(KC_X),    KC_C,    KC_D,   KC_V,    KC_M  ,        KC_H, KC_COMM,  KC_DOT, SFT_T(KC_SLSH),
-                                  OSM(MOD_LSFT), OSL(1),    LT(2, KC_SPC), OSL(3)
+     KC_Q,        KC_W,        KC_F,   KC_P,    KC_B,    KC_J,          KC_L, KC_U, KC_Y,   KC_SCLN,          
+     CTL_T(KC_A), KC_R,        KC_S,   KC_T,    KC_G,    KC_K,          KC_N, KC_E, KC_I,   CTL_T(KC_O), /*MT(XXXXXXX,KC_R)*//*MT(XXXXXXX,KC_I)*/
+     SFT_T(KC_Z), ALT_T(KC_X), KC_C,   KC_D,    KC_V,    KC_M,          KC_H, rsmk, KC_DOT, CKC_SL,
+                               OSM(MOD_LSFT), OSL(1),    LT(2, KC_SPC), OSL(3)
     ),
 
     [6] = LAYOUT_split_3x5_2(//base

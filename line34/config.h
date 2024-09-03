@@ -1,17 +1,14 @@
-// // Copyright 2023 Jan Erik Schopmeier (@janschop)
-// // SPDX-License-Identifier: GPL-2.0-or-later
+// Copyright 2023 Jan Erik Schopmeier (@janschop)
+// SPDX-License-Identifier: GPL-2.0-or-later
 
 #pragma once
 
-/*
- * Feature disable options
- *  These options are also useful to firmware size reduction.
- */
-// #define SERIAL_PIO_USE_PIO1
 #define RP2040_BOOTLOADER_DOUBLE_TAP_RESET
 #define RP2040_BOOTLOADER_DOUBLE_TAP_RESET_TIMEOUT 1000U
-// #define SPLIT_CONNECTION_CHECK_TIMEOUT 0
-// #define SPLIT_MAX_CONNECTION_ERRORS 0
+
+#define I2C_DRIVER I2CD0
+#define I2C_SDA_PIN GP21
+#define I2C_SCL_PIN GP16
 
 #define DYNAMIC_MACRO_DELAY 50
 #define COMBO_ONLY_FROM_LAYER 6
@@ -21,26 +18,9 @@
 #define TAPPING_TERM 220
 #define COMBO_TERM 50
 
-// only for right side
-#define I2C_DRIVER I2CD0
-#define I2C_SDA_PIN GP21
-#define I2C_SCL_PIN GP16
+// sm_td
+#define MAX_DEFERRED_EXECUTORS 10
 
-// // #define SPLIT_USB_DETECT
-
-// #define AZOTEQ_IQS5XX_TPS65
-// #define AZOTEQ_IQS5XX_TWO_FINGER_TAP_ENABLE true
-// #define AZOTEQ_IQS5XX_ZOOM_ENABLE false
-// #define AZOTEQ IQS5XX_SCROLL_ENABLE false
-// // #define AZOTEQ_IQS5XX_ROTATION_90
-// #define AZOTEQ_IQS5XX_PRESS_AND_HOLD_ENABLE false
-// #define AZOTEQ_IQS5XX_SWIPE_X_ENABLE true
-// #define AZOTEQ_IQS5XX_SWIPE_Y_ENABLE true
-// #define AZOTEQ_IQS5XX_TAP_TIME 150
-// #define AZOTEQ_IQS5XX_TAP_DISTANCE 10
-// //#define POINTING_DEVICE_GESTURES_SCROLL_ENABLE 
-// #define POINTING_DEVICE_ROTATION_90
-// #define POINTING_DEVICE_GESTURES_CURSOR_GLIDE_ENABLE true
 
 // Mouse key speed and acceleration.
 #define MOUSEKEY_INERTIA
