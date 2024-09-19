@@ -19,7 +19,8 @@ enum custom_keycodes {
     CKC_O,
     CKC_Z,
     CKC_SL,
-    rsmk,
+    CKC_SPC,
+    cmsemi,
     SMTD_KEYCODES_END,
     LLOCK,
     kiwi,
@@ -31,8 +32,6 @@ enum custom_keycodes {
     last_name,
     number,
     pwd,
-    Usr,
-    usr,
     dplct,
     lft_dsktp,
     rght_dsktp,
@@ -48,6 +47,8 @@ enum custom_keycodes {
     alt_tab,
     ctl_tab,
     ctl_s_tab,
+    win_left,
+    win_right,
     win_1,
     win_2,
     win_3,
@@ -109,17 +110,6 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
         case number:
         if (record->event.pressed) {
             SEND_STRING("46360691");
-        }
-        break;
-        case pwd:
-        if (record->event.pressed) {
-            SEND_STRING("Hva i faen1");
-        }
-        break;
-
-        case usr:
-        if (record->event.pressed) {
-            SEND_STRING("m77648"); 
         }
         break;
 
@@ -188,6 +178,20 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             SEND_STRING(SS_DOWN(X_LCTL)SS_DOWN(X_LSFT)SS_TAP(X_TAB)SS_UP(X_LSFT));
         }
         break;
+        case win_left:
+        if (record->event.pressed) {
+            SEND_STRING(SS_DOWN(X_LGUI) SS_DELAY(15) SS_DOWN(X_LEFT));
+        } else {
+            SEND_STRING(SS_UP(X_LEFT) SS_UP(X_LGUI));
+        }
+        break;
+        case win_right:
+        if (record->event.pressed) {
+            SEND_STRING(SS_DOWN(X_LGUI) SS_DELAY(15) SS_DOWN(X_RIGHT));
+        } else {
+            SEND_STRING(SS_UP(X_RIGHT) SS_UP(X_LGUI));
+        }
+        break;
         case win_1:
         if (record->event.pressed) {
             SEND_STRING(SS_DOWN(X_LGUI)SS_TAP(X_1));
@@ -234,8 +238,19 @@ layer_state_t layer_state_set_user(layer_state_t state) {
     return state;
 }
 
+uint16_t get_combo_term(uint16_t index, combo_t *combo) {
+    switch (index) {
+        case combo_tab:
+            return 35;
+        case combo_aa:
+            return 60;
+    }
+    return COMBO_TERM;
+};
+
 // https://github.com/stasmarkin/sm_td
 void on_smtd_action(uint16_t keycode, smtd_action action, uint8_t tap_count) {
+
     switch (keycode) {
         SMTD_MT(CKC_A, KC_A, KC_LEFT_CTRL)
         SMTD_MT(CKC_R, KC_R, KC_LEFT_ALT)
@@ -243,7 +258,8 @@ void on_smtd_action(uint16_t keycode, smtd_action action, uint8_t tap_count) {
         SMTD_MT(CKC_O, KC_O, KC_LEFT_CTRL)
         SMTD_MT(CKC_Z, KC_Z, KC_LSFT)
         SMTD_MT(CKC_SL, KC_SLSH, KC_LSFT)
-        case rsmk: {                                           
+        SMTD_LT(CKC_SPC, KC_SPC, 2)
+        case cmsemi: {                                           
             switch (action) {                                     
                 case SMTD_ACTION_TOUCH: 
                     if (tap_count > 0) {
@@ -268,15 +284,8 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     [0] = LAYOUT_split_3x5_2(//colemak dh
      KC_Q,        KC_W,        KC_F,   KC_P,    KC_B,    KC_J,          KC_L, KC_U, KC_Y,   KC_SCLN,          
      CTL_T(KC_A), KC_R,        KC_S,   KC_T,    KC_G,    KC_K,          KC_N, KC_E, KC_I,   CTL_T(KC_O), /*MT(XXXXXXX,KC_R)*//*MT(XXXXXXX,KC_I)*/
-     SFT_T(KC_Z), ALT_T(KC_X), KC_C,   KC_D,    KC_V,    KC_M,          KC_H, rsmk, KC_DOT, CKC_SL,
-                               OSM(MOD_LSFT), OSL(1),    LT(2, KC_SPC), OSL(3)
-    ),
-
-    [6] = LAYOUT_split_3x5_2(//base
-            KC_Q,        KC_W,    KC_E,    KC_R,   KC_T,    KC_Y  ,        KC_U,    KC_I,    KC_O,           KC_P,          
-     CTL_T(KC_A),        KC_S,    KC_D,    KC_F,   KC_G,    KC_H  ,        KC_J,    KC_K,    KC_L, CTL_T(KC_SCLN), 
-     SFT_T(KC_Z), ALT_T(KC_X),    KC_C,    KC_V,   KC_B,    KC_N  ,        KC_M, KC_COMM,  KC_DOT, SFT_T(KC_SLSH),
-                                  OSM(MOD_LSFT), OSL(1),    LT(2, KC_SPC), OSL(3)
+     SFT_T(KC_Z), ALT_T(KC_X), KC_C,   KC_D,    KC_V,    KC_M,          KC_H, cmsemi, KC_DOT, CKC_SL,
+                               OSM(MOD_LSFT), OSL(1),    LT(2, KC_SPC), OSL(3) //LT(2, KC_SPC) CKC_SPC 
     ),
 
     [1] = LAYOUT_split_3x5_2(//numbers and symbols
@@ -296,22 +305,29 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     [3] = LAYOUT_split_3x5_2(// function and algr
   KC_GRV, ALGR(KC_2), ALGR(KC_3),   S(KC_4),    ALGR(KC_5),    KC_PSCR, DM_REC1, ALGR(KC_8), ALGR(KC_9),    S(KC_RBRC),
    KC_F1,      KC_F2,      KC_F3,     KC_F4,         KC_F5,    KC_F6  , DM_PLY1,    KC_NUBS, S(KC_NUBS),    S(KC_BSLS),
-   KC_F7,      KC_F8,      KC_F9,    KC_F10,        KC_F11,    KC_F12,    print,        usr,        pwd, ALGR(KC_RBRC),      
+   KC_F7,      KC_F8,      KC_F9,    KC_F10,        KC_F11,    KC_F12,    print,    KC_BSLS, S(KC_MINS), ALGR(KC_RBRC),      
                                   C(KC_BSPC), C(KC_DELETE),    XXXXXXX, _______
     ),
 
     [5] = LAYOUT_split_3x5_2(// mouse
-    XXXXXXX, XXXXXXX, G(KC_D), XXXXXXX, XXXXXXX,    DT_UP  , XXXXXXX, G(KC_TAB), XXXXXXX, XXXXXXX,
-    XXXXXXX, XXXXXXX, KC_WH_U, XXXXXXX, XXXXXXX,    DT_PRNT, XXXXXXX,   KC_MS_U, XXXXXXX, XXXXXXX,   
-    XXXXXXX, KC_WH_L, KC_WH_D, KC_WH_R,   TG(5),    DT_DOWN, KC_MS_L,   KC_MS_D, KC_MS_R, XXXXXXX,            
-                                 TG(5),   TG(5),    TG(5)  ,     TG(5)
+    XXXXXXX, XXXXXXX, G(KC_D), XXXXXXX, XXXXXXX,    XXXXXXX, XXXXXXX, G(KC_TAB), XXXXXXX, XXXXXXX,
+    XXXXXXX, XXXXXXX, KC_WH_U, XXXXXXX, XXXXXXX,    XXXXXXX, XXXXXXX,   KC_MS_U, XXXXXXX, XXXXXXX,   
+    XXXXXXX, KC_WH_L, KC_WH_D, KC_WH_R,   TG(5),    XXXXXXX, KC_MS_L,   KC_MS_D, KC_MS_R, XXXXXXX,          
+                                 TG(5),   TG(5),    TG(5)  ,    TG(5)
     ),
 
     [4] = LAYOUT_split_3x5_2(//numpad
-    QK_BOOT,    kiwi, bunnpris,     rema,    meny,    KC_NUM,  KC_P7,   KC_P8,   KC_P9, KC_PSLS,
-    XXXXXXX, XXXXXXX,    KC_UP,  XXXXXXX, XXXXXXX,    KC_TAB,  KC_P4,   KC_P5,   KC_P6, KC_PPLS,
-    XXXXXXX, KC_LEFT,  KC_DOWN, KC_RIGHT,   TG(4),    XXXXXXX, KC_P1,   KC_P2,   KC_P3, KC_PENT,
+    QK_BOOT,    kiwi, bunnpris,     rema,    meny,    KC_NUM , KC_P7,   KC_P8,   KC_P9, XXXXXXX,
+    XXXXXXX, XXXXXXX,    KC_UP,  XXXXXXX, XXXXXXX,    KC_LEFT, KC_P4,   KC_P5,   KC_P6, KC_RIGHT,
+    XXXXXXX, KC_LEFT,  KC_DOWN, KC_RIGHT,   TG(4),    KC_BSPC, KC_P1,   KC_P2,   KC_P3, KC_DOWN,
                                  KC_BSPC, _______,    KC_P0,   KC_DOT
+    ),
+
+    [6] = LAYOUT_split_3x5_2(//base
+            KC_Q,        KC_W,    KC_E,    KC_R,   KC_T,    KC_Y  ,        KC_U,    KC_I,    KC_O,           KC_P,          
+     CTL_T(KC_A),        KC_S,    KC_D,    KC_F,   KC_G,    KC_H  ,        KC_J,    KC_K,    KC_L, CTL_T(KC_SCLN), 
+     SFT_T(KC_Z), ALT_T(KC_X),    KC_C,    KC_V,   KC_B,    KC_N  ,        KC_M, KC_COMM,  KC_DOT, SFT_T(KC_SLSH),
+                                  OSM(MOD_LSFT), OSL(1),    LT(2, KC_SPC), OSL(3)
     ),
 };
 
