@@ -18,33 +18,13 @@ uint16_t alt_tab_timeout_short = 700;
 uint16_t alt_tab_timeout_long = 1100;
 
 enum custom_keycodes {
-    SMTD_KEYCODES_BEGIN = SAFE_RANGE,
-    CKC_A, // reads as C(ustom) + KC_A, but you may give any name here
-    CKC_R,
-    CKC_I,
-    CKC_O,
-    CKC_Z,
-    CKC_SL,
-    CKC_SPC,
-    cmsemi,
-    SMTD_KEYCODES_END,
-    ALT_TAB,
+    ALT_TAB = SAFE_RANGE,
     LLOCK,
-    kiwi,
-    rema,
-    bunnpris,
-    meny,
-    mail,
-    first_name,
-    last_name,
-    number,
-    pwd,
     dplct,
     lft_dsktp,
     rght_dsktp,
     tsk_view,
     print,
-    heart,
     frac,
     double_click,
     MOUSE_MACRO,
@@ -66,10 +46,8 @@ enum custom_keycodes {
 };
 
 #include "g/keymap_combo.h"
-#include "sm_td.h"
 
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
-    if (!process_smtd(keycode, record)) { return false; }
     if (!process_layer_lock(keycode, record, LLOCK)) { return false; }
     switch (keycode) {
         case ALT_TAB:
@@ -96,53 +74,6 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                 }
             }
             break;
-        case bunnpris:
-        if (record->event.pressed) {
-            SEND_STRING("bunnpris");
-        }
-        break;
-
-        case kiwi:
-        if (record->event.pressed) {
-            SEND_STRING("kiwi");
-        }
-        break;
-
-        case rema:
-        if (record->event.pressed) {
-            SEND_STRING("rema");
-        } 
-        break;    
-        
-        case meny:
-        if (record->event.pressed) {
-            SEND_STRING("meny");
-        } 
-        break;     
-
-        case mail:
-        if (record->event.pressed) {
-            SEND_STRING("jan.erik"SS_RALT("2")"schopmeier.com");
-        }
-        break;
-        
-        case first_name:
-        if (record->event.pressed) {
-            SEND_STRING("Jan Erik ");
-        }
-        break;
-        
-        case last_name:
-        if (record->event.pressed) {
-            SEND_STRING("Schopmeier");
-        }
-        break;
-        
-        case number:
-        if (record->event.pressed) {
-            SEND_STRING("46360691");
-        }
-        break;
 
         case print:
         if (record->event.pressed) {
@@ -175,11 +106,6 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
         case rght_dsktp:
         if (record->event.pressed) {
             SEND_STRING(SS_DOWN(X_LGUI)SS_DOWN(X_LCTL)SS_TAP(X_RIGHT)SS_UP(X_LCTL)SS_UP(X_LGUI));
-        }
-        break;
-        case heart:
-        if (record->event.pressed) {
-            SEND_STRING(SS_LSFT(",")"3");
         }
         break;
         case double_click:
@@ -271,43 +197,12 @@ layer_state_t layer_state_set_user(layer_state_t state) {
 
 uint16_t get_combo_term(uint16_t index, combo_t *combo) {
     switch (index) {
-        case combo_tab:
-            return 35;
         case combo_aa:
             return 60;
     }
     return COMBO_TERM;
 };
 
-// https://github.com/stasmarkin/sm_td
-void on_smtd_action(uint16_t keycode, smtd_action action, uint8_t tap_count) {
-
-    switch (keycode) {
-        SMTD_MT(CKC_A, KC_A, KC_LEFT_CTRL)
-        SMTD_MT(CKC_R, KC_R, KC_LEFT_ALT)
-        SMTD_MT(CKC_I, KC_I, KC_LEFT_ALT)
-        SMTD_MT(CKC_O, KC_O, KC_LEFT_CTRL)
-        SMTD_MT(CKC_Z, KC_Z, KC_LSFT)
-        SMTD_MT(CKC_SL, KC_SLSH, KC_LSFT)
-        SMTD_LT(CKC_SPC, KC_SPC, 2)
-        case cmsemi: {                                           
-            switch (action) {                                     
-                case SMTD_ACTION_TOUCH: 
-                    if (tap_count > 0) {
-                        tap_code16(KC_BSPC);
-                    }                         
-
-                    switch (tap_count % 2) { 
-                        case 0: tap_code16(KC_COMM); break;
-                        case 1: tap_code16(S(KC_COMM)); break;
-                        default: break;
-                    }
-                default: break;
-                break;
-            } // end of switch (keycode)
-        }
-    }
-}
 void matrix_scan_user(void) { // The very important timer.
     if (is_alt_tab_active) {
         if (timer_elapsed(alt_tab_timer) > alt_tab_timeout) {
@@ -319,11 +214,17 @@ void matrix_scan_user(void) { // The very important timer.
 //layout: {ortho_layout: {split: true, rows: 3, columns: 5, thumbs: 2}}
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
-    [0] = LAYOUT_split_3x5_2(//colemak dh
-     KC_Q,        KC_W,        KC_F,   KC_P,    KC_B,    KC_J,          KC_L, KC_U, KC_Y,   KC_SCLN,          
-     CTL_T(KC_A), KC_R,        KC_S,   KC_T,    KC_G,    KC_K,          KC_N, KC_E, KC_I,   CTL_T(KC_O), /*MT(XXXXXXX,KC_R)*//*MT(XXXXXXX,KC_I)*/
-     SFT_T(KC_Z), ALT_T(KC_X), KC_C,   KC_D,    KC_V,    KC_M,          KC_H, cmsemi, KC_DOT, CKC_SL,
-                               OSM(MOD_LSFT), OSL(1),    LT(2, KC_SPC), OSL(3) //LT(2, KC_SPC) CKC_SPC 
+    // [0] = LAYOUT_split_3x5_2(//colemak dh
+    //  KC_Q,        KC_W,        KC_F,   KC_P,    KC_B,    KC_J,          KC_L, KC_U, KC_Y,   KC_SCLN,          
+    //  CTL_T(KC_A), KC_R,        KC_S,   KC_T,    KC_G,    KC_K,          KC_N, KC_E, KC_I,   CTL_T(KC_O), /*MT(XXXXXXX,KC_R)*//*MT(XXXXXXX,KC_I)*/
+    //  SFT_T(KC_Z), ALT_T(KC_X), KC_C,   KC_D,    KC_V,    KC_M,          KC_H, cmsemi, KC_DOT, CKC_SL,
+    //                            OSM(MOD_LSFT), OSL(1),    LT(2, KC_SPC), OSL(3) //LT(2, KC_SPC) CKC_SPC 
+    // ),
+    [0] = LAYOUT_split_3x5_2(//base
+            KC_Q,        KC_W,    KC_E,    KC_R,   KC_T,    KC_Y  ,        KC_U,   KC_I,   KC_O,           KC_P,          
+     CTL_T(KC_A),        KC_S,    KC_D,    KC_F,   KC_G,    KC_H  ,        KC_J,   KC_K,   KC_L, CTL_T(KC_SCLN), 
+     SFT_T(KC_Z), ALT_T(KC_X),    KC_C,    KC_V,   KC_B,    KC_N  ,        KC_M, KC_COMM, KC_DOT, SFT_T(KC_SLSH),
+                                  OSM(MOD_LSFT), OSL(1),    LT(2, KC_SPC), OSL(3)
     ),
 
     [1] = LAYOUT_split_3x5_2(//numbers and symbols
@@ -355,17 +256,12 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     ),
 
     [4] = LAYOUT_split_3x5_2(//numpad
-    QK_BOOT,    kiwi, bunnpris,     rema,    meny,    KC_NUM , KC_P7,   KC_P8,   KC_P9, XXXXXXX,
-    XXXXXXX, XXXXXXX,    KC_UP,  XXXXXXX, XXXXXXX,    KC_LEFT, KC_P4,   KC_P5,   KC_P6, KC_RIGHT,
-    XXXXXXX, KC_LEFT,  KC_DOWN, KC_RIGHT,   TG(4),    KC_BSPC, KC_P1,   KC_P2,   KC_P3, KC_DOWN,
-                                 KC_BSPC, _______,    KC_P0,   KC_DOT
+    QK_BOOT, XXXXXXX, XXXXXXX,  XXXXXXX, XXXXXXX,    KC_NUM , KC_P7,   KC_P8,   KC_P9,  XXXXXXX,
+    XXXXXXX, XXXXXXX,   KC_UP,  XXXXXXX, XXXXXXX,    KC_LEFT, KC_P4,   KC_P5,   KC_P6, KC_RIGHT,
+    XXXXXXX, KC_LEFT, KC_DOWN, KC_RIGHT,   TG(4),    KC_BSPC, KC_P1,   KC_P2,   KC_P3,  KC_DOWN,
+                                KC_BSPC, _______,     KC_P0, KC_DOT
     ),
 
-    [6] = LAYOUT_split_3x5_2(//base
-            KC_Q,        KC_W,    KC_E,    KC_R,   KC_T,    KC_Y  ,        KC_U,    KC_I,    KC_O,           KC_P,          
-     CTL_T(KC_A),        KC_S,    KC_D,    KC_F,   KC_G,    KC_H  ,        KC_J,    KC_K,    KC_L, CTL_T(KC_SCLN), 
-     SFT_T(KC_Z), ALT_T(KC_X),    KC_C,    KC_V,   KC_B,    KC_N  ,        KC_M, KC_COMM,  KC_DOT, SFT_T(KC_SLSH),
-                                  OSM(MOD_LSFT), OSL(1),    LT(2, KC_SPC), OSL(3)
-    ),
+
 };
 
