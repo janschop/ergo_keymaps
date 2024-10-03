@@ -27,6 +27,8 @@
 #define PERMISSIVE_HOLD_PER_KEY
 #define HOLD_ON_OTHER_KEY_PRESS_PER_KEY
 #define TAPPING_TERM 220
+#define COMBO_ONLY_FROM_LAYER 6
+
 
 
 // Mouse key speed and acceleration.
@@ -60,3 +62,6 @@
 #define PERMISSIVE_HOLD_PER_KEY
 #define HOLD_ON_OTHER_KEY_PRESS_PER_KEY
 #define COMBO_TERM 60
+
+// sm_td
+#define MAX_DEFERRED_EXECUTORS 10

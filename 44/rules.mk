@@ -10,4 +10,8 @@ SPLIT_KEYBOARD = yes
 SERIAL_DRIVER = bitbang
 COMBO_ENABLE = yes # disable for midi
 DYNAMIC_MACRO_ENABLE = yes
-MIDI_ENABLE = yes
+# MIDI_ENABLE = yes
+# TAP_DANCE_ENABLE = yes
+
+# sm_td
+DEFERRED_EXEC_ENABLE = yes
