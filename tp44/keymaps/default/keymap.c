@@ -4,18 +4,65 @@
 #include QMK_KEYBOARD_H
 #include "features/layer_lock.h"
 
+// bool set_scrolling = false;
+// // Modify these values to adjust the scrolling speed
+// #define SCROLL_DIVISOR_H 15.0
+// #define SCROLL_DIVISOR_V 15.0
+// #define ZOOM_DIVISOR 5
+//
+// // Variables to store accumulated scroll values
+// float scroll_accumulated_h = 0;
+// float scroll_accumulated_v = 0;
+// uint8_t zoom_in = 0;
+// uint8_t zoom_out = 0;
+//
+// report_mouse_t pointing_device_task_user(report_mouse_t mouse_report) {
+//     // Check if drag scrolling is active
+//     // Calculate and accumulate scroll values based on mouse movement and divisors
+//     scroll_accumulated_h += (float)mouse_report.h / SCROLL_DIVISOR_H;
+//     scroll_accumulated_v += (float)mouse_report.v / SCROLL_DIVISOR_V;
+//
+//     // Assign integer parts of accumulated scroll values to the mouse report
+//     mouse_report.v = -(int8_t)scroll_accumulated_h;
+//     mouse_report.h = -(int8_t)scroll_accumulated_v;
+//
+//     // Update accumulated scroll values by subtracting the integer parts
+//     scroll_accumulated_h -= (int8_t)scroll_accumulated_h;
+//     scroll_accumulated_v -= (int8_t)scroll_accumulated_v;
+//     if (mouse_report.buttons & (1 << 7)) {
+//         zoom_in ++;
+//     } 
+//     if (mouse_report.buttons & (1 << 6)) {
+//         zoom_out ++;
+//     }
+//
+//     if (zoom_in == ZOOM_DIVISOR) {
+//         SEND_STRING(SS_DOWN(X_LCTL)SS_TAP(X_MINS)SS_UP(X_LCTL));
+//         zoom_in = 0;
+//     }
+//     if (zoom_out == ZOOM_DIVISOR) {
+//         SEND_STRING(SS_DOWN(X_LCTL)SS_TAP(X_SLSH)SS_UP(X_LCTL));
+//         zoom_out = 0;
+//     }
+//     return mouse_report;
+// }
+
 void keyboard_post_init_user(void) {
   debug_enable=true;
 //   debug_matrix=true;
-  debug_keyboard=true;
-  //debug_mouse=true;
+//   debug_keyboard=true;
+  debug_mouse=true;
 }
 
-bool is_alt_tab_active = false; // ADD this near the beginning of keymap.c
-uint16_t alt_tab_timer = 0;     // we will be using them soon.
+bool is_alt_tab_active = false; 
+uint16_t alt_tab_timer = 0;     
 uint16_t alt_tab_timeout = 0;
 uint16_t alt_tab_timeout_short = 800;
 uint16_t alt_tab_timeout_long = 1200;
+
+bool is_win_active = false;
+uint16_t win_timer = 0;
+uint16_t win_timeout = 600;
 
 enum custom_keycodes {
     SMTD_KEYCODES_BEGIN = SAFE_RANGE,
@@ -27,6 +74,8 @@ enum custom_keycodes {
     CKC_SL,
     CKC_SPC,
     cmsemi,
+    dshund,
+    dotcol,
     SMTD_KEYCODES_END,
     ALT_TAB,
     LLOCK,
@@ -38,19 +87,13 @@ enum custom_keycodes {
     first_name,
     last_name,
     number,
-    pwd,
-    dplct,
     lft_dsktp,
     rght_dsktp,
     tsk_view,
     print,
-    heart,
     frac,
     double_click,
     MOUSE_MACRO,
-    copy,
-    paste,
-    cut,
     alt_tab,
     ctl_tab,
     ctl_s_tab,
@@ -63,6 +106,7 @@ enum custom_keycodes {
     win_5,
     win_6,
     win_7,
+    win_8,
 };
 
 #include "g/keymap_combo.h"
@@ -82,9 +126,8 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                 } else {
                     alt_tab_timeout = alt_tab_timeout_short;
                 }
-
-            alt_tab_timer = timer_read();
-            register_code(KC_TAB);
+                alt_tab_timer = timer_read();
+                register_code(KC_TAB);
             } else {
                 unregister_code(KC_TAB);
             }
@@ -159,14 +202,6 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             SEND_STRING(SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT));
         }
         break;
-        case dplct:
-        if (record->event.pressed) {
-            SEND_STRING(SS_LCTL("l"));
-            SEND_STRING(SS_DOWN(X_LALT));
-            SEND_STRING((SS_TAP(X_ENT)));
-            SEND_STRING(SS_UP(X_LALT));
-        }              
-        break;
         case lft_dsktp:
         if (record->event.pressed) {
             SEND_STRING(SS_DOWN(X_LGUI)SS_DOWN(X_LCTL)SS_TAP(X_LEFT)SS_UP(X_LCTL)SS_UP(X_LGUI));
@@ -175,11 +210,6 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
         case rght_dsktp:
         if (record->event.pressed) {
             SEND_STRING(SS_DOWN(X_LGUI)SS_DOWN(X_LCTL)SS_TAP(X_RIGHT)SS_UP(X_LCTL)SS_UP(X_LGUI));
-        }
-        break;
-        case heart:
-        if (record->event.pressed) {
-            SEND_STRING(SS_LSFT(",")"3");
         }
         break;
         case double_click:
@@ -225,37 +255,82 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
         break;
         case win_1:
         if (record->event.pressed) {
-            SEND_STRING(SS_DOWN(X_LGUI)SS_TAP(X_1));
+            if (!is_win_active) {
+                    is_win_active = true;
+                    register_code(KC_LGUI); 
+                }
+            win_timer = timer_read();
+            SEND_STRING(SS_TAP(X_1));
         }
         break;
         case win_2:
         if (record->event.pressed) {
-            SEND_STRING(SS_DOWN(X_LGUI)SS_TAP(X_2));
+            if (!is_win_active) {
+                    is_win_active = true;
+                    register_code(KC_LGUI); 
+                }
+            win_timer = timer_read();
+            SEND_STRING(SS_TAP(X_2));
         }
         break;
         case win_3:
         if (record->event.pressed) {
-            SEND_STRING(SS_DOWN(X_LGUI)SS_TAP(X_3));
+            if (!is_win_active) {
+                    is_win_active = true;
+                    register_code(KC_LGUI); 
+                }
+            win_timer = timer_read();
+            SEND_STRING(SS_TAP(X_3));
         }
         break;
         case win_4:
         if (record->event.pressed) {
-            SEND_STRING(SS_DOWN(X_LGUI)SS_TAP(X_4));
+            if (!is_win_active) {
+                    is_win_active = true;
+                    register_code(KC_LGUI); 
+                }
+            win_timer = timer_read();
+            SEND_STRING(SS_TAP(X_4));
         }
         break;
         case win_5:
         if (record->event.pressed) {
-            SEND_STRING(SS_DOWN(X_LGUI)SS_TAP(X_5));
+            if (!is_win_active) {
+                    is_win_active = true;
+                    register_code(KC_LGUI); 
+                }
+            win_timer = timer_read();
+            SEND_STRING(SS_TAP(X_5));
         }
         break;
         case win_6:
         if (record->event.pressed) {
-            SEND_STRING(SS_DOWN(X_LGUI)SS_TAP(X_6));
+            if (!is_win_active) {
+                    is_win_active = true;
+                    register_code(KC_LGUI); 
+                }
+            win_timer = timer_read();
+            SEND_STRING(SS_TAP(X_6));
         }
         break;
         case win_7:
         if (record->event.pressed) {
-            SEND_STRING(SS_DOWN(X_LGUI)SS_TAP(X_7));
+            if (!is_win_active) {
+                    is_win_active = true;
+                    register_code(KC_LGUI); 
+                }
+            win_timer = timer_read();
+            SEND_STRING(SS_TAP(X_7));
+        }
+        break;
+        case win_8:
+        if (record->event.pressed) {
+            if (!is_win_active) {
+                    is_win_active = true;
+                    register_code(KC_LGUI); 
+                }
+            win_timer = timer_read();
+            SEND_STRING(SS_TAP(X_8));
         }
         break;
     }
@@ -296,7 +371,6 @@ void on_smtd_action(uint16_t keycode, smtd_action action, uint8_t tap_count) {
                     if (tap_count > 0) {
                         tap_code16(KC_BSPC);
                     }                         
-
                     switch (tap_count % 2) { 
                         case 0: tap_code16(KC_COMM); break;
                         case 1: tap_code16(S(KC_COMM)); break;
@@ -304,64 +378,96 @@ void on_smtd_action(uint16_t keycode, smtd_action action, uint8_t tap_count) {
                     }
                 default: break;
                 break;
-            } // end of switch (keycode)
+            } 
+            break;
+        }
+        case dshund: {                                           
+            switch (action) {                                     
+                case SMTD_ACTION_TOUCH: 
+                    if (tap_count > 0) {
+                        tap_code16(KC_BSPC);
+                    }                         
+                    switch (tap_count % 2) { 
+                        case 0: tap_code16(KC_SLSH); break;
+                        case 1: tap_code16(S(KC_SLSH)); break; 
+                        default: break;
+                    }
+                default: break;
+                break;
+            }
+            break;
+        }
+        case dotcol: {                                           
+            switch (action) {                                     
+                case SMTD_ACTION_TOUCH: 
+                    if (tap_count > 0) {
+                        tap_code16(KC_BSPC);
+                    }                         
+                    switch (tap_count % 2) { 
+                        case 0: tap_code16(KC_DOT); break;
+                        case 1: tap_code16(S(KC_DOT)); break; 
+                        default: break;
+                    }
+                default: break;
+                break;
+            }
+            break;
         }
     }
 }
-void matrix_scan_user(void) { // The very important timer.
+
+void matrix_scan_user(void) {
     if (is_alt_tab_active) {
         if (timer_elapsed(alt_tab_timer) > alt_tab_timeout) {
-        unregister_code(KC_LALT);
-        is_alt_tab_active = false;
+            unregister_code(KC_LALT);
+            is_alt_tab_active = false;
+        }
+    }
+    if (is_win_active) {
+        if (timer_elapsed(win_timer) > win_timeout) {
+            unregister_code(KC_LGUI);
+            is_win_active = false;
         }
     }
 }
-//layout: {ortho_layout: {split: true, rows: 3, columns: 5, thumbs: 2}}
+
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
     [0] = LAYOUT_split_3x5_3u4(//colemak dh
-            // new keyb
-                  KC_N,        KC_E,   KC_W, KC_SPC,                   KC_K,          KC_E, KC_Y, KC_B,
+                 win_1,       win_2,  win_3,win_4,                     win_5,        win_6,win_7, win_8,
      KC_Q,        KC_W,        KC_F,   KC_P, KC_B,                     KC_J,          KC_L, KC_U, KC_Y,   KC_SCLN,          
      CTL_T(KC_A), KC_R,        KC_S,   KC_T, KC_G,                     KC_K,          KC_N, KC_E, KC_I,   CTL_T(KC_O),
-     SFT_T(KC_Z), ALT_T(KC_X), KC_C,   KC_D, KC_V,                     KC_M,          KC_H, cmsemi, KC_DOT, CKC_SL,
-                              OSM(MOD_LSFT), OSL(1), _______, _______, LT(2, KC_SPC), OSL(3)
+     SFT_T(KC_Z), ALT_T(KC_X), KC_C,   KC_D, KC_V,                     KC_M,          KC_H, cmsemi,KC_DOT, dshund,
+                              OSM(MOD_LSFT), OSL(1), KC_BSPC, KC_BTN1, LT(2, KC_SPC), OSL(3)
     ),
 
     [1] = LAYOUT_split_3x5_3u4(//numbers and symbols
-                  _______, _______, _______, _______,                    _______, _______, _______, _______,
-    S(KC_1),   S(KC_2), S(KC_3), ALGR(KC_4), S(KC_5),                   S(KC_6), S(KC_7), S(KC_8), S(KC_9), S(KC_0),
-       KC_1,      KC_2,    KC_3,       KC_4,    KC_5,                   KC_6   ,    KC_7,    KC_8,    KC_9,    KC_0,
-    KC_LSFT, ctl_s_tab, KC_RBRC,    ctl_tab, KC_BSLS,                   KC_EQL , KC_MINS, _______, _______, _______,
-                                     KC_DEL, _______, _______, _______, _______, _______
+                  _______, _______, _______, _______,                        KC_NUBS, ALGR(KC_8), ALGR(KC_9), S(KC_NUBS),
+    S(KC_1),   S(KC_2), S(KC_3), ALGR(KC_4), S(KC_5),                        S(KC_6), S(KC_7), S(KC_8), S(KC_9), S(KC_0),
+       KC_1,      KC_2,    KC_3,       KC_4,    KC_5,                        KC_6   ,    KC_7,    KC_8,    KC_9,    KC_0,
+    KC_LSFT, ctl_s_tab, KC_RBRC,    ctl_tab, KC_BSLS,                        KC_EQL , KC_MINS, _______, _______, _______,
+                                     KC_DEL, _______, _______, double_click, KC_BTN2, _______
     ),
    
     [2] = LAYOUT_split_3x5_3u4(//navigation
-             _______, _______,   _______,   _______,                   _______,    _______, _______,     _______,
-    KC_VOLD, KC_MPRV, KC_MPLY,   KC_MNXT,   KC_VOLU,                   KC_MUTE, ALGR(KC_7), S(KC_8),     S(KC_9), ALGR(KC_0), 
-      win_1,   win_2,   win_3,     win_4,     win_5,                   KC_HOME, C(KC_LEFT),   KC_UP, C(KC_RIGHT),     KC_END, 
-    KC_LSFT, KC_LALT,   win_6,     win_7,     LLOCK,                   alt_tab,    KC_LEFT, KC_DOWN,    KC_RIGHT,    KC_LGUI,
-                                 KC_BSPC, KC_DELETE, _______, _______, _______, TG(4)
+    // DM_REC1 DM_PLY1 KC_PSCR 
+             _______, _______,   _______, _______,                   _______,    _______, _______,     _______,
+    KC_VOLD, KC_MPRV, KC_MPLY,   KC_MNXT, KC_VOLU,                   KC_MUTE, ALGR(KC_7), S(KC_8),     S(KC_9), ALGR(KC_0), 
+    _______, _______, _______,   _______, _______,                   KC_HOME, C(KC_LEFT),   KC_UP, C(KC_RIGHT),     KC_END, 
+    KC_LSFT, KC_LALT, _______,   _______,   LLOCK,                   alt_tab,    KC_LEFT, KC_DOWN,    KC_RIGHT,    _______,
+                                 KC_BSPC,  KC_DEL,   LLOCK, _______, _______, TG(4)
     ),
 
     [3] = LAYOUT_split_3x5_3u4(// function and algr
-             _______,    _______,   _______,       _______,                   _______, _______,    _______,    _______,
-  KC_GRV, ALGR(KC_2), ALGR(KC_3),   S(KC_4),    ALGR(KC_5),                   KC_PSCR, DM_REC1, ALGR(KC_8), ALGR(KC_9),    S(KC_RBRC),
-   KC_F1,      KC_F2,      KC_F3,     KC_F4,         KC_F5,                   KC_F6  , DM_PLY1,    KC_NUBS, S(KC_NUBS),    S(KC_BSLS),
-   KC_F7,      KC_F8,      KC_F9,    KC_F10,        KC_F11,                   KC_F12,    print,    KC_BSLS, S(KC_MINS), ALGR(KC_RBRC),      
-                                  C(KC_BSPC), C(KC_DELETE), _______, _______, _______, _______
-    ),
-
-    [5] = LAYOUT_split_3x5_3u4(// mouse
-             _______, _______, _______, _______,               _______, _______,   _______, _______,
-    XXXXXXX, XXXXXXX, G(KC_D), XXXXXXX, XXXXXXX,               XXXXXXX, XXXXXXX, G(KC_TAB), XXXXXXX, XXXXXXX,
-    XXXXXXX, XXXXXXX, KC_WH_U, XXXXXXX, XXXXXXX,               XXXXXXX, XXXXXXX,   KC_MS_U, XXXXXXX, XXXXXXX,   
-    XXXXXXX, KC_WH_L, KC_WH_D, KC_WH_R,   TG(5),               XXXXXXX, KC_MS_L,   KC_MS_D, KC_MS_R, XXXXXXX,          
-                                 TG(5),   TG(5), TG(5), TG(5), TG(5),     TG(5)
+             _______,    _______,   _______,    _______,                   _______, _______,    _______,    _______,
+  KC_GRV, ALGR(KC_2), ALGR(KC_3),   S(KC_4), ALGR(KC_5),                   KC_PSCR, DM_REC1,    C(KC_BSPC), C(KC_DELETE), S(KC_RBRC),
+   KC_F1,      KC_F2,      KC_F3,     KC_F4,      KC_F5,                   KC_F6  , DM_PLY1,    KC_BSPC, KC_DELETE,       S(KC_BSLS),
+   KC_F7,      KC_F8,      KC_F9,    KC_F10,     KC_F11,                   KC_F12,    print,    KC_BSLS, S(KC_MINS), ALGR(KC_RBRC),      
+                                 C(KC_BSPC),  C(KC_DEL), _______, _______, _______, _______
     ),
 
     [4] = LAYOUT_split_3x5_3u4(//numpad
-             _______,  _______,  _______, _______,                   _______, _______, _______, _______,
+             _______,  _______,  _______, _______,                   _______, _______,   KC_UP, _______,
     QK_BOOT,    kiwi, bunnpris,     rema,    meny,                   KC_NUM ,   KC_P7,   KC_P8,   KC_P9, XXXXXXX,
     XXXXXXX, XXXXXXX,    KC_UP,  XXXXXXX, XXXXXXX,                   KC_LEFT,   KC_P4,   KC_P5,   KC_P6, KC_RIGHT,
     XXXXXXX, KC_LEFT,  KC_DOWN, KC_RIGHT,   TG(4),                   KC_BSPC,   KC_P1,   KC_P2,   KC_P3, KC_DOWN,
@@ -373,7 +479,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
             KC_Q,        KC_W,    KC_E,    KC_R,   KC_T,                   KC_Y  ,        KC_U,    KC_I,    KC_O,           KC_P,          
      CTL_T(KC_A),        KC_S,    KC_D,    KC_F,   KC_G,                   KC_H  ,        KC_J,    KC_K,    KC_L, CTL_T(KC_SCLN), 
      SFT_T(KC_Z), ALT_T(KC_X),    KC_C,    KC_V,   KC_B,                   KC_N  ,        KC_M, KC_COMM,  KC_DOT, SFT_T(KC_SLSH),
-                                  OSM(MOD_LSFT), OSL(1), _______, _______, LT(2, KC_SPC), OSL(3)
+                                  OSM(MOD_LSFT), OSL(1), _______, KC_BTN1, LT(2, KC_SPC), OSL(3)
     ),
 };
 

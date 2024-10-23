@@ -11,8 +11,14 @@ void keyboard_post_init_user(void) {
   //debug_mouse=true;
 }
 
+bool is_alt_tab_active = false; // ADD this near the beginning of keymap.c
+uint16_t alt_tab_timer = 0;     // we will be using them soon.
+uint16_t alt_tab_timeout = 0;
+uint16_t alt_tab_timeout_short = 800;
+uint16_t alt_tab_timeout_long = 1200;
+
 enum custom_keycodes {
-     SMTD_KEYCODES_BEGIN = SAFE_RANGE,
+    SMTD_KEYCODES_BEGIN = SAFE_RANGE,
     CKC_A, // reads as C(ustom) + KC_A, but you may give any name here
     CKC_R,
     CKC_I,
@@ -22,6 +28,7 @@ enum custom_keycodes {
     CKC_SPC,
     cmsemi,
     SMTD_KEYCODES_END,
+    ALT_TAB,
     LLOCK,
     kiwi,
     rema,
@@ -65,6 +72,30 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     if (!process_smtd(keycode, record)) { return false; }
     if (!process_layer_lock(keycode, record, LLOCK)) { return false; }
     switch (keycode) {
+        case ALT_TAB:
+            if (record->event.pressed) {
+                if (!is_alt_tab_active) {
+                    is_alt_tab_active = true;
+                    register_code(KC_LALT); 
+                    SEND_STRING(SS_DOWN(X_LSFT)SS_TAP(X_TAB)SS_UP(X_LSFT));
+                    alt_tab_timeout = alt_tab_timeout_long;
+                } else {
+                    alt_tab_timeout = alt_tab_timeout_short;
+                }
+
+            alt_tab_timer = timer_read();
+            register_code(KC_TAB);
+            } else {
+                unregister_code(KC_TAB);
+            }
+            break;
+        case C(KC_W):
+            if (record->event.pressed) {
+                if (is_alt_tab_active) {
+                    alt_tab_timer = timer_read();
+                }
+            }
+            break;
         case bunnpris:
         if (record->event.pressed) {
             SEND_STRING("bunnpris");
@@ -115,11 +146,11 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 
         case print:
         if (record->event.pressed) {
-            // SEND_STRING("printf"SS_DOWN(X_LSFT)"82"SS_UP(X_LSFT));
-            // SEND_STRING("=n"SS_DOWN(X_LSFT)"29,"SS_UP(X_LSFT));
-            // SEND_STRING(SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT));
-            SEND_STRING("print"SS_DOWN(X_LSFT)"8229"SS_UP(X_LSFT));
-            SEND_STRING(SS_TAP(X_LEFT)SS_TAP(X_LEFT));
+            SEND_STRING("printf"SS_DOWN(X_LSFT)"82"SS_UP(X_LSFT));
+            SEND_STRING("=r=n"SS_DOWN(X_LSFT)"29,"SS_UP(X_LSFT));
+            SEND_STRING(SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT));
+            // SEND_STRING("print"SS_DOWN(X_LSFT)"8229"SS_UP(X_LSFT));
+            // SEND_STRING(SS_TAP(X_LEFT)SS_TAP(X_LEFT));
         }
         break;
         case frac: //\frac{}{}
@@ -277,7 +308,14 @@ void on_smtd_action(uint16_t keycode, smtd_action action, uint8_t tap_count) {
         }
     }
 }
-
+void matrix_scan_user(void) { // The very important timer.
+    if (is_alt_tab_active) {
+        if (timer_elapsed(alt_tab_timer) > alt_tab_timeout) {
+        unregister_code(KC_LALT);
+        is_alt_tab_active = false;
+        }
+    }
+}
 //layout: {ortho_layout: {split: true, rows: 3, columns: 5, thumbs: 2}}
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
