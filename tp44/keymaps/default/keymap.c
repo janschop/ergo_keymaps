@@ -4,47 +4,21 @@
 #include QMK_KEYBOARD_H
 #include "features/layer_lock.h"
 
-// bool set_scrolling = false;
-// // Modify these values to adjust the scrolling speed
-// #define SCROLL_DIVISOR_H 15.0
-// #define SCROLL_DIVISOR_V 15.0
-// #define ZOOM_DIVISOR 5
-//
-// // Variables to store accumulated scroll values
-// float scroll_accumulated_h = 0;
-// float scroll_accumulated_v = 0;
-// uint8_t zoom_in = 0;
-// uint8_t zoom_out = 0;
-//
-// report_mouse_t pointing_device_task_user(report_mouse_t mouse_report) {
-//     // Check if drag scrolling is active
-//     // Calculate and accumulate scroll values based on mouse movement and divisors
-//     scroll_accumulated_h += (float)mouse_report.h / SCROLL_DIVISOR_H;
-//     scroll_accumulated_v += (float)mouse_report.v / SCROLL_DIVISOR_V;
-//
-//     // Assign integer parts of accumulated scroll values to the mouse report
-//     mouse_report.v = -(int8_t)scroll_accumulated_h;
-//     mouse_report.h = -(int8_t)scroll_accumulated_v;
-//
-//     // Update accumulated scroll values by subtracting the integer parts
-//     scroll_accumulated_h -= (int8_t)scroll_accumulated_h;
-//     scroll_accumulated_v -= (int8_t)scroll_accumulated_v;
-//     if (mouse_report.buttons & (1 << 7)) {
-//         zoom_in ++;
-//     } 
-//     if (mouse_report.buttons & (1 << 6)) {
-//         zoom_out ++;
-//     }
-//
-//     if (zoom_in == ZOOM_DIVISOR) {
-//         SEND_STRING(SS_DOWN(X_LCTL)SS_TAP(X_MINS)SS_UP(X_LCTL));
-//         zoom_in = 0;
-//     }
-//     if (zoom_out == ZOOM_DIVISOR) {
-//         SEND_STRING(SS_DOWN(X_LCTL)SS_TAP(X_SLSH)SS_UP(X_LCTL));
-//         zoom_out = 0;
-//     }
-//     return mouse_report;
+
+
+// left tp just for scrolling, requires POINTING_DEVICE_COMBINED 
+
+// void keyboard_post_init_user(void) {
+//     pointing_device_set_cpi_on_side(true, 1000); //Set cpi on left side to a low value for slower scrolling.
+//     pointing_device_set_cpi_on_side(false, 8000); //Set cpi on right side to a reasonable value for mousing.
+// }
+
+// report_mouse_t pointing_device_task_combined_user(report_mouse_t left_report, report_mouse_t right_report) {
+//     left_report.h = left_report.x;
+//     left_report.v = left_report.y;
+//     left_report.x = 0;
+//     left_report.y = 0;
+//     return pointing_device_combine_reports(left_report, right_report);
 // }
 
 void keyboard_post_init_user(void) {
@@ -63,6 +37,15 @@ uint16_t alt_tab_timeout_long = 1200;
 bool is_win_active = false;
 uint16_t win_timer = 0;
 uint16_t win_timeout = 600;
+
+bool alt_tab_mode = false;
+bool arrow_key_mode = false;
+static bool scrolling_mode = false;
+
+uint16_t default_cpi = 800;
+uint16_t scrolling_cpi = 25;
+uint16_t alt_tab_cpi = 4;
+uint16_t arrow_cpi = 30;//800;
 
 enum custom_keycodes {
     SMTD_KEYCODES_BEGIN = SAFE_RANGE,
@@ -107,6 +90,7 @@ enum custom_keycodes {
     win_6,
     win_7,
     win_8,
+    MOUSE_MOD,
 };
 
 #include "g/keymap_combo.h"
@@ -137,6 +121,25 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                 if (is_alt_tab_active) {
                     alt_tab_timer = timer_read();
                 }
+            }
+            break;
+
+        case ALT_T(KC_X):
+            if (record->event.pressed) {
+                pointing_device_set_cpi(alt_tab_cpi);
+                alt_tab_mode = true;
+            } else {
+                pointing_device_set_cpi(default_cpi);
+                alt_tab_mode = false;
+            }
+            break;
+        case MOUSE_MOD:
+            if (record->event.pressed) {
+                pointing_device_set_cpi(arrow_cpi);
+                arrow_key_mode = true;
+            } else {
+                pointing_device_set_cpi(default_cpi);
+                arrow_key_mode = false;
             }
             break;
         case bunnpris:
@@ -341,7 +344,58 @@ layer_state_t layer_state_set_user(layer_state_t state) {
     if (IS_LAYER_ON_STATE(state, 0)) {
         SEND_STRING(SS_UP(X_LALT)SS_UP(X_LCTL)SS_UP(X_LGUI));
     }
+    switch (get_highest_layer(state)) {
+        case 1:  // If we're on the _RAISE layer enable scrolling mode
+            scrolling_mode = true;
+            pointing_device_set_cpi(scrolling_cpi);
+            break;
+        default:
+            if (scrolling_mode) {  // check if we were scrolling before and set disable if so
+                scrolling_mode = false;
+                pointing_device_set_cpi(default_cpi);
+            }
+            break;
+    }
     return state;
+}
+report_mouse_t pointing_device_task_user(report_mouse_t mouse_report) {
+    //TODO: add friction mode to scrolling
+    //TODO: check if windows high definition mode is possible
+    if (scrolling_mode) {
+        // mouse_report.h = mouse_report.x;
+        mouse_report.v = mouse_report.y;
+        mouse_report.x = 0;
+        mouse_report.y = 0;
+    }
+    if (alt_tab_mode){ 
+        if (mouse_report.x > 0) {
+            SEND_STRING(SS_TAP(X_TAB));
+        } else if (mouse_report.x < 0) {
+            SEND_STRING(SS_DOWN(X_LSFT)SS_TAP(X_TAB)SS_UP(X_LSFT));
+        }
+        
+        mouse_report.x = 0;
+        mouse_report.y = 0;
+    }
+    if (arrow_key_mode) {
+        if (mouse_report.x > 0) {
+            dprintf("x:%i y: %i\n",mouse_report.x, mouse_report.y);
+            SEND_STRING(SS_TAP(X_RIGHT));
+        } else if (mouse_report.x < 0) {
+            SEND_STRING(SS_TAP(X_LEFT));
+            dprintf("x:%i y: %i\n",mouse_report.x, mouse_report.y);
+        }
+        // if (mouse_report.y > 0) {
+        //     SEND_STRING(SS_TAP(X_DOWN));
+        //     dprintf("x:%i y: %i\n",mouse_report.x, mouse_report.y);
+        // } else if (mouse_report.y < 0) {
+        //     SEND_STRING(SS_TAP(X_UP));
+        //     dprintf("x:%i y: %i\n",mouse_report.x, mouse_report.y);
+        // }
+        mouse_report.x = 0;
+        mouse_report.y = 0;
+    }
+    return mouse_report;
 }
 
 uint16_t get_combo_term(uint16_t index, combo_t *combo) {
@@ -438,7 +492,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
      KC_Q,        KC_W,        KC_F,   KC_P, KC_B,                     KC_J,          KC_L, KC_U, KC_Y,   KC_SCLN,          
      CTL_T(KC_A), KC_R,        KC_S,   KC_T, KC_G,                     KC_K,          KC_N, KC_E, KC_I,   CTL_T(KC_O),
      SFT_T(KC_Z), ALT_T(KC_X), KC_C,   KC_D, KC_V,                     KC_M,          KC_H, cmsemi,KC_DOT, dshund,
-                              OSM(MOD_LSFT), OSL(1), KC_BSPC, KC_BTN1, LT(2, KC_SPC), OSL(3)
+                              OSM(MOD_LSFT), OSL(1),MOUSE_MOD, KC_BTN1, LT(2, KC_SPC), OSL(3)
     ),
 
     [1] = LAYOUT_split_3x5_3u4(//numbers and symbols
@@ -460,8 +514,8 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
     [3] = LAYOUT_split_3x5_3u4(// function and algr
              _______,    _______,   _______,    _______,                   _______, _______,    _______,    _______,
-  KC_GRV, ALGR(KC_2), ALGR(KC_3),   S(KC_4), ALGR(KC_5),                   KC_PSCR, DM_REC1,    C(KC_BSPC), C(KC_DELETE), S(KC_RBRC),
-   KC_F1,      KC_F2,      KC_F3,     KC_F4,      KC_F5,                   KC_F6  , DM_PLY1,    KC_BSPC, KC_DELETE,       S(KC_BSLS),
+  KC_GRV, ALGR(KC_2), ALGR(KC_3),   S(KC_4), ALGR(KC_5),                   KC_PSCR, DM_REC1,    ALGR(KC_8), ALGR(KC_9), S(KC_RBRC),
+   KC_F1,      KC_F2,      KC_F3,     KC_F4,      KC_F5,                   KC_F6  , DM_PLY1,    KC_NUBS, S(KC_NUBS),       S(KC_BSLS),
    KC_F7,      KC_F8,      KC_F9,    KC_F10,     KC_F11,                   KC_F12,    print,    KC_BSLS, S(KC_MINS), ALGR(KC_RBRC),      
                                  C(KC_BSPC),  C(KC_DEL), _______, _______, _______, _______
     ),
