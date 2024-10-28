@@ -90,6 +90,8 @@ enum custom_keycodes {
     win_6,
     win_7,
     win_8,
+    win_9,
+    win_0,
     MOUSE_MOD,
 };
 
@@ -336,6 +338,25 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             SEND_STRING(SS_TAP(X_8));
         }
         break;
+        case win_9:
+        if (record->event.pressed) {
+            if (!is_win_active) {
+                    is_win_active = true;
+                    register_code(KC_LGUI); 
+                }
+            win_timer = timer_read();
+            SEND_STRING(SS_TAP(X_9));
+        }
+        break;
+        case win_0:
+        if (record->event.pressed) {
+            if (!is_win_active) {
+                    is_win_active = true;
+                    register_code(KC_LGUI); 
+                }
+            win_timer = timer_read();
+            SEND_STRING(SS_TAP(X_0));
+        }
     }
     return true;    
 };
@@ -536,4 +557,3 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
                                   OSM(MOD_LSFT), OSL(1), _______, KC_BTN1, LT(2, KC_SPC), OSL(3)
     ),
 };
-
