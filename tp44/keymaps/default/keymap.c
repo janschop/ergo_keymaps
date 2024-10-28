@@ -6,28 +6,6 @@
 
 
 
-// left tp just for scrolling, requires POINTING_DEVICE_COMBINED 
-
-// void keyboard_post_init_user(void) {
-//     pointing_device_set_cpi_on_side(true, 1000); //Set cpi on left side to a low value for slower scrolling.
-//     pointing_device_set_cpi_on_side(false, 8000); //Set cpi on right side to a reasonable value for mousing.
-// }
-
-// report_mouse_t pointing_device_task_combined_user(report_mouse_t left_report, report_mouse_t right_report) {
-//     left_report.h = left_report.x;
-//     left_report.v = left_report.y;
-//     left_report.x = 0;
-//     left_report.y = 0;
-//     return pointing_device_combine_reports(left_report, right_report);
-// }
-
-void keyboard_post_init_user(void) {
-  debug_enable=true;
-//   debug_matrix=true;
-//   debug_keyboard=true;
-  debug_mouse=true;
-}
-
 bool is_alt_tab_active = false; 
 uint16_t alt_tab_timer = 0;     
 uint16_t alt_tab_timeout = 0;
@@ -46,6 +24,23 @@ uint16_t default_cpi = 800;
 uint16_t scrolling_cpi = 25;
 uint16_t alt_tab_cpi = 4;
 uint16_t arrow_cpi = 30;//800;
+
+// Modify these values to adjust the scrolling speed
+#define SCROLL_DIVISOR_H 64.0
+#define SCROLL_DIVISOR_V 64.0
+
+// Variables to store accumulated scroll values
+float scroll_accumulated_h = 0;
+float scroll_accumulated_v = 0;
+
+void keyboard_post_init_user(void) {
+  debug_enable=true;
+//   debug_matrix=true;
+//   debug_keyboard=true;
+  debug_mouse=true;
+  pointing_device_set_cpi_on_side(false, default_cpi); //right
+  pointing_device_set_cpi_on_side(true, default_cpi); //left
+}
 
 enum custom_keycodes {
     SMTD_KEYCODES_BEGIN = SAFE_RANGE,
@@ -93,6 +88,7 @@ enum custom_keycodes {
     win_9,
     win_0,
     MOUSE_MOD,
+    M_ATAB,
 };
 
 #include "g/keymap_combo.h"
@@ -126,24 +122,27 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             }
             break;
 
-        case ALT_T(KC_X):
+        case M_ATAB:
             if (record->event.pressed) {
-                pointing_device_set_cpi(alt_tab_cpi);
+                pointing_device_set_cpi_on_side(true, alt_tab_cpi); //left
+                register_code(KC_LALT); 
+                SEND_STRING(SS_TAP(X_TAB)SS_DOWN(X_LSFT)SS_TAP(X_TAB)SS_UP(X_LSFT));
                 alt_tab_mode = true;
             } else {
-                pointing_device_set_cpi(default_cpi);
+                pointing_device_set_cpi_on_side(true, default_cpi); //left
+                unregister_code(KC_LALT);
                 alt_tab_mode = false;
             }
             break;
-        case MOUSE_MOD:
-            if (record->event.pressed) {
-                pointing_device_set_cpi(arrow_cpi);
-                arrow_key_mode = true;
-            } else {
-                pointing_device_set_cpi(default_cpi);
-                arrow_key_mode = false;
-            }
-            break;
+        // case MOUSE_MOD:
+        //     if (record->event.pressed) {
+        //         pointing_device_set_cpi(arrow_cpi);
+        //         arrow_key_mode = true;
+        //     } else {
+        //         pointing_device_set_cpi(default_cpi);
+        //         arrow_key_mode = false;
+        //     }
+        //     break;
         case bunnpris:
         if (record->event.pressed) {
             SEND_STRING("bunnpris");
@@ -379,45 +378,62 @@ layer_state_t layer_state_set_user(layer_state_t state) {
     }
     return state;
 }
-report_mouse_t pointing_device_task_user(report_mouse_t mouse_report) {
-    //TODO: add friction mode to scrolling
-    //TODO: check if windows high definition mode is possible
-    if (scrolling_mode) {
-        // mouse_report.h = mouse_report.x;
-        mouse_report.v = mouse_report.y;
-        mouse_report.x = 0;
-        mouse_report.y = 0;
-    }
+
+report_mouse_t pointing_device_task_combined_user(report_mouse_t left_report, report_mouse_t right_report) {
     if (alt_tab_mode){ 
-        if (mouse_report.x > 0) {
-            SEND_STRING(SS_TAP(X_TAB));
-        } else if (mouse_report.x < 0) {
-            SEND_STRING(SS_DOWN(X_LSFT)SS_TAP(X_TAB)SS_UP(X_LSFT));
-        }
-        
-        mouse_report.x = 0;
-        mouse_report.y = 0;
-    }
-    if (arrow_key_mode) {
-        if (mouse_report.x > 0) {
-            dprintf("x:%i y: %i\n",mouse_report.x, mouse_report.y);
+        if (left_report.x > 0) {
             SEND_STRING(SS_TAP(X_RIGHT));
-        } else if (mouse_report.x < 0) {
+        } else if (left_report.x < 0) {
             SEND_STRING(SS_TAP(X_LEFT));
-            dprintf("x:%i y: %i\n",mouse_report.x, mouse_report.y);
-        }
-        // if (mouse_report.y > 0) {
-        //     SEND_STRING(SS_TAP(X_DOWN));
-        //     dprintf("x:%i y: %i\n",mouse_report.x, mouse_report.y);
-        // } else if (mouse_report.y < 0) {
-        //     SEND_STRING(SS_TAP(X_UP));
-        //     dprintf("x:%i y: %i\n",mouse_report.x, mouse_report.y);
-        // }
-        mouse_report.x = 0;
-        mouse_report.y = 0;
+        } else if (left_report.y > 0) {
+            SEND_STRING(SS_TAP(X_DOWN));
+        } else if (left_report.y < 0) {
+            SEND_STRING(SS_TAP(X_UP));
+        }   
+        left_report.x = 0;
+        left_report.y = 0;
     }
-    return mouse_report;
+    left_report.x = -left_report.x;
+    if ((abs(left_report.x) / abs(left_report.y)) > 1) {
+        scroll_accumulated_h += (float)left_report.x / SCROLL_DIVISOR_H;
+    } else {
+        scroll_accumulated_v += (float)left_report.y / SCROLL_DIVISOR_V;
+    }
+    
+    // Assign integer parts of accumulated scroll values to the mouse report
+    left_report.h = (int8_t)scroll_accumulated_h;
+    left_report.v = (int8_t)scroll_accumulated_v;
+
+    // Update accumulated scroll values by subtracting the integer parts
+    scroll_accumulated_h -= (int8_t)scroll_accumulated_h;
+    scroll_accumulated_v -= (int8_t)scroll_accumulated_v;
+    left_report.x = 0;
+    left_report.y = 0;
+    return pointing_device_combine_reports(left_report, right_report);
 }
+
+
+
+//     if (arrow_key_mode) {
+//         if (mouse_report.x > 0) {
+//             dprintf("x:%i y: %i\n",mouse_report.x, mouse_report.y);
+//             SEND_STRING(SS_TAP(X_RIGHT));
+//         } else if (mouse_report.x < 0) {
+//             SEND_STRING(SS_TAP(X_LEFT));
+//             dprintf("x:%i y: %i\n",mouse_report.x, mouse_report.y);
+//         }
+//         // if (mouse_report.y > 0) {
+//         //     SEND_STRING(SS_TAP(X_DOWN));
+//         //     dprintf("x:%i y: %i\n",mouse_report.x, mouse_report.y);
+//         // } else if (mouse_report.y < 0) {
+//         //     SEND_STRING(SS_TAP(X_UP));
+//         //     dprintf("x:%i y: %i\n",mouse_report.x, mouse_report.y);
+//         // }
+//         mouse_report.x = 0;
+//         mouse_report.y = 0;
+//     }
+//     return mouse_report;
+// }
 
 uint16_t get_combo_term(uint16_t index, combo_t *combo) {
     switch (index) {
@@ -513,7 +529,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
      KC_Q,        KC_W,        KC_F,   KC_P, KC_B,                     KC_J,          KC_L, KC_U, KC_Y,   KC_SCLN,          
      CTL_T(KC_A), KC_R,        KC_S,   KC_T, KC_G,                     KC_K,          KC_N, KC_E, KC_I,   CTL_T(KC_O),
      SFT_T(KC_Z), ALT_T(KC_X), KC_C,   KC_D, KC_V,                     KC_M,          KC_H, cmsemi,KC_DOT, dshund,
-                              OSM(MOD_LSFT), OSL(1),MOUSE_MOD, KC_BTN1, LT(2, KC_SPC), OSL(3)
+                              OSM(MOD_LSFT), OSL(1), M_ATAB, KC_BTN1, LT(2, KC_SPC), OSL(3)
     ),
 
     [1] = LAYOUT_split_3x5_3u4(//numbers and symbols
