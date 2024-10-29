@@ -12,16 +12,15 @@ uint16_t alt_tab_timeout_long = 1200;
 
 bool is_win_active = false;
 uint16_t win_timer = 0;
-uint16_t win_timeout = 600;
+uint16_t win_timeout = 800;
 
 bool alt_tab_mode = false;
 bool arrow_key_mode = false;
-static bool scrolling_mode = false;
 
 uint16_t default_cpi = 800;
 uint16_t scrolling_cpi = 25;
 uint16_t alt_tab_cpi = 4;
-uint16_t arrow_cpi = 35;
+uint16_t arrow_cpi = 30;
 
 // Modify these values to adjust the scrolling speed
 #define SCROLL_DIVISOR_H 64.0
@@ -74,7 +73,7 @@ enum custom_keycodes {
     print,
     frac,
     double_click,
-    MOUSE_MACRO,
+    M_S_BT3,
     alt_tab,
     ctl_tab,
     ctl_s_tab,
@@ -90,7 +89,6 @@ enum custom_keycodes {
     win_8,
     win_9,
     win_0,
-    MOUSE_MOD,
     M_ATAB,
 };
 
@@ -135,15 +133,6 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                 pointing_device_set_cpi_on_side(true, default_cpi); //left
                 unregister_code(KC_LALT);
                 alt_tab_mode = false;
-            }
-            break;
-        case MOUSE_MOD:
-            if (record->event.pressed) {
-                pointing_device_set_cpi_on_side(true, arrow_cpi);
-                arrow_key_mode = true;
-            } else {
-                pointing_device_set_cpi_on_side(true, default_cpi);
-                arrow_key_mode = false;
             }
             break;
         case bunnpris:
@@ -224,7 +213,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             SEND_STRING(SS_TAP(X_BTN1) SS_DELAY(15) SS_TAP(X_BTN1));
         }
         break;
-         case MOUSE_MACRO :
+         case M_S_BT3:
         if (record->event.pressed) {
             SEND_STRING(SS_DOWN(X_LSFT) SS_DELAY(15) SS_DOWN(X_BTN3));
         } else {
@@ -369,13 +358,13 @@ layer_state_t layer_state_set_user(layer_state_t state) {
     }
     switch (get_highest_layer(state)) {
         case 1:  // If we're on the _RAISE layer enable scrolling mode
-            scrolling_mode = true;
-            pointing_device_set_cpi(scrolling_cpi);
+            pointing_device_set_cpi_on_side(false, arrow_cpi); //right
+            arrow_key_mode = true;
             break;
         default:
-            if (scrolling_mode) {  // check if we were scrolling before and set disable if so
-                scrolling_mode = false;
-                pointing_device_set_cpi(default_cpi);
+            if (arrow_key_mode) {
+                pointing_device_set_cpi_on_side(false, default_cpi);
+                arrow_key_mode = false;
             }
             break;
     }
@@ -423,13 +412,13 @@ report_mouse_t pointing_device_task_combined_user(report_mouse_t left_report, re
         // // Update accumulated scroll values by subtracting the integer parts
         // arrow_accumulated_h = 0;
         // arrow_accumulated_v = 0;
-        if (left_report.x > 0) {
+        if (right_report.x > 0) {
             SEND_STRING(SS_TAP(X_RIGHT));
-        } else if (left_report.x < 0) {
+        } else if (right_report.x < 0) {
             SEND_STRING(SS_TAP(X_LEFT));
         } 
-        left_report.x = 0;
-        left_report.y = 0;
+        right_report.x = 0;
+        right_report.y = 0;
     }
     if (!arrow_key_mode && !alt_tab_mode) {
         
@@ -458,6 +447,8 @@ uint16_t get_combo_term(uint16_t index, combo_t *combo) {
         case combo_tab:
             return 35;
         case combo_aa:
+            return 60;
+        case combo_r_click_r:
             return 60;
     }
     return COMBO_TERM;
@@ -506,32 +497,10 @@ void on_smtd_action(uint16_t keycode, smtd_action action, uint8_t tap_count) {
             }
             break;
         }
-        case dotcol: {                                           
-            switch (action) {                                     
-                case SMTD_ACTION_TOUCH: 
-                    if (tap_count > 0) {
-                        tap_code16(KC_BSPC);
-                    }                         
-                    switch (tap_count % 2) { 
-                        case 0: tap_code16(KC_DOT); break;
-                        case 1: tap_code16(S(KC_DOT)); break; 
-                        default: break;
-                    }
-                default: break;
-                break;
-            }
-            break;
-        }
     }
 }
 
 void matrix_scan_user(void) {
-    if (is_alt_tab_active) {
-        if (timer_elapsed(alt_tab_timer) > alt_tab_timeout) {
-            unregister_code(KC_LALT);
-            is_alt_tab_active = false;
-        }
-    }
     if (is_win_active) {
         if (timer_elapsed(win_timer) > win_timeout) {
             unregister_code(KC_LGUI);
@@ -543,25 +512,24 @@ void matrix_scan_user(void) {
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
     [0] = LAYOUT_split_3x5_3u4(//colemak dh
-                 win_1,       win_2,  win_3,win_4,                     win_5,        win_6,win_7, win_8,
-     KC_Q,        KC_W,        KC_F,   KC_P, KC_B,                     KC_J,          KC_L, KC_U, KC_Y,   KC_SCLN,          
-     CTL_T(KC_A), KC_R,        KC_S,   KC_T, KC_G,                     KC_K,          KC_N, KC_E, KC_I,   CTL_T(KC_O),
-     SFT_T(KC_Z), ALT_T(KC_X), KC_C,   KC_D, KC_V,                     KC_M,          KC_H, cmsemi,KC_DOT, dshund,
-                              OSM(MOD_LSFT), OSL(1), M_ATAB, KC_BTN1, LT(2, KC_SPC), OSL(3)
+               KC_MPRV,     KC_MPLY,KC_MNXT, KC_PSCR,                     KC_MUTE,    KC_VOLD,KC_VOLU,_______,
+     KC_Q,        KC_W,        KC_F,   KC_P,    KC_B,                     KC_J,          KC_L, KC_U, KC_Y,   KC_SCLN,          
+     CTL_T(KC_A), KC_R,        KC_S,   KC_T,    KC_G,                     KC_K,          KC_N, KC_E, KC_I,   CTL_T(KC_O),
+     SFT_T(KC_Z), ALT_T(KC_X), KC_C,   KC_D,    KC_V,                     KC_M,          KC_H, cmsemi,KC_DOT, dshund,
+                              OSM(MOD_LSFT),    OSL(1), M_ATAB, KC_BTN1, LT(2, KC_SPC), OSL(3)
     ),
 
     [1] = LAYOUT_split_3x5_3u4(//numbers and symbols
-                  _______, _______, _______, _______,                        KC_NUBS, ALGR(KC_8), ALGR(KC_9), S(KC_NUBS),
+                  _______, _______, _______, _______,                        _______, _______, _______, _______,
     S(KC_1),   S(KC_2), S(KC_3), ALGR(KC_4), S(KC_5),                        S(KC_6), S(KC_7), S(KC_8), S(KC_9), S(KC_0),
        KC_1,      KC_2,    KC_3,       KC_4,    KC_5,                        KC_6   ,    KC_7,    KC_8,    KC_9,    KC_0,
     KC_LSFT, ctl_s_tab, KC_RBRC,    ctl_tab, KC_BSLS,                        KC_EQL , KC_MINS, _______, _______, _______,
-                                     KC_DEL, _______,MOUSE_MOD, double_click, KC_BTN2, _______
+                                     KC_DEL, _______, _______, double_click, KC_BTN2, _______
     ),
    
-    [2] = LAYOUT_split_3x5_3u4(//navigation
-    // DM_REC1 DM_PLY1 KC_PSCR 
+    [2] = LAYOUT_split_3x5_3u4(//navigation 
              _______, _______,   _______, _______,                   _______,    _______, _______,     _______,
-    KC_VOLD, KC_MPRV, KC_MPLY,   KC_MNXT, KC_VOLU,                   KC_MUTE, ALGR(KC_7), S(KC_8),     S(KC_9), ALGR(KC_0), 
+    _______, _______, _______,   _______, _______,                   _______, ALGR(KC_7), S(KC_8),     S(KC_9), ALGR(KC_0), 
     _______, _______, _______,   _______, _______,                   KC_HOME, C(KC_LEFT),   KC_UP, C(KC_RIGHT),     KC_END, 
     KC_LSFT, KC_LALT, _______,   _______,   LLOCK,                   alt_tab,    KC_LEFT, KC_DOWN,    KC_RIGHT,    _______,
                                  KC_BSPC,  KC_DEL,   LLOCK, _______, _______, TG(4)
