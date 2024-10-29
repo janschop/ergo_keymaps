@@ -15,6 +15,7 @@
 #define TAPPING_TERM 250
 #define COMBO_TERM 45
 #define COMBO_TERM_PER_COMBO
+#define QUICK_TAP_TERM 0
 
 // sm_td
 #define MAX_DEFERRED_EXECUTORS 10

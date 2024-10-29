@@ -4,8 +4,6 @@
 #include QMK_KEYBOARD_H
 #include "features/layer_lock.h"
 
-
-
 bool is_alt_tab_active = false; 
 uint16_t alt_tab_timer = 0;     
 uint16_t alt_tab_timeout = 0;
@@ -23,7 +21,7 @@ static bool scrolling_mode = false;
 uint16_t default_cpi = 800;
 uint16_t scrolling_cpi = 25;
 uint16_t alt_tab_cpi = 4;
-uint16_t arrow_cpi = 30;//800;
+uint16_t arrow_cpi = 35;
 
 // Modify these values to adjust the scrolling speed
 #define SCROLL_DIVISOR_H 64.0
@@ -32,6 +30,11 @@ uint16_t arrow_cpi = 30;//800;
 // Variables to store accumulated scroll values
 float scroll_accumulated_h = 0;
 float scroll_accumulated_v = 0;
+
+// #define ARROW_DIVISOR_H 128.0
+// #define ARROW_DIVISOR_V 128.0
+// float arrow_accumulated_h = 0;
+// float arrow_accumulated_v = 0;
 
 void keyboard_post_init_user(void) {
   debug_enable=true;
@@ -134,15 +137,15 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                 alt_tab_mode = false;
             }
             break;
-        // case MOUSE_MOD:
-        //     if (record->event.pressed) {
-        //         pointing_device_set_cpi(arrow_cpi);
-        //         arrow_key_mode = true;
-        //     } else {
-        //         pointing_device_set_cpi(default_cpi);
-        //         arrow_key_mode = false;
-        //     }
-        //     break;
+        case MOUSE_MOD:
+            if (record->event.pressed) {
+                pointing_device_set_cpi_on_side(true, arrow_cpi);
+                arrow_key_mode = true;
+            } else {
+                pointing_device_set_cpi_on_side(true, default_cpi);
+                arrow_key_mode = false;
+            }
+            break;
         case bunnpris:
         if (record->event.pressed) {
             SEND_STRING("bunnpris");
@@ -378,7 +381,6 @@ layer_state_t layer_state_set_user(layer_state_t state) {
     }
     return state;
 }
-
 report_mouse_t pointing_device_task_combined_user(report_mouse_t left_report, report_mouse_t right_report) {
     if (alt_tab_mode){ 
         if (left_report.x > 0) {
@@ -393,47 +395,63 @@ report_mouse_t pointing_device_task_combined_user(report_mouse_t left_report, re
         left_report.x = 0;
         left_report.y = 0;
     }
-    left_report.x = -left_report.x;
-    if ((abs(left_report.x) / abs(left_report.y)) > 1) {
-        scroll_accumulated_h += (float)left_report.x / SCROLL_DIVISOR_H;
-    } else {
-        scroll_accumulated_v += (float)left_report.y / SCROLL_DIVISOR_V;
-    }
-    
-    // Assign integer parts of accumulated scroll values to the mouse report
-    left_report.h = (int8_t)scroll_accumulated_h;
-    left_report.v = (int8_t)scroll_accumulated_v;
+    if (arrow_key_mode) {
+        // if ((abs(left_report.x) / abs(left_report.y)) > 1) {
+        //     arrow_accumulated_h += (float)left_report.x / ARROW_DIVISOR_H;
+        // } else {
+        //     arrow_accumulated_v += (float)left_report.y / ARROW_DIVISOR_V;
+        // }
+        
+        // // Assign integer parts of accumulated scroll values to the mouse report
+        // left_report.h = (int8_t)scroll_accumulated_h;
+        // left_report.v = (int8_t)scroll_accumulated_v;
 
-    // Update accumulated scroll values by subtracting the integer parts
-    scroll_accumulated_h -= (int8_t)scroll_accumulated_h;
-    scroll_accumulated_v -= (int8_t)scroll_accumulated_v;
-    left_report.x = 0;
-    left_report.y = 0;
+        // if (arrow_accumulated_h > threshold) {
+        //     // dprintf("x:%i y: %i\n",mouse_report.x, mouse_report.y);
+        //     SEND_STRING(SS_TAP(X_RIGHT));
+        // } else if (arrow_accumulated_h < -threshold) {
+        //     SEND_STRING(SS_TAP(X_LEFT));
+        //     // dprintf("x:%i y: %i\n",mouse_report.x, mouse_report.y);
+        // }
+        // if (arrow_accumulated_v > threshold) {
+        //     SEND_STRING(SS_TAP(X_DOWN));
+        //     // dprintf("x:%i y: %i\n",mouse_report.x, mouse_report.y);
+        // } else if (arrow_accumulated_v < -threshold) {
+        //     SEND_STRING(SS_TAP(X_UP));
+        //     // dprintf("x:%i y: %i\n",mouse_report.x, mouse_report.y);
+        // }
+        // // Update accumulated scroll values by subtracting the integer parts
+        // arrow_accumulated_h = 0;
+        // arrow_accumulated_v = 0;
+        if (left_report.x > 0) {
+            SEND_STRING(SS_TAP(X_RIGHT));
+        } else if (left_report.x < 0) {
+            SEND_STRING(SS_TAP(X_LEFT));
+        } 
+        left_report.x = 0;
+        left_report.y = 0;
+    }
+    if (!arrow_key_mode && !alt_tab_mode) {
+        
+        left_report.x = -left_report.x;
+        if ((abs(left_report.x) / abs(left_report.y)) > 1) {
+            scroll_accumulated_h += (float)left_report.x / SCROLL_DIVISOR_H;
+        } else {
+            scroll_accumulated_v += (float)left_report.y / SCROLL_DIVISOR_V;
+        }
+        
+        // Assign integer parts of accumulated scroll values to the mouse report
+        left_report.h = (int8_t)scroll_accumulated_h;
+        left_report.v = (int8_t)scroll_accumulated_v;
+
+        // Update accumulated scroll values by subtracting the integer parts
+        scroll_accumulated_h -= (int8_t)scroll_accumulated_h;
+        scroll_accumulated_v -= (int8_t)scroll_accumulated_v;
+        left_report.x = 0;
+        left_report.y = 0;
+    }
     return pointing_device_combine_reports(left_report, right_report);
 }
-
-
-
-//     if (arrow_key_mode) {
-//         if (mouse_report.x > 0) {
-//             dprintf("x:%i y: %i\n",mouse_report.x, mouse_report.y);
-//             SEND_STRING(SS_TAP(X_RIGHT));
-//         } else if (mouse_report.x < 0) {
-//             SEND_STRING(SS_TAP(X_LEFT));
-//             dprintf("x:%i y: %i\n",mouse_report.x, mouse_report.y);
-//         }
-//         // if (mouse_report.y > 0) {
-//         //     SEND_STRING(SS_TAP(X_DOWN));
-//         //     dprintf("x:%i y: %i\n",mouse_report.x, mouse_report.y);
-//         // } else if (mouse_report.y < 0) {
-//         //     SEND_STRING(SS_TAP(X_UP));
-//         //     dprintf("x:%i y: %i\n",mouse_report.x, mouse_report.y);
-//         // }
-//         mouse_report.x = 0;
-//         mouse_report.y = 0;
-//     }
-//     return mouse_report;
-// }
 
 uint16_t get_combo_term(uint16_t index, combo_t *combo) {
     switch (index) {
@@ -537,7 +555,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     S(KC_1),   S(KC_2), S(KC_3), ALGR(KC_4), S(KC_5),                        S(KC_6), S(KC_7), S(KC_8), S(KC_9), S(KC_0),
        KC_1,      KC_2,    KC_3,       KC_4,    KC_5,                        KC_6   ,    KC_7,    KC_8,    KC_9,    KC_0,
     KC_LSFT, ctl_s_tab, KC_RBRC,    ctl_tab, KC_BSLS,                        KC_EQL , KC_MINS, _______, _______, _______,
-                                     KC_DEL, _______, _______, double_click, KC_BTN2, _______
+                                     KC_DEL, _______,MOUSE_MOD, double_click, KC_BTN2, _______
     ),
    
     [2] = LAYOUT_split_3x5_3u4(//navigation
