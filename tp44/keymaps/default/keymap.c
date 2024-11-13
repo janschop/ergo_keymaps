@@ -18,13 +18,13 @@ bool alt_tab_mode = false;
 bool arrow_key_mode = false;
 
 uint16_t default_cpi = 800;
-uint16_t scrolling_cpi = 25;
+uint16_t scrolling_cpi = 30;
 uint16_t alt_tab_cpi = 4;
 uint16_t arrow_cpi = 30;
 
 // Modify these values to adjust the scrolling speed
 #define SCROLL_DIVISOR_H 64.0
-#define SCROLL_DIVISOR_V 64.0
+#define SCROLL_DIVISOR_V 50.0
 
 // Variables to store accumulated scroll values
 float scroll_accumulated_h = 0;
@@ -370,6 +370,7 @@ layer_state_t layer_state_set_user(layer_state_t state) {
     }
     return state;
 }
+
 report_mouse_t pointing_device_task_combined_user(report_mouse_t left_report, report_mouse_t right_report) {
     if (alt_tab_mode){ 
         if (left_report.x > 0) {
@@ -420,8 +421,7 @@ report_mouse_t pointing_device_task_combined_user(report_mouse_t left_report, re
         right_report.x = 0;
         right_report.y = 0;
     }
-    if (!arrow_key_mode && !alt_tab_mode) {
-        
+    if (!alt_tab_mode) {       
         left_report.x = -left_report.x;
         if ((abs(left_report.x) / abs(left_report.y)) > 1) {
             scroll_accumulated_h += (float)left_report.x / SCROLL_DIVISOR_H;
@@ -512,11 +512,11 @@ void matrix_scan_user(void) {
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
     [0] = LAYOUT_split_3x5_3u4(//colemak dh
-               KC_MPRV,     KC_MPLY,KC_MNXT, KC_PSCR,                     KC_MUTE,    KC_VOLD,KC_VOLU,_______,
-     KC_Q,        KC_W,        KC_F,   KC_P,    KC_B,                     KC_J,          KC_L, KC_U, KC_Y,   KC_SCLN,          
-     CTL_T(KC_A), KC_R,        KC_S,   KC_T,    KC_G,                     KC_K,          KC_N, KC_E, KC_I,   CTL_T(KC_O),
-     SFT_T(KC_Z), ALT_T(KC_X), KC_C,   KC_D,    KC_V,                     KC_M,          KC_H, cmsemi,KC_DOT, dshund,
-                              OSM(MOD_LSFT),    OSL(1), M_ATAB, KC_BTN1, LT(2, KC_SPC), OSL(3)
+                 KC_MPRV,     KC_MPLY,      KC_MNXT, KC_PSCR,                  KC_MUTE,    KC_VOLD, KC_VOLU, _______,
+     KC_Q,          KC_W,        KC_F,         KC_P,    KC_B,                  KC_J,          KC_L,    KC_U,    KC_Y, KC_SCLN,          
+     CTL_T(KC_A),   KC_R,        KC_S,         KC_T,    KC_G,                  KC_K,          KC_N,    KC_E,    KC_I, CTL_T(KC_O),
+     SFT_T(KC_Z),   ALT_T(KC_X), KC_C,         KC_D,    KC_V,                  KC_M,          KC_H,  cmsemi,  KC_DOT, dshund,
+                                      OSM(MOD_LSFT),  OSL(1), M_ATAB, KC_BTN1, LT(2, KC_SPC), OSL(3)
     ),
 
     [1] = LAYOUT_split_3x5_3u4(//numbers and symbols
