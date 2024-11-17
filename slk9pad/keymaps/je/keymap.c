@@ -1,5 +1,4 @@
 #include QMK_KEYBOARD_H
-#include "g/keymap_combo.h"
 
 void keyboard_post_init_user(void) {
 //   debug_enable=true;
@@ -13,9 +12,12 @@ enum my_keycodes {
     lft_dsktp,
     rght_dsktp,
     print,
-    frac
+    frac,
+    win_left,
+    win_right,
 };
 
+#include "g/keymap_combo.h"
 
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     switch (keycode) {
@@ -44,6 +46,20 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                 SEND_STRING(SS_DOWN(X_LGUI)SS_DOWN(X_LCTL)SS_TAP(X_RIGHT)SS_UP(X_LCTL)SS_UP(X_LGUI));
             }
             return false;
+        case win_left:
+            if (record->event.pressed) {
+                SEND_STRING(SS_DOWN(X_LGUI) SS_DELAY(15) SS_DOWN(X_LEFT));
+            } else {
+                SEND_STRING(SS_UP(X_LEFT) SS_UP(X_LGUI));
+            }
+            return false;
+        case win_right:
+            if (record->event.pressed) {
+                SEND_STRING(SS_DOWN(X_LGUI) SS_DELAY(15) SS_DOWN(X_RIGHT));
+            } else {
+                SEND_STRING(SS_UP(X_RIGHT) SS_UP(X_LGUI));
+            }
+            return false;
         default:
             return true; // Process all other keycodes normally
     }
@@ -62,5 +78,10 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
         KC_7, KC_8, KC_9,
         KC_4, KC_5, KC_6,
         KC_1, KC_2, KC_3
+    ),
+    [2] = LAYOUT_macro_3x3(
+        C(KC_LEFT), KC_UP,      C(KC_RIGHT),
+        KC_LEFT,    KC_DOWN,    KC_RIGHT,  
+        KC_BSPC,    KC_LCTL,    KC_LSFT
     ),
 };

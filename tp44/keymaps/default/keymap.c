@@ -12,7 +12,7 @@ uint16_t alt_tab_timeout_long = 1200;
 
 bool is_win_active = false;
 uint16_t win_timer = 0;
-uint16_t win_timeout = 800;
+uint16_t win_timeout = 1500;
 
 bool alt_tab_mode = false;
 bool arrow_key_mode = false;
@@ -36,10 +36,10 @@ float scroll_accumulated_v = 0;
 // float arrow_accumulated_v = 0;
 
 void keyboard_post_init_user(void) {
-  debug_enable=true;
+//   debug_enable=true;
 //   debug_matrix=true;
 //   debug_keyboard=true;
-  debug_mouse=true;
+//   debug_mouse=true;
   pointing_device_set_cpi_on_side(false, default_cpi); //right
   pointing_device_set_cpi_on_side(true, default_cpi); //left
 }
@@ -90,286 +90,11 @@ enum custom_keycodes {
     win_9,
     win_0,
     M_ATAB,
+    param,
 };
 
 #include "g/keymap_combo.h"
 #include "sm_td.h"
-
-bool process_record_user(uint16_t keycode, keyrecord_t *record) {
-    if (!process_smtd(keycode, record)) { return false; }
-    if (!process_layer_lock(keycode, record, LLOCK)) { return false; }
-    switch (keycode) {
-        case ALT_TAB:
-            if (record->event.pressed) {
-                if (!is_alt_tab_active) {
-                    is_alt_tab_active = true;
-                    register_code(KC_LALT); 
-                    SEND_STRING(SS_DOWN(X_LSFT)SS_TAP(X_TAB)SS_UP(X_LSFT));
-                    alt_tab_timeout = alt_tab_timeout_long;
-                } else {
-                    alt_tab_timeout = alt_tab_timeout_short;
-                }
-                alt_tab_timer = timer_read();
-                register_code(KC_TAB);
-            } else {
-                unregister_code(KC_TAB);
-            }
-            break;
-        case C(KC_W):
-            if (record->event.pressed) {
-                if (is_alt_tab_active) {
-                    alt_tab_timer = timer_read();
-                }
-            }
-            break;
-
-        case M_ATAB:
-            if (record->event.pressed) {
-                pointing_device_set_cpi_on_side(true, alt_tab_cpi); //left
-                register_code(KC_LALT); 
-                SEND_STRING(SS_TAP(X_TAB)SS_DOWN(X_LSFT)SS_TAP(X_TAB)SS_UP(X_LSFT));
-                alt_tab_mode = true;
-            } else {
-                pointing_device_set_cpi_on_side(true, default_cpi); //left
-                unregister_code(KC_LALT);
-                alt_tab_mode = false;
-            }
-            break;
-        case bunnpris:
-        if (record->event.pressed) {
-            SEND_STRING("bunnpris");
-        }
-        break;
-
-        case kiwi:
-        if (record->event.pressed) {
-            SEND_STRING("kiwi");
-        }
-        break;
-
-        case rema:
-        if (record->event.pressed) {
-            SEND_STRING("rema");
-        } 
-        break;    
-        
-        case meny:
-        if (record->event.pressed) {
-            SEND_STRING("meny");
-        } 
-        break;     
-
-        case mail:
-        if (record->event.pressed) {
-            SEND_STRING("jan.erik"SS_RALT("2")"schopmeier.com");
-        }
-        break;
-        
-        case first_name:
-        if (record->event.pressed) {
-            SEND_STRING("Jan Erik ");
-        }
-        break;
-        
-        case last_name:
-        if (record->event.pressed) {
-            SEND_STRING("Schopmeier");
-        }
-        break;
-        
-        case number:
-        if (record->event.pressed) {
-            SEND_STRING("46360691");
-        }
-        break;
-
-        case print:
-        if (record->event.pressed) {
-            SEND_STRING("printf"SS_DOWN(X_LSFT)"82"SS_UP(X_LSFT));
-            SEND_STRING("=r=n"SS_DOWN(X_LSFT)"29,"SS_UP(X_LSFT));
-            SEND_STRING(SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT));
-            // SEND_STRING("print"SS_DOWN(X_LSFT)"8229"SS_UP(X_LSFT));
-            // SEND_STRING(SS_TAP(X_LEFT)SS_TAP(X_LEFT));
-        }
-        break;
-        case frac: //\frac{}{}
-        if (record->event.pressed) {
-            SEND_STRING("=frac"SS_ALGR("7")SS_ALGR("0")SS_ALGR("7")SS_ALGR("0"));
-            SEND_STRING(SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT));
-        }
-        break;
-        case lft_dsktp:
-        if (record->event.pressed) {
-            SEND_STRING(SS_DOWN(X_LGUI)SS_DOWN(X_LCTL)SS_TAP(X_LEFT)SS_UP(X_LCTL)SS_UP(X_LGUI));
-        }
-        break;
-        case rght_dsktp:
-        if (record->event.pressed) {
-            SEND_STRING(SS_DOWN(X_LGUI)SS_DOWN(X_LCTL)SS_TAP(X_RIGHT)SS_UP(X_LCTL)SS_UP(X_LGUI));
-        }
-        break;
-        case double_click:
-        if (record->event.pressed) {
-            SEND_STRING(SS_TAP(X_BTN1) SS_DELAY(15) SS_TAP(X_BTN1));
-        }
-        break;
-         case M_S_BT3:
-        if (record->event.pressed) {
-            SEND_STRING(SS_DOWN(X_LSFT) SS_DELAY(15) SS_DOWN(X_BTN3));
-        } else {
-            SEND_STRING(SS_UP(X_LSFT) SS_UP(X_BTN3));
-        }
-        break;
-        case alt_tab:
-        if (record->event.pressed) {
-            SEND_STRING(SS_DOWN(X_LALT)SS_TAP(X_TAB)SS_TAP(X_LEFT));
-        }
-        break;
-        case ctl_tab:
-        if (record->event.pressed) {
-            SEND_STRING(SS_DOWN(X_LCTL)SS_TAP(X_TAB));
-        }
-        break;
-        case ctl_s_tab:
-        if (record->event.pressed) {
-            SEND_STRING(SS_DOWN(X_LCTL)SS_DOWN(X_LSFT)SS_TAP(X_TAB)SS_UP(X_LSFT));
-        }
-        break;
-        case win_left:
-        if (record->event.pressed) {
-            SEND_STRING(SS_DOWN(X_LGUI) SS_DELAY(15) SS_DOWN(X_LEFT));
-        } else {
-            SEND_STRING(SS_UP(X_LEFT) SS_UP(X_LGUI));
-        }
-        break;
-        case win_right:
-        if (record->event.pressed) {
-            SEND_STRING(SS_DOWN(X_LGUI) SS_DELAY(15) SS_DOWN(X_RIGHT));
-        } else {
-            SEND_STRING(SS_UP(X_RIGHT) SS_UP(X_LGUI));
-        }
-        break;
-        case win_1:
-        if (record->event.pressed) {
-            if (!is_win_active) {
-                    is_win_active = true;
-                    register_code(KC_LGUI); 
-                }
-            win_timer = timer_read();
-            SEND_STRING(SS_TAP(X_1));
-        }
-        break;
-        case win_2:
-        if (record->event.pressed) {
-            if (!is_win_active) {
-                    is_win_active = true;
-                    register_code(KC_LGUI); 
-                }
-            win_timer = timer_read();
-            SEND_STRING(SS_TAP(X_2));
-        }
-        break;
-        case win_3:
-        if (record->event.pressed) {
-            if (!is_win_active) {
-                    is_win_active = true;
-                    register_code(KC_LGUI); 
-                }
-            win_timer = timer_read();
-            SEND_STRING(SS_TAP(X_3));
-        }
-        break;
-        case win_4:
-        if (record->event.pressed) {
-            if (!is_win_active) {
-                    is_win_active = true;
-                    register_code(KC_LGUI); 
-                }
-            win_timer = timer_read();
-            SEND_STRING(SS_TAP(X_4));
-        }
-        break;
-        case win_5:
-        if (record->event.pressed) {
-            if (!is_win_active) {
-                    is_win_active = true;
-                    register_code(KC_LGUI); 
-                }
-            win_timer = timer_read();
-            SEND_STRING(SS_TAP(X_5));
-        }
-        break;
-        case win_6:
-        if (record->event.pressed) {
-            if (!is_win_active) {
-                    is_win_active = true;
-                    register_code(KC_LGUI); 
-                }
-            win_timer = timer_read();
-            SEND_STRING(SS_TAP(X_6));
-        }
-        break;
-        case win_7:
-        if (record->event.pressed) {
-            if (!is_win_active) {
-                    is_win_active = true;
-                    register_code(KC_LGUI); 
-                }
-            win_timer = timer_read();
-            SEND_STRING(SS_TAP(X_7));
-        }
-        break;
-        case win_8:
-        if (record->event.pressed) {
-            if (!is_win_active) {
-                    is_win_active = true;
-                    register_code(KC_LGUI); 
-                }
-            win_timer = timer_read();
-            SEND_STRING(SS_TAP(X_8));
-        }
-        break;
-        case win_9:
-        if (record->event.pressed) {
-            if (!is_win_active) {
-                    is_win_active = true;
-                    register_code(KC_LGUI); 
-                }
-            win_timer = timer_read();
-            SEND_STRING(SS_TAP(X_9));
-        }
-        break;
-        case win_0:
-        if (record->event.pressed) {
-            if (!is_win_active) {
-                    is_win_active = true;
-                    register_code(KC_LGUI); 
-                }
-            win_timer = timer_read();
-            SEND_STRING(SS_TAP(X_0));
-        }
-    }
-    return true;    
-};
-
-layer_state_t layer_state_set_user(layer_state_t state) {
-    if (IS_LAYER_ON_STATE(state, 0)) {
-        SEND_STRING(SS_UP(X_LALT)SS_UP(X_LCTL)SS_UP(X_LGUI));
-    }
-    switch (get_highest_layer(state)) {
-        case 1:  // If we're on the _RAISE layer enable scrolling mode
-            pointing_device_set_cpi_on_side(false, arrow_cpi); //right
-            arrow_key_mode = true;
-            break;
-        default:
-            if (arrow_key_mode) {
-                pointing_device_set_cpi_on_side(false, default_cpi);
-                arrow_key_mode = false;
-            }
-            break;
-    }
-    return state;
-}
 
 report_mouse_t pointing_device_task_combined_user(report_mouse_t left_report, report_mouse_t right_report) {
     if (alt_tab_mode){ 
@@ -442,6 +167,286 @@ report_mouse_t pointing_device_task_combined_user(report_mouse_t left_report, re
     return pointing_device_combine_reports(left_report, right_report);
 }
 
+layer_state_t layer_state_set_user(layer_state_t state) {
+    if (IS_LAYER_ON_STATE(state, 0)) {
+        SEND_STRING(SS_UP(X_LALT)SS_UP(X_LCTL)SS_UP(X_LGUI));
+    }
+    switch (get_highest_layer(state)) {
+        case 1:  // If we're on the _RAISE layer enable scrolling mode
+            pointing_device_set_cpi_on_side(false, arrow_cpi); //right
+            arrow_key_mode = true;
+            break;
+        default:
+            if (arrow_key_mode) {
+                pointing_device_set_cpi_on_side(false, default_cpi);
+                arrow_key_mode = false;
+            }
+            break;
+    }
+    return state;
+}
+
+bool process_record_user(uint16_t keycode, keyrecord_t *record) {
+    if (!process_smtd(keycode, record)) { return false; }
+    if (!process_layer_lock(keycode, record, LLOCK)) { return false; }
+    switch (keycode) {
+        case ALT_TAB:
+            if (record->event.pressed) {
+                if (!is_alt_tab_active) {
+                    is_alt_tab_active = true;
+                    register_code(KC_LALT); 
+                    SEND_STRING(SS_DOWN(X_LSFT)SS_TAP(X_TAB)SS_UP(X_LSFT));
+                    alt_tab_timeout = alt_tab_timeout_long;
+                } else {
+                    alt_tab_timeout = alt_tab_timeout_short;
+                }
+                alt_tab_timer = timer_read();
+                register_code(KC_TAB);
+            } else {
+                unregister_code(KC_TAB);
+            }
+            break;
+        case C(KC_W):
+            if (record->event.pressed) {
+                if (is_alt_tab_active) {
+                    alt_tab_timer = timer_read();
+                }
+            }
+            break;
+
+        case M_ATAB:
+            if (record->event.pressed) {
+                pointing_device_set_cpi_on_side(true, alt_tab_cpi); //left
+                register_code(KC_LALT); 
+                SEND_STRING(SS_TAP(X_TAB)SS_DOWN(X_LSFT)SS_TAP(X_TAB)SS_UP(X_LSFT));
+                alt_tab_mode = true;
+            } else {
+                pointing_device_set_cpi_on_side(true, default_cpi); //left
+                unregister_code(KC_LALT);
+                alt_tab_mode = false;
+            }
+            break;
+        case bunnpris:
+            if (record->event.pressed) {
+                SEND_STRING("bunnpris");
+            }
+            break;
+        case kiwi:
+            if (record->event.pressed) {
+                SEND_STRING("kiwi");
+            }
+            break;
+        case rema:
+            if (record->event.pressed) {
+                SEND_STRING("rema");
+            } 
+            break;    
+        case meny:
+            if (record->event.pressed) {
+                SEND_STRING("meny");
+            } 
+            break;     
+        case mail:
+            if (record->event.pressed) {
+                SEND_STRING("jan.erik"SS_RALT("2")"schopmeier.com");
+            }
+            break;
+        case first_name:
+            if (record->event.pressed) {
+                SEND_STRING("Jan Erik ");
+            }
+            break;
+        case last_name:
+            if (record->event.pressed) {
+                SEND_STRING("Schopmeier");
+            }
+            break;
+        case number:
+            if (record->event.pressed) {
+                SEND_STRING("46360691");
+            }
+            break;
+        case print:
+            if (record->event.pressed) {
+                SEND_STRING("printf"SS_DOWN(X_LSFT)"82"SS_UP(X_LSFT));
+                SEND_STRING("=r=n"SS_DOWN(X_LSFT)"29,"SS_UP(X_LSFT));
+                SEND_STRING(SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT));
+                // SEND_STRING("print"SS_DOWN(X_LSFT)"8229"SS_UP(X_LSFT));
+                // SEND_STRING(SS_TAP(X_LEFT)SS_TAP(X_LEFT));
+            }
+            break;
+        case frac: //\frac{}{}
+            if (record->event.pressed) {
+                SEND_STRING("=frac"SS_ALGR("7")SS_ALGR("0")SS_ALGR("7")SS_ALGR("0"));
+                SEND_STRING(SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT));
+            }
+            break;
+        case lft_dsktp:
+            if (record->event.pressed) {
+                SEND_STRING(SS_DOWN(X_LGUI)SS_DOWN(X_LCTL)SS_TAP(X_LEFT)SS_UP(X_LCTL)SS_UP(X_LGUI));
+            }
+            break;
+        case rght_dsktp:
+            if (record->event.pressed) {
+                SEND_STRING(SS_DOWN(X_LGUI)SS_DOWN(X_LCTL)SS_TAP(X_RIGHT)SS_UP(X_LCTL)SS_UP(X_LGUI));
+            }
+            break;
+        case double_click:
+            if (record->event.pressed) {
+                SEND_STRING(SS_TAP(X_BTN1) SS_DELAY(15) SS_TAP(X_BTN1));
+            }
+            break;
+        case M_S_BT3:
+            if (record->event.pressed) {
+                SEND_STRING(SS_DOWN(X_LSFT) SS_DELAY(15) SS_DOWN(X_BTN3));
+            } else {
+                SEND_STRING(SS_UP(X_LSFT) SS_UP(X_BTN3));
+            }
+            break;
+        case alt_tab:
+            if (record->event.pressed) {
+                SEND_STRING(SS_DOWN(X_LALT)SS_TAP(X_TAB)SS_TAP(X_LEFT));
+            }
+            break;
+        case ctl_tab:
+            if (record->event.pressed) {
+                SEND_STRING(SS_DOWN(X_LCTL)SS_TAP(X_TAB));
+            }
+            break;
+        case ctl_s_tab:
+            if (record->event.pressed) {
+                SEND_STRING(SS_DOWN(X_LCTL)SS_DOWN(X_LSFT)SS_TAP(X_TAB)SS_UP(X_LSFT));
+            }
+            break;
+        case win_left:
+            if (record->event.pressed) {
+                SEND_STRING(SS_DOWN(X_LGUI) SS_DELAY(15) SS_DOWN(X_LEFT));
+            } else {
+                SEND_STRING(SS_UP(X_LEFT) SS_UP(X_LGUI));
+            }
+            break;
+        case win_right:
+            if (record->event.pressed) {
+                SEND_STRING(SS_DOWN(X_LGUI) SS_DELAY(15) SS_DOWN(X_RIGHT));
+            } else {
+                SEND_STRING(SS_UP(X_RIGHT) SS_UP(X_LGUI));
+            }
+            break;
+        case win_1:
+            if (record->event.pressed) {
+                if (!is_win_active) {
+                        is_win_active = true;
+                        register_code(KC_LGUI); 
+                    }
+                win_timer = timer_read();
+                SEND_STRING(SS_TAP(X_1));
+            }
+            break;
+        case win_2:
+            if (record->event.pressed) {
+                if (!is_win_active) {
+                        is_win_active = true;
+                        register_code(KC_LGUI); 
+                    }
+                win_timer = timer_read();
+                SEND_STRING(SS_TAP(X_2));
+            }
+            break;
+        case win_3:
+            if (record->event.pressed) {
+                if (!is_win_active) {
+                        is_win_active = true;
+                        register_code(KC_LGUI); 
+                    }
+                win_timer = timer_read();
+                SEND_STRING(SS_TAP(X_3));
+            }
+            break;
+        case win_4:
+            if (record->event.pressed) {
+                if (!is_win_active) {
+                        is_win_active = true;
+                        register_code(KC_LGUI); 
+                    }
+                win_timer = timer_read();
+                SEND_STRING(SS_TAP(X_4));
+            }
+            break;
+        case win_5:
+            if (record->event.pressed) {
+                if (!is_win_active) {
+                        is_win_active = true;
+                        register_code(KC_LGUI); 
+                    }
+                win_timer = timer_read();
+                SEND_STRING(SS_TAP(X_5));
+            }
+            break;
+        case win_6:
+            if (record->event.pressed) {
+                if (!is_win_active) {
+                        is_win_active = true;
+                        register_code(KC_LGUI); 
+                    }
+                win_timer = timer_read();
+                SEND_STRING(SS_TAP(X_6));
+            }
+            break;
+        case win_7:
+            if (record->event.pressed) {
+                if (!is_win_active) {
+                        is_win_active = true;
+                        register_code(KC_LGUI); 
+                    }
+                win_timer = timer_read();
+                SEND_STRING(SS_TAP(X_7));
+            }
+            break;
+        case win_8:
+            if (record->event.pressed) {
+                if (!is_win_active) {
+                        is_win_active = true;
+                        register_code(KC_LGUI); 
+                    }
+                win_timer = timer_read();
+                SEND_STRING(SS_TAP(X_8));
+            }
+            break;
+        case win_9:
+            if (record->event.pressed) {
+                if (!is_win_active) {
+                        is_win_active = true;
+                        register_code(KC_LGUI); 
+                    }
+                win_timer = timer_read();
+                SEND_STRING(SS_TAP(X_9));
+            }
+            break;
+        case win_0:
+            if (record->event.pressed) {
+                if (!is_win_active) {
+                        is_win_active = true;
+                        register_code(KC_LGUI); 
+                    }
+                win_timer = timer_read();
+                SEND_STRING(SS_TAP(X_0));
+            }
+            break;
+        case param:
+            if (record->event.pressed) {
+                SEND_STRING("sparam");
+                SEND_STRING(SS_TAP(X_ENTER));
+            }
+        default:
+            if (is_win_active) {
+                unregister_code(KC_LGUI);
+                is_win_active = false;
+            }
+            break;
+    }
+    return true;    
+};
+
 uint16_t get_combo_term(uint16_t index, combo_t *combo) {
     switch (index) {
         case combo_tab:
@@ -456,7 +461,6 @@ uint16_t get_combo_term(uint16_t index, combo_t *combo) {
 
 // https://github.com/stasmarkin/sm_td
 void on_smtd_action(uint16_t keycode, smtd_action action, uint8_t tap_count) {
-
     switch (keycode) {
         SMTD_MT(CKC_A, KC_A, KC_LEFT_CTRL)
         SMTD_MT(CKC_R, KC_R, KC_LEFT_ALT)

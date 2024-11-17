@@ -4,18 +4,22 @@
 #include QMK_KEYBOARD_H
 #include "features/layer_lock.h"
 
-void keyboard_post_init_user(void) {
-  debug_enable=true;
-//   debug_matrix=true;
-  debug_keyboard=true;
-  //debug_mouse=true;
-}
-
-bool is_alt_tab_active = false; // ADD this near the beginning of keymap.c
-uint16_t alt_tab_timer = 0;     // we will be using them soon.
+bool is_alt_tab_active = false; 
+uint16_t alt_tab_timer = 0;     
 uint16_t alt_tab_timeout = 0;
 uint16_t alt_tab_timeout_short = 800;
 uint16_t alt_tab_timeout_long = 1200;
+
+bool is_win_active = false;
+uint16_t win_timer = 0;
+uint16_t win_timeout = 800;
+
+void keyboard_post_init_user(void) {
+  debug_enable=true;
+//   debug_matrix=true;
+//   debug_keyboard=true;
+  debug_mouse=true;
+}
 
 enum custom_keycodes {
     SMTD_KEYCODES_BEGIN = SAFE_RANGE,
@@ -27,6 +31,8 @@ enum custom_keycodes {
     CKC_SL,
     CKC_SPC,
     cmsemi,
+    dshund,
+    dotcol,
     SMTD_KEYCODES_END,
     ALT_TAB,
     LLOCK,
@@ -38,19 +44,13 @@ enum custom_keycodes {
     first_name,
     last_name,
     number,
-    pwd,
-    dplct,
     lft_dsktp,
     rght_dsktp,
     tsk_view,
     print,
-    heart,
     frac,
     double_click,
-    MOUSE_MACRO,
-    copy,
-    paste,
-    cut,
+    M_S_BT3,
     alt_tab,
     ctl_tab,
     ctl_s_tab,
@@ -63,6 +63,10 @@ enum custom_keycodes {
     win_5,
     win_6,
     win_7,
+    win_8,
+    win_9,
+    win_0,
+    param,
 };
 
 #include "g/keymap_combo.h"
@@ -82,9 +86,8 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                 } else {
                     alt_tab_timeout = alt_tab_timeout_short;
                 }
-
-            alt_tab_timer = timer_read();
-            register_code(KC_TAB);
+                alt_tab_timer = timer_read();
+                register_code(KC_TAB);
             } else {
                 unregister_code(KC_TAB);
             }
@@ -97,167 +100,222 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             }
             break;
         case bunnpris:
-        if (record->event.pressed) {
-            SEND_STRING("bunnpris");
-        }
-        break;
-
+            if (record->event.pressed) {
+                SEND_STRING("bunnpris");
+            }
+            break;
         case kiwi:
-        if (record->event.pressed) {
-            SEND_STRING("kiwi");
-        }
-        break;
-
+            if (record->event.pressed) {
+                SEND_STRING("kiwi");
+            }
+            break;
         case rema:
-        if (record->event.pressed) {
-            SEND_STRING("rema");
-        } 
-        break;    
-        
+            if (record->event.pressed) {
+                SEND_STRING("rema");
+            } 
+            break;    
         case meny:
-        if (record->event.pressed) {
-            SEND_STRING("meny");
-        } 
-        break;     
-
+            if (record->event.pressed) {
+                SEND_STRING("meny");
+            } 
+            break;     
         case mail:
-        if (record->event.pressed) {
-            SEND_STRING("jan.erik"SS_RALT("2")"schopmeier.com");
-        }
-        break;
-        
+            if (record->event.pressed) {
+                SEND_STRING("jan.erik"SS_RALT("2")"schopmeier.com");
+            }
+            break;
         case first_name:
-        if (record->event.pressed) {
-            SEND_STRING("Jan Erik ");
-        }
-        break;
-        
+            if (record->event.pressed) {
+                SEND_STRING("Jan Erik ");
+            }
+            break;
         case last_name:
-        if (record->event.pressed) {
-            SEND_STRING("Schopmeier");
-        }
-        break;
-        
+            if (record->event.pressed) {
+                SEND_STRING("Schopmeier");
+            }
+            break;
         case number:
-        if (record->event.pressed) {
-            SEND_STRING("46360691");
-        }
-        break;
-
+            if (record->event.pressed) {
+                SEND_STRING("46360691");
+            }
+            break;
         case print:
-        if (record->event.pressed) {
-            SEND_STRING("printf"SS_DOWN(X_LSFT)"82"SS_UP(X_LSFT));
-            SEND_STRING("=r=n"SS_DOWN(X_LSFT)"29,"SS_UP(X_LSFT));
-            SEND_STRING(SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT));
-            // SEND_STRING("print"SS_DOWN(X_LSFT)"8229"SS_UP(X_LSFT));
-            // SEND_STRING(SS_TAP(X_LEFT)SS_TAP(X_LEFT));
-        }
-        break;
+            if (record->event.pressed) {
+                SEND_STRING("printf"SS_DOWN(X_LSFT)"82"SS_UP(X_LSFT));
+                SEND_STRING("=r=n"SS_DOWN(X_LSFT)"29,"SS_UP(X_LSFT));
+                SEND_STRING(SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT));
+                // SEND_STRING("print"SS_DOWN(X_LSFT)"8229"SS_UP(X_LSFT));
+                // SEND_STRING(SS_TAP(X_LEFT)SS_TAP(X_LEFT));
+            }
+            break;
         case frac: //\frac{}{}
-        if (record->event.pressed) {
-            SEND_STRING("=frac"SS_ALGR("7")SS_ALGR("0")SS_ALGR("7")SS_ALGR("0"));
-            SEND_STRING(SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT));
-        }
-        break;
-        case dplct:
-        if (record->event.pressed) {
-            SEND_STRING(SS_LCTL("l"));
-            SEND_STRING(SS_DOWN(X_LALT));
-            SEND_STRING((SS_TAP(X_ENT)));
-            SEND_STRING(SS_UP(X_LALT));
-        }              
-        break;
+            if (record->event.pressed) {
+                SEND_STRING("=frac"SS_ALGR("7")SS_ALGR("0")SS_ALGR("7")SS_ALGR("0"));
+                SEND_STRING(SS_TAP(X_LEFT)SS_TAP(X_LEFT)SS_TAP(X_LEFT));
+            }
+            break;
         case lft_dsktp:
-        if (record->event.pressed) {
-            SEND_STRING(SS_DOWN(X_LGUI)SS_DOWN(X_LCTL)SS_TAP(X_LEFT)SS_UP(X_LCTL)SS_UP(X_LGUI));
-        }
-        break;
+            if (record->event.pressed) {
+                SEND_STRING(SS_DOWN(X_LGUI)SS_DOWN(X_LCTL)SS_TAP(X_LEFT)SS_UP(X_LCTL)SS_UP(X_LGUI));
+            }
+            break;
         case rght_dsktp:
-        if (record->event.pressed) {
-            SEND_STRING(SS_DOWN(X_LGUI)SS_DOWN(X_LCTL)SS_TAP(X_RIGHT)SS_UP(X_LCTL)SS_UP(X_LGUI));
-        }
-        break;
-        case heart:
-        if (record->event.pressed) {
-            SEND_STRING(SS_LSFT(",")"3");
-        }
-        break;
+            if (record->event.pressed) {
+                SEND_STRING(SS_DOWN(X_LGUI)SS_DOWN(X_LCTL)SS_TAP(X_RIGHT)SS_UP(X_LCTL)SS_UP(X_LGUI));
+            }
+            break;
         case double_click:
-        if (record->event.pressed) {
-            SEND_STRING(SS_TAP(X_BTN1) SS_DELAY(15) SS_TAP(X_BTN1));
-        }
-        break;
-         case MOUSE_MACRO :
-        if (record->event.pressed) {
-            SEND_STRING(SS_DOWN(X_LSFT) SS_DELAY(15) SS_DOWN(X_BTN3));
-        } else {
-            SEND_STRING(SS_UP(X_LSFT) SS_UP(X_BTN3));
-        }
-        break;
+            if (record->event.pressed) {
+                SEND_STRING(SS_TAP(X_BTN1) SS_DELAY(15) SS_TAP(X_BTN1));
+            }
+            break;
+        case M_S_BT3:
+            if (record->event.pressed) {
+                SEND_STRING(SS_DOWN(X_LSFT) SS_DELAY(15) SS_DOWN(X_BTN3));
+            } else {
+                SEND_STRING(SS_UP(X_LSFT) SS_UP(X_BTN3));
+            }
+            break;
         case alt_tab:
-        if (record->event.pressed) {
-            SEND_STRING(SS_DOWN(X_LALT)SS_TAP(X_TAB)SS_TAP(X_LEFT));
-        }
-        break;
+            if (record->event.pressed) {
+                SEND_STRING(SS_DOWN(X_LALT)SS_TAP(X_TAB)SS_TAP(X_LEFT));
+            }
+            break;
         case ctl_tab:
-        if (record->event.pressed) {
-            SEND_STRING(SS_DOWN(X_LCTL)SS_TAP(X_TAB));
-        }
-        break;
+            if (record->event.pressed) {
+                SEND_STRING(SS_DOWN(X_LCTL)SS_TAP(X_TAB));
+            }
+            break;
         case ctl_s_tab:
-        if (record->event.pressed) {
-            SEND_STRING(SS_DOWN(X_LCTL)SS_DOWN(X_LSFT)SS_TAP(X_TAB)SS_UP(X_LSFT));
-        }
-        break;
+            if (record->event.pressed) {
+                SEND_STRING(SS_DOWN(X_LCTL)SS_DOWN(X_LSFT)SS_TAP(X_TAB)SS_UP(X_LSFT));
+            }
+            break;
         case win_left:
-        if (record->event.pressed) {
-            SEND_STRING(SS_DOWN(X_LGUI) SS_DELAY(15) SS_DOWN(X_LEFT));
-        } else {
-            SEND_STRING(SS_UP(X_LEFT) SS_UP(X_LGUI));
-        }
-        break;
+            if (record->event.pressed) {
+                SEND_STRING(SS_DOWN(X_LGUI) SS_DELAY(15) SS_DOWN(X_LEFT));
+            } else {
+                SEND_STRING(SS_UP(X_LEFT) SS_UP(X_LGUI));
+            }
+            break;
         case win_right:
-        if (record->event.pressed) {
-            SEND_STRING(SS_DOWN(X_LGUI) SS_DELAY(15) SS_DOWN(X_RIGHT));
-        } else {
-            SEND_STRING(SS_UP(X_RIGHT) SS_UP(X_LGUI));
-        }
-        break;
+            if (record->event.pressed) {
+                SEND_STRING(SS_DOWN(X_LGUI) SS_DELAY(15) SS_DOWN(X_RIGHT));
+            } else {
+                SEND_STRING(SS_UP(X_RIGHT) SS_UP(X_LGUI));
+            }
+            break;
         case win_1:
-        if (record->event.pressed) {
-            SEND_STRING(SS_DOWN(X_LGUI)SS_TAP(X_1));
-        }
-        break;
+            if (record->event.pressed) {
+                if (!is_win_active) {
+                        is_win_active = true;
+                        register_code(KC_LGUI); 
+                    }
+                win_timer = timer_read();
+                SEND_STRING(SS_TAP(X_1));
+            }
+            break;
         case win_2:
-        if (record->event.pressed) {
-            SEND_STRING(SS_DOWN(X_LGUI)SS_TAP(X_2));
-        }
-        break;
+            if (record->event.pressed) {
+                if (!is_win_active) {
+                        is_win_active = true;
+                        register_code(KC_LGUI); 
+                    }
+                win_timer = timer_read();
+                SEND_STRING(SS_TAP(X_2));
+            }
+            break;
         case win_3:
-        if (record->event.pressed) {
-            SEND_STRING(SS_DOWN(X_LGUI)SS_TAP(X_3));
-        }
-        break;
+            if (record->event.pressed) {
+                if (!is_win_active) {
+                        is_win_active = true;
+                        register_code(KC_LGUI); 
+                    }
+                win_timer = timer_read();
+                SEND_STRING(SS_TAP(X_3));
+            }
+            break;
         case win_4:
-        if (record->event.pressed) {
-            SEND_STRING(SS_DOWN(X_LGUI)SS_TAP(X_4));
-        }
-        break;
+            if (record->event.pressed) {
+                if (!is_win_active) {
+                        is_win_active = true;
+                        register_code(KC_LGUI); 
+                    }
+                win_timer = timer_read();
+                SEND_STRING(SS_TAP(X_4));
+            }
+            break;
         case win_5:
-        if (record->event.pressed) {
-            SEND_STRING(SS_DOWN(X_LGUI)SS_TAP(X_5));
-        }
-        break;
+            if (record->event.pressed) {
+                if (!is_win_active) {
+                        is_win_active = true;
+                        register_code(KC_LGUI); 
+                    }
+                win_timer = timer_read();
+                SEND_STRING(SS_TAP(X_5));
+            }
+            break;
         case win_6:
-        if (record->event.pressed) {
-            SEND_STRING(SS_DOWN(X_LGUI)SS_TAP(X_6));
-        }
-        break;
+            if (record->event.pressed) {
+                if (!is_win_active) {
+                        is_win_active = true;
+                        register_code(KC_LGUI); 
+                    }
+                win_timer = timer_read();
+                SEND_STRING(SS_TAP(X_6));
+            }
+            break;
         case win_7:
-        if (record->event.pressed) {
-            SEND_STRING(SS_DOWN(X_LGUI)SS_TAP(X_7));
-        }
-        break;
+            if (record->event.pressed) {
+                if (!is_win_active) {
+                        is_win_active = true;
+                        register_code(KC_LGUI); 
+                    }
+                win_timer = timer_read();
+                SEND_STRING(SS_TAP(X_7));
+            }
+            break;
+        case win_8:
+            if (record->event.pressed) {
+                if (!is_win_active) {
+                        is_win_active = true;
+                        register_code(KC_LGUI); 
+                    }
+                win_timer = timer_read();
+                SEND_STRING(SS_TAP(X_8));
+            }
+            break;
+        case win_9:
+            if (record->event.pressed) {
+                if (!is_win_active) {
+                        is_win_active = true;
+                        register_code(KC_LGUI); 
+                    }
+                win_timer = timer_read();
+                SEND_STRING(SS_TAP(X_9));
+            }
+            break;
+        case win_0:
+            if (record->event.pressed) {
+                if (!is_win_active) {
+                        is_win_active = true;
+                        register_code(KC_LGUI); 
+                    }
+                win_timer = timer_read();
+                SEND_STRING(SS_TAP(X_0));
+            }
+            break;
+        case param:
+            if (record->event.pressed) {
+                SEND_STRING("sparam");
+                SEND_STRING(SS_TAP(X_ENTER));
+            }
+        default:
+            if (is_win_active) {
+                unregister_code(KC_LGUI);
+                is_win_active = false;
+            }
+            break;
     }
     return true;    
 };
@@ -274,6 +332,8 @@ uint16_t get_combo_term(uint16_t index, combo_t *combo) {
         case combo_tab:
             return 35;
         case combo_aa:
+            return 60;
+        case combo_r_click_r:
             return 60;
     }
     return COMBO_TERM;
@@ -296,7 +356,6 @@ void on_smtd_action(uint16_t keycode, smtd_action action, uint8_t tap_count) {
                     if (tap_count > 0) {
                         tap_code16(KC_BSPC);
                     }                         
-
                     switch (tap_count % 2) { 
                         case 0: tap_code16(KC_COMM); break;
                         case 1: tap_code16(S(KC_COMM)); break;
@@ -304,26 +363,44 @@ void on_smtd_action(uint16_t keycode, smtd_action action, uint8_t tap_count) {
                     }
                 default: break;
                 break;
-            } // end of switch (keycode)
+            } 
+            break;
+        }
+        case dshund: {                                           
+            switch (action) {                                     
+                case SMTD_ACTION_TOUCH: 
+                    if (tap_count > 0) {
+                        tap_code16(KC_BSPC);
+                    }                         
+                    switch (tap_count % 2) { 
+                        case 0: tap_code16(KC_SLSH); break;
+                        case 1: tap_code16(S(KC_SLSH)); break; 
+                        default: break;
+                    }
+                default: break;
+                break;
+            }
+            break;
         }
     }
 }
-void matrix_scan_user(void) { // The very important timer.
-    if (is_alt_tab_active) {
-        if (timer_elapsed(alt_tab_timer) > alt_tab_timeout) {
-        unregister_code(KC_LALT);
-        is_alt_tab_active = false;
+
+void matrix_scan_user(void) {
+    if (is_win_active) {
+        if (timer_elapsed(win_timer) > win_timeout) {
+            unregister_code(KC_LGUI);
+            is_win_active = false;
         }
     }
 }
-//layout: {ortho_layout: {split: true, rows: 3, columns: 5, thumbs: 2}}
+
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
     [0] = LAYOUT_split_3x5_2(//colemak dh
-     KC_Q,        KC_W,        KC_F,   KC_P,    KC_B,    KC_J,          KC_L, KC_U, KC_Y,   KC_SCLN,          
-     CTL_T(KC_A), KC_R,        KC_S,   KC_T,    KC_G,    KC_K,          KC_N, KC_E, KC_I,   CTL_T(KC_O), /*MT(XXXXXXX,KC_R)*//*MT(XXXXXXX,KC_I)*/
-     SFT_T(KC_Z), ALT_T(KC_X), KC_C,   KC_D,    KC_V,    KC_M,          KC_H, cmsemi, KC_DOT, CKC_SL,
-                               OSM(MOD_LSFT), OSL(1),    LT(2, KC_SPC), OSL(3) //LT(2, KC_SPC) CKC_SPC 
+     KC_Q,          KC_W,        KC_F,         KC_P,    KC_B,                  KC_J,          KC_L,    KC_U,    KC_Y, KC_SCLN,          
+     CTL_T(KC_A),   KC_R,        KC_S,         KC_T,    KC_G,                  KC_K,          KC_N,    KC_E,    KC_I, CTL_T(KC_O),
+     SFT_T(KC_Z),   ALT_T(KC_X), KC_C,         KC_D,    KC_V,                  KC_M,          KC_H,  cmsemi,  KC_DOT, dshund,
+                                      OSM(MOD_LSFT),  OSL(1), LT(2, KC_SPC), OSL(3)
     ),
 
     [1] = LAYOUT_split_3x5_2(//numbers and symbols
@@ -333,11 +410,11 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
                                      KC_DEL, _______,    _______, _______
     ),
    
-    [2] = LAYOUT_split_3x5_2(//navigation
-    KC_VOLD, KC_MPRV, KC_MPLY,   KC_MNXT,   KC_VOLU,    KC_MUTE, ALGR(KC_7), S(KC_8),     S(KC_9), ALGR(KC_0), 
-      win_1,   win_2,   win_3,     win_4,     win_5,    KC_HOME, C(KC_LEFT),   KC_UP, C(KC_RIGHT),     KC_END, 
-    KC_LSFT, KC_LALT,   win_6,     win_7,     LLOCK,    alt_tab,    KC_LEFT, KC_DOWN,    KC_RIGHT,    KC_LGUI,
-                                 KC_BSPC, KC_DELETE,    _______,      TG(4)
+    [2] = LAYOUT_split_3x5_2(//navigation 
+    _______, KC_MPRV,    KC_MPLY,KC_MNXT, _______,                   _______, ALGR(KC_7), S(KC_8),     S(KC_9), ALGR(KC_0), 
+    _______, KC_MUTE,   KC_VOLD, KC_VOLU, _______,                   KC_HOME, C(KC_LEFT),   KC_UP, C(KC_RIGHT),     KC_END, 
+    KC_LSFT, KC_LALT, _______,   _______,   LLOCK,                   alt_tab,    KC_LEFT, KC_DOWN,    KC_RIGHT,    _______,
+                                 KC_BSPC,  KC_DEL,    _______, TG(4)
     ),
 
     [3] = LAYOUT_split_3x5_2(// function and algr
@@ -368,4 +445,3 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
                                   OSM(MOD_LSFT), OSL(1),    LT(2, KC_SPC), OSL(3)
     ),
 };
-
