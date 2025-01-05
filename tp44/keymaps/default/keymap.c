@@ -23,8 +23,8 @@ uint16_t alt_tab_cpi = 4;
 uint16_t arrow_cpi = 30;
 
 // Modify these values to adjust the scrolling speed
-#define SCROLL_DIVISOR_H 64.0
-#define SCROLL_DIVISOR_V 50.0
+#define SCROLL_DIVISOR_H 128
+#define SCROLL_DIVISOR_V 50
 
 // Variables to store accumulated scroll values
 float scroll_accumulated_h = 0;
@@ -116,11 +116,9 @@ report_mouse_t pointing_device_task_combined_user(report_mouse_t left_report, re
         // } else {
         //     arrow_accumulated_v += (float)left_report.y / ARROW_DIVISOR_V;
         // }
-        
         // // Assign integer parts of accumulated scroll values to the mouse report
         // left_report.h = (int8_t)scroll_accumulated_h;
         // left_report.v = (int8_t)scroll_accumulated_v;
-
         // if (arrow_accumulated_h > threshold) {
         //     // dprintf("x:%i y: %i\n",mouse_report.x, mouse_report.y);
         //     SEND_STRING(SS_TAP(X_RIGHT));
@@ -167,24 +165,7 @@ report_mouse_t pointing_device_task_combined_user(report_mouse_t left_report, re
     return pointing_device_combine_reports(left_report, right_report);
 }
 
-layer_state_t layer_state_set_user(layer_state_t state) {
-    if (IS_LAYER_ON_STATE(state, 0)) {
-        SEND_STRING(SS_UP(X_LALT)SS_UP(X_LCTL)SS_UP(X_LGUI));
-    }
-    switch (get_highest_layer(state)) {
-        case 1:  // If we're on the _RAISE layer enable scrolling mode
-            pointing_device_set_cpi_on_side(false, arrow_cpi); //right
-            arrow_key_mode = true;
-            break;
-        default:
-            if (arrow_key_mode) {
-                pointing_device_set_cpi_on_side(false, default_cpi);
-                arrow_key_mode = false;
-            }
-            break;
-    }
-    return state;
-}
+
 
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     if (!process_smtd(keycode, record)) { return false; }
@@ -447,12 +428,33 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     return true;    
 };
 
+layer_state_t layer_state_set_user(layer_state_t state) {
+    if (IS_LAYER_ON_STATE(state, 0)) {
+        SEND_STRING(SS_UP(X_LALT)SS_UP(X_LCTL)SS_UP(X_LGUI));
+    }
+    switch (get_highest_layer(state)) {
+        case 1:  // If we're on the _RAISE layer enable scrolling mode
+            pointing_device_set_cpi_on_side(false, arrow_cpi); //right
+            pointing_device_set_cpi_on_side(true, arrow_cpi/3); //left
+            arrow_key_mode = true;
+            break;
+        default:
+            if (arrow_key_mode) {
+                pointing_device_set_cpi_on_side(false, default_cpi);
+                pointing_device_set_cpi_on_side(true, default_cpi);
+                arrow_key_mode = false;
+            }
+            break;
+    }
+    return state;
+}
+
 uint16_t get_combo_term(uint16_t index, combo_t *combo) {
     switch (index) {
         case combo_tab:
             return 35;
-        case combo_aa:
-            return 60;
+        case combo_ae:
+            return 70;
         case combo_r_click_r:
             return 60;
     }
