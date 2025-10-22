@@ -16,10 +16,10 @@ uint16_t win_timeout = 1500;
 bool alt_tab_mode = false;
 bool arrow_key_mode = false;
 
-uint16_t default_cpi = 800;
-uint16_t scrolling_cpi = 30;
+uint16_t default_cpi = 512;
+uint16_t scrolling_cpi = 32;
 uint16_t alt_tab_cpi = 4;
-uint16_t arrow_cpi = 30;
+uint16_t arrow_cpi = 32;
 
 // Modify these values to adjust the scrolling speed
 #define SCROLL_DIVISOR_H 128
@@ -90,60 +90,14 @@ enum custom_keycodes {
     win_0,
     M_ATAB,
     param,
+    hed,
 };
 
 #include "g/keymap_combo.h"
 
-report_mouse_t pointing_device_task_combined_user(report_mouse_t left_report, report_mouse_t right_report) {
-    if (alt_tab_mode){ 
-        if (left_report.x > 0) {
-            SEND_STRING(SS_TAP(X_RIGHT));
-        } else if (left_report.x < 0) {
-            SEND_STRING(SS_TAP(X_LEFT));
-        } else if (left_report.y > 0) {
-            SEND_STRING(SS_TAP(X_DOWN));
-        } else if (left_report.y < 0) {
-            SEND_STRING(SS_TAP(X_UP));
-        }   
-        left_report.x = 0;
-        left_report.y = 0;
-    }
-    if (arrow_key_mode) {
-        // if ((abs(left_report.x) / abs(left_report.y)) > 1) {
-        //     arrow_accumulated_h += (float)left_report.x / ARROW_DIVISOR_H;
-        // } else {
-        //     arrow_accumulated_v += (float)left_report.y / ARROW_DIVISOR_V;
-        // }
-        // // Assign integer parts of accumulated scroll values to the mouse report
-        // left_report.h = (int8_t)scroll_accumulated_h;
-        // left_report.v = (int8_t)scroll_accumulated_v;
-        // if (arrow_accumulated_h > threshold) {
-        //     // dprintf("x:%i y: %i\n",mouse_report.x, mouse_report.y);
-        //     SEND_STRING(SS_TAP(X_RIGHT));
-        // } else if (arrow_accumulated_h < -threshold) {
-        //     SEND_STRING(SS_TAP(X_LEFT));
-        //     // dprintf("x:%i y: %i\n",mouse_report.x, mouse_report.y);
-        // }
-        // if (arrow_accumulated_v > threshold) {
-        //     SEND_STRING(SS_TAP(X_DOWN));
-        //     // dprintf("x:%i y: %i\n",mouse_report.x, mouse_report.y);
-        // } else if (arrow_accumulated_v < -threshold) {
-        //     SEND_STRING(SS_TAP(X_UP));
-        //     // dprintf("x:%i y: %i\n",mouse_report.x, mouse_report.y);
-        // }
-        // // Update accumulated scroll values by subtracting the integer parts
-        // arrow_accumulated_h = 0;
-        // arrow_accumulated_v = 0;
-        if (right_report.x > 0) {
-            SEND_STRING(SS_TAP(X_RIGHT));
-        } else if (right_report.x < 0) {
-            SEND_STRING(SS_TAP(X_LEFT));
-        } 
-        right_report.x = 0;
-        right_report.y = 0;
-    }
-    if (!alt_tab_mode) {       
-        left_report.x = -left_report.x;
+report_mouse_t pointing_device_task_combined_user(report_mouse_t left_report, report_mouse_t right_report) {     
+    if (left_report.x != 0 || left_report.y != 0) {
+        left_report.y = -left_report.y;
         if ((abs(left_report.x) / abs(left_report.y)) > 1) {
             scroll_accumulated_h += (float)left_report.x / SCROLL_DIVISOR_H;
         } else {
@@ -153,7 +107,7 @@ report_mouse_t pointing_device_task_combined_user(report_mouse_t left_report, re
         // Assign integer parts of accumulated scroll values to the mouse report
         left_report.h = (int8_t)scroll_accumulated_h;
         left_report.v = (int8_t)scroll_accumulated_v;
-
+    
         // Update accumulated scroll values by subtracting the integer parts
         scroll_accumulated_h -= (int8_t)scroll_accumulated_h;
         scroll_accumulated_v -= (int8_t)scroll_accumulated_v;
@@ -309,141 +263,39 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                 SEND_STRING(SS_UP(X_RIGHT) SS_UP(X_LGUI));
             }
             break;
-        case win_1:
+        case hed:
             if (record->event.pressed) {
-                if (!is_win_active) {
-                        is_win_active = true;
-                        register_code(KC_LGUI); 
-                    }
-                win_timer = timer_read();
-                SEND_STRING(SS_TAP(X_1));
-            }
-            break;
-        case win_2:
-            if (record->event.pressed) {
-                if (!is_win_active) {
-                        is_win_active = true;
-                        register_code(KC_LGUI); 
-                    }
-                win_timer = timer_read();
-                SEND_STRING(SS_TAP(X_2));
-            }
-            break;
-        case win_3:
-            if (record->event.pressed) {
-                if (!is_win_active) {
-                        is_win_active = true;
-                        register_code(KC_LGUI); 
-                    }
-                win_timer = timer_read();
-                SEND_STRING(SS_TAP(X_3));
-            }
-            break;
-        case win_4:
-            if (record->event.pressed) {
-                if (!is_win_active) {
-                        is_win_active = true;
-                        register_code(KC_LGUI); 
-                    }
-                win_timer = timer_read();
-                SEND_STRING(SS_TAP(X_4));
-            }
-            break;
-        case win_5:
-            if (record->event.pressed) {
-                if (!is_win_active) {
-                        is_win_active = true;
-                        register_code(KC_LGUI); 
-                    }
-                win_timer = timer_read();
-                SEND_STRING(SS_TAP(X_5));
-            }
-            break;
-        case win_6:
-            if (record->event.pressed) {
-                if (!is_win_active) {
-                        is_win_active = true;
-                        register_code(KC_LGUI); 
-                    }
-                win_timer = timer_read();
-                SEND_STRING(SS_TAP(X_6));
-            }
-            break;
-        case win_7:
-            if (record->event.pressed) {
-                if (!is_win_active) {
-                        is_win_active = true;
-                        register_code(KC_LGUI); 
-                    }
-                win_timer = timer_read();
-                SEND_STRING(SS_TAP(X_7));
-            }
-            break;
-        case win_8:
-            if (record->event.pressed) {
-                if (!is_win_active) {
-                        is_win_active = true;
-                        register_code(KC_LGUI); 
-                    }
-                win_timer = timer_read();
-                SEND_STRING(SS_TAP(X_8));
-            }
-            break;
-        case win_9:
-            if (record->event.pressed) {
-                if (!is_win_active) {
-                        is_win_active = true;
-                        register_code(KC_LGUI); 
-                    }
-                win_timer = timer_read();
-                SEND_STRING(SS_TAP(X_9));
-            }
-            break;
-        case win_0:
-            if (record->event.pressed) {
-                if (!is_win_active) {
-                        is_win_active = true;
-                        register_code(KC_LGUI); 
-                    }
-                win_timer = timer_read();
-                SEND_STRING(SS_TAP(X_0));
-            }
-            break;
-        case param:
-            if (record->event.pressed) {
-                SEND_STRING("sparam");
+                SEND_STRING("Hva er dette");
+                SEND_STRING(SS_DOWN(X_LSFT) SS_TAP(X_MINS) SS_UP(X_LSFT));
                 SEND_STRING(SS_TAP(X_ENTER));
             }
         default:
-            if (is_win_active) {
-                unregister_code(KC_LGUI);
-                is_win_active = false;
-            }
+         
             break;
     }
     return true;    
 };
 
-layer_state_t layer_state_set_user(layer_state_t state) {
-    if (IS_LAYER_ON_STATE(state, 0)) {
-        SEND_STRING(SS_UP(X_LALT)SS_UP(X_LCTL)SS_UP(X_LGUI));
-    }
-    switch (get_highest_layer(state)) {
-        case 1:  // If we're on the _RAISE layer enable scrolling mode
-            pointing_device_set_cpi_on_side(false, arrow_cpi); //right
-            pointing_device_set_cpi_on_side(true, arrow_cpi/3); //left
-            arrow_key_mode = true;
-            break;
-        default:
-            if (arrow_key_mode) {
-                pointing_device_set_cpi_on_side(false, default_cpi);
-                pointing_device_set_cpi_on_side(true, default_cpi);
-                arrow_key_mode = false;
-            }
-            break;
-    }
-    return state;
-}
+// layer_state_t layer_state_set_user(layer_state_t state) {
+//     if (IS_LAYER_ON_STATE(state, 0)) {
+//         SEND_STRING(SS_UP(X_LALT)SS_UP(X_LCTL)SS_UP(X_LGUI));
+//     }
+//      switch (get_highest_layer(state)) {
+//         case 1:  // If we're on the _RAISE layer enable scrolling mode
+//             pointing_device_set_cpi_on_side(false, arrow_cpi); //right
+//             pointing_device_set_cpi_on_side(true, arrow_cpi/3); //left
+//             arrow_key_mode = true;
+//             break;
+//         default:
+//             if (arrow_key_mode) {
+//                 pointing_device_set_cpi_on_side(false, default_cpi);
+//                 pointing_device_set_cpi_on_side(true, default_cpi);
+//                 arrow_key_mode = false;
+//             }
+//             break;
+//     }
+//     return state;
+// }
 
 uint16_t get_combo_term(uint16_t index, combo_t *combo) {
     switch (index) {
@@ -468,35 +320,35 @@ void matrix_scan_user(void) {
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
     [0] = LAYOUT_split_3x5_3u4(//colemak dh
-                 KC_MPRV,     KC_MPLY,      KC_MNXT, KC_PSCR,                  KC_MUTE,    KC_VOLD, KC_VOLU, _______,
+                  KC_MPRV,     KC_MPLY,      KC_MNXT, KC_PSCR,                  KC_MUTE,    KC_VOLD, KC_VOLU, _______,
      KC_Q,          KC_W,        KC_F,         KC_P,    KC_B,                  KC_J,          KC_L,    KC_U,    KC_Y, KC_SCLN,          
-     CTL_T(KC_A),   KC_R,        KC_S,         KC_T,    KC_G,                  KC_K,          KC_N,    KC_E,    KC_I, CTL_T(KC_O),
-     SFT_T(KC_Z),   ALT_T(KC_X), KC_C,         KC_D,    KC_V,                  KC_M,          KC_H,  KC_COMM,  KC_DOT, KC_SLSH,
-                                      OSM(MOD_LSFT),  OSL(1), M_ATAB, KC_BTN1, LT(2, KC_SPC), OSL(3)
+     CMD_T(KC_A),   KC_R,        KC_S,         KC_T,    KC_G,                  KC_K,          KC_N,    KC_E,    KC_I, CMD_T(KC_O),
+     KC_Z,          OPT_T(KC_X), CTL_T(KC_C),         KC_D,    KC_V,                  KC_M,          KC_H, CTL_T(KC_COMM), OPT_T(KC_DOT), KC_SLSH,
+                                      OSM(MOD_LSFT),  OSL(1),C(KC_UP), KC_BTN1, LT(2, KC_SPC), OSL(3)
     ),
 
     [1] = LAYOUT_split_3x5_3u4(//numbers and symbols
                   _______, _______, _______, _______,                        _______, _______, _______, _______,
-    S(KC_1),   S(KC_2), S(KC_3), ALGR(KC_4), S(KC_5),                        S(KC_6), S(KC_7), S(KC_8), S(KC_9), S(KC_0),
+    S(KC_1),   S(KC_2), S(KC_3), S(KC_4), S(KC_5),                        S(KC_6), S(KC_7), S(KC_8), S(KC_9), S(KC_0),
        KC_1,      KC_2,    KC_3,       KC_4,    KC_5,                        KC_6   ,    KC_7,    KC_8,    KC_9,    KC_0,
-    KC_LSFT, ctl_s_tab, KC_RBRC,    ctl_tab, KC_BSLS,                        KC_EQL , KC_MINS, _______, _______, _______,
+    KC_LSFT, C(S(KC_TAB)), KC_RBRC,    C(KC_TAB), KC_BSLS,                        KC_EQL , KC_MINS, _______, _______, _______,
                                      KC_DEL, _______, _______, double_click, KC_BTN2, _______
     ),
    
     [2] = LAYOUT_split_3x5_3u4(//navigation 
              _______, _______,   _______, _______,                   _______,    _______, _______,     _______,
-    _______, _______, _______,   _______, _______,                   _______, ALGR(KC_7), S(KC_8),     S(KC_9), ALGR(KC_0), 
-    _______, _______, _______,   _______, _______,                   KC_HOME, C(KC_LEFT),   KC_UP, C(KC_RIGHT),     KC_END, 
-    KC_LSFT, KC_LALT, _______,   _______,   LLOCK,                   alt_tab,    KC_LEFT, KC_DOWN,    KC_RIGHT,    _______,
+    KC_VOLD, KC_MPRV, KC_MPLY,   KC_MNXT, KC_VOLU,                   KC_MUTE, A(S(KC_8)), S(KC_8),     S(KC_9), A(S(KC_9)), 
+    _______, _______, _______,   _______, _______,                   G(KC_LEFT), A(KC_LEFT), KC_UP, A(KC_RIGHT), G(KC_RIGHT), 
+    KC_LSFT, KC_LALT, _______,   _______,   LLOCK,                   alt_tab,    KC_LEFT, KC_DOWN,    KC_RIGHT,   hed,
                                  KC_BSPC,  KC_DEL,   LLOCK, _______, _______, TG(4)
     ),
 
     [3] = LAYOUT_split_3x5_3u4(// function and algr
              _______,    _______,   _______,    _______,                   _______, _______,    _______,    _______,
-  KC_GRV, ALGR(KC_2), ALGR(KC_3),   S(KC_4), ALGR(KC_5),                   KC_PSCR, DM_REC1,    ALGR(KC_8), ALGR(KC_9), S(KC_RBRC),
+  ALGR(KC_7), KC_BSLS, ALGR(KC_3),   ALGR(KC_4), ALGR(KC_5),               C(S(G(KC_4))), DM_REC1,    ALGR(KC_8), ALGR(KC_9), S(KC_RBRC),
    KC_F1,      KC_F2,      KC_F3,     KC_F4,      KC_F5,                   KC_F6  , DM_PLY1,    KC_NUBS, S(KC_NUBS),       S(KC_BSLS),
-   KC_F7,      KC_F8,      KC_F9,    KC_F10,     KC_F11,                   KC_F12,    print,    KC_BSLS, S(KC_MINS), ALGR(KC_RBRC),      
-                                 C(KC_BSPC),  C(KC_DEL), _______, _______, _______, _______
+   KC_F7,      KC_F8,      KC_F9,    KC_F10,     KC_F11,                   KC_F12, S(KC_EQL),    KC_GRV, S(KC_MINS), ALGR(KC_RBRC),      
+                                 A(KC_BSPC),  A(KC_DEL), _______, _______, _______, _______
     ),
 
     [4] = LAYOUT_split_3x5_3u4(//numpad
@@ -518,8 +370,8 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     [7] = LAYOUT_split_3x5_3u4(//colemak dh
                  KC_MPRV,     KC_MPLY,      KC_MNXT, KC_PSCR,                  KC_MUTE,    KC_VOLD, KC_VOLU, _______,
      KC_Q,          KC_W,        KC_F,         KC_P,    KC_B,                  KC_J,          KC_L,    KC_U,    KC_Y, KC_SCLN,          
-     CTL_T(KC_A),   KC_R,        KC_S,         KC_T,    KC_G,                  KC_K,          KC_N,    KC_E,    KC_I, CTL_T(KC_O),
-     SFT_T(KC_Z),   ALT_T(KC_X), KC_C,         KC_D,    KC_V,                  KC_M,          KC_H,  KC_COMM,  KC_DOT, KC_SLSH,
+     CMD_T(KC_A),   KC_R,        KC_S,         KC_T,    KC_G,                  KC_K,          KC_N,    KC_E,    KC_I, CMD_T(KC_O),
+     KC_Z,          OPT_T(KC_X), CTL_T(KC_C),         KC_D,    KC_V,                  KC_M,          KC_H,  KC_COMM,  KC_DOT, KC_SLSH,
                                       OSM(MOD_LSFT),  OSL(1), M_ATAB, KC_BTN1, LT(2, KC_SPC), OSL(3)
     ),
 
