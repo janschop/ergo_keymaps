@@ -91,6 +91,8 @@ enum custom_keycodes {
     M_ATAB,
     param,
     hed,
+    threeup,
+    threedown
 };
 
 #include "g/keymap_combo.h"
@@ -269,8 +271,18 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                 SEND_STRING(SS_DOWN(X_LSFT) SS_TAP(X_MINS) SS_UP(X_LSFT));
                 SEND_STRING(SS_TAP(X_ENTER));
             }
+            break;
+        case threeup:
+            if (record->event.pressed) {
+                SEND_STRING( SS_TAP(X_UP) SS_TAP(X_UP) SS_TAP(X_UP));
+            }
+            break;
+        case threedown:
+            if (record->event.pressed) {
+                SEND_STRING( SS_TAP(X_DOWN) SS_TAP(X_DOWN) SS_TAP(X_DOWN));
+            }
+            break;
         default:
-         
             break;
     }
     return true;    
@@ -320,11 +332,11 @@ void matrix_scan_user(void) {
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
     [0] = LAYOUT_split_3x5_3u4(//colemak dh
-                  KC_MPRV,     KC_MPLY,            KC_MNXT, KC_PSCR,                  KC_MUTE,    KC_VOLD, KC_VOLU, _______,
-     KC_Q,          KC_W,        KC_F,               KC_P,    KC_B,                  KC_J,          KC_L,    KC_U,    KC_Y, KC_SCLN,          
-     CMD_T(KC_A),   OPT_T(KC_R), CTL_T(KC_S),         KC_T,    KC_G,                  KC_K,          KC_N,    CTL_T(KC_E),    OPT_T(KC_I), CMD_T(KC_O),
-     KC_Z,          OPT_T(KC_X), CTL_T(KC_C),         KC_D,    KC_V,                  KC_M,          KC_H, CTL_T(KC_COMM), OPT_T(KC_DOT), KC_SLSH,
-                                      OSM(MOD_LSFT),  OSL(1),C(KC_UP), KC_BTN1, LT(2, KC_SPC), OSL(3)
+                  KC_MPRV,     KC_MPLY,       KC_MNXT,     KC_PSCR,                   KC_MUTE,      KC_VOLD,     KC_VOLU,       _______,
+     KC_Q,          KC_W,        KC_F,        KC_P,        KC_B,                      KC_J,            KC_L,        KC_U,          KC_Y, KC_SCLN,          
+     CMD_T(KC_A),   OPT_T(KC_R), CTL_T(KC_S), MEH_T(KC_T), KC_G,                      KC_K,       MEH_T(KC_N), CTL_T(KC_E),   OPT_T(KC_I), CMD_T(KC_O),
+     KC_Z,          KC_X,        KC_C,        KC_D,        KC_V,                      KC_M,            KC_H,     KC_COMM,        KC_DOT, KC_SLSH,
+                                        OSM(MOD_LSFT),     OSL(1), C(KC_UP), KC_BTN1, LT(2, KC_SPC), OSL(3)
     ),
 
     [1] = LAYOUT_split_3x5_3u4(//numbers and symbols
@@ -337,7 +349,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
    
     [2] = LAYOUT_split_3x5_3u4(//navigation 
              _______, _______,   _______, _______,                   _______,    _______, _______,     _______,
-    KC_VOLD, KC_MPRV, KC_MPLY,   KC_MNXT, KC_VOLU,                   KC_MUTE, A(S(KC_8)), S(KC_8),     S(KC_9), A(S(KC_9)), 
+    KC_VOLD, KC_MPRV, KC_MPLY,   KC_MNXT, KC_VOLU,                   KC_MUTE, A(S(KC_8)),  threeup,   threedown, A(S(KC_9)), 
     _______, _______, _______,   _______, _______,                   G(KC_LEFT), A(KC_LEFT), KC_UP, A(KC_RIGHT), G(KC_RIGHT), 
     KC_LSFT, KC_LALT, _______,   _______,   LLOCK,                   alt_tab,    KC_LEFT, KC_DOWN,    KC_RIGHT,   hed,
                                  KC_BSPC,  KC_DEL,   LLOCK, _______, _______, TG(4)
