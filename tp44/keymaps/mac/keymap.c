@@ -23,7 +23,7 @@ uint16_t arrow_cpi = 32;
 
 // Modify these values to adjust the scrolling speed
 #define SCROLL_DIVISOR_H 128
-#define SCROLL_DIVISOR_V 50
+#define SCROLL_DIVISOR_V 32
 
 // Variables to store accumulated scroll values
 float scroll_accumulated_h = 0;

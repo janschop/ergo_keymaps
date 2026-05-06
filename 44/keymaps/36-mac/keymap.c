@@ -67,7 +67,6 @@ enum custom_keycodes {
     win_9,
     win_0,
     param,
-    hed,
 };
 
 #include "g/keymap_combo.h"
@@ -305,13 +304,6 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                 SEND_STRING(SS_TAP(X_0));
             }
             break;
-        case hed:
-            if (record->event.pressed) {
-                SEND_STRING("Hva er dette");
-                SEND_STRING(SS_DOWN(X_LSFT) SS_TAP(X_MINS) SS_UP(X_LSFT));
-                SEND_STRING(SS_TAP(X_ENTER));
-            }
-            break;
         case param:
             if (record->event.pressed) {
                 SEND_STRING("sparam");
@@ -373,7 +365,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     [2] = LAYOUT_split_3x5_2_u2(//navigation 
   LOPT(KC_DEL), KC_VOLD, KC_MPRV,    KC_MPLY,KC_MNXT, KC_VOLU,           KC_MUTE, A(S(KC_8)), S(KC_8),     S(KC_9), A(S(KC_9)), LOPT(KC_BSPC),
    LOPT(KC_DEL), _______, _______,   _______, _______, _______,           G(KC_LEFT), A(KC_LEFT), KC_UP, A(KC_RIGHT), G(KC_RIGHT), LOPT(KC_BSPC),
-    KC_LSFT, KC_LALT, _______,   _______,   LLOCK,                   alt_tab,    KC_LEFT, KC_DOWN,    KC_RIGHT,    hed,
+    KC_LSFT, KC_LALT, _______,   _______,   LLOCK,                   alt_tab,    KC_LEFT, KC_DOWN,    KC_RIGHT, _______,
                                  KC_BSPC,  KC_DEL,    _______, TG(4)
     ),
 
