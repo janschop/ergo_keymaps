@@ -17,7 +17,7 @@ uint16_t win_timeout = 1500;
 bool alt_tab_mode = false;
 bool arrow_key_mode = false;
 
-uint16_t default_cpi = 800;
+uint16_t default_cpi = 900; // used to be 800
 uint16_t scrolling_cpi = 30;
 uint16_t alt_tab_cpi = 4;
 uint16_t arrow_cpi = 30;
